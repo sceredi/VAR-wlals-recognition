@@ -1,18 +1,17 @@
-from typing import List
+from typing import List, Tuple
 import os
 import cv2
 import numpy as np
 
 class Video:
     def __init__(self, gloss: str, video_id: str, split: str, frame_start: int, frame_end: int, fps:int, bbox: List[int]) -> None:
+        self.video_capture = None
         self.gloss = gloss
         self.video_id = video_id
         self.split = split
         self.fps = fps
         self.bbox = bbox
         self.frame_start = frame_start
-        if frame_end == -1:
-            frame_end = int(self.get_video_capture().get(cv2.CAP_PROP_FRAME_COUNT))
         self.frame_end = frame_end
 
     @classmethod
@@ -44,16 +43,19 @@ class Video:
             self.video_capture = cv2.VideoCapture(self.get_path())
         return self.video_capture
     
-    def get_frame(self, frame_number: int) -> 'np.ndarray':
+    def get_frame(self, frame_number: int) -> Tuple[bool, 'np.ndarray']:
         self.get_video_capture().set(cv2.CAP_PROP_POS_FRAMES, frame_number)
         ret, frame = self.get_video_capture().read()
-        if ret == False:
-            raise Exception(f"Error reading frame {frame_number} from video {self.video_id}")
-        return frame
+        return ret, frame
     
     def get_frames(self) -> List['np.ndarray']:
-        ret = []
-        for frame_number in range(self.frame_start, self.frame_end + 1):
-            ret.append(self.get_frame(frame_number))
-        return ret
+        frames = []
+        frame_number = self.frame_start
+        while True:
+            ret, frame = self.get_frame(frame_number)
+            if ret == False:
+                break
+            frames.append(frame)
+            frame_number += 1
+        return frames
 

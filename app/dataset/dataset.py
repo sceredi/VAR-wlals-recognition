@@ -15,8 +15,8 @@ class Dataset:
             gloss = word_data['gloss']
             instances = word_data['instances']
             for instance in instances:
-                video = Video.fromInstance(gloss, instance)
-                if video.isMissing() == False:
+                video = Video.from_instance(gloss, instance)
+                if video.is_missing() == False:
                     ret.append(video)
         return ret
     
