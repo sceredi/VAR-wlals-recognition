@@ -58,4 +58,10 @@ class Video:
             frames.append(frame)
             frame_number += 1
         return frames
+    
+    def get_bounded_frames(self) -> List['np.ndarray']:
+        frames = []
+        for frame in self.get_frames():
+            frames.append(frame[self.bbox[1]:self.bbox[3], self.bbox[0]:self.bbox[2]])
+        return frames
 

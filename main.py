@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 from app.dataset.dataset import Dataset
 from app.dataset.video import Video
-from app.plotter.plotter import Plotter
+from app.plotter.framesPlotter import FramesPlotter
 from app.utilities.preprocess import preprocess
 
 def plot_video(video: Video):
-    frames = video.get_frames()
-    plotter = Plotter(frames)
+    frames = video.get_bounded_frames()
+    plotter = FramesPlotter(frames)
     plotter.plot()
 
 
