@@ -5,11 +5,11 @@ import numpy as np
 
 
 def create_mp4_video_from_frames(frames, fps):
-    temp_video_path = 'tempfile.mp4'
-    compressed_path = '{}.mp4'.format(str(uuid.uuid4()))
+    temp_video_path = "tempfile.mp4"
+    compressed_path = "{}.mp4".format(str(uuid.uuid4()))
 
     size = (frames[0].shape[1], frames[0].shape[0])
-    out = cv2.VideoWriter(temp_video_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
+    out = cv2.VideoWriter(temp_video_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, size)
 
     for i in range(len(frames)):
         out.write(frames[i][..., ::-1].copy())
@@ -34,9 +34,13 @@ def draw_connected_components(labels):
     return labeled_img
 
 
-def draw_detected_objects(image, detected_bbs, detected_centroids, contours=None, detected_colors=(0, 0, 255)):
+def draw_detected_objects(
+    image, detected_bbs, detected_centroids, contours=None, detected_colors=(0, 0, 255)
+):
     if contours is not None:
-        image_with_detected_objects = cv2.polylines(image.copy(), contours, True, (0, 255, 0), 1)
+        image_with_detected_objects = cv2.polylines(
+            image.copy(), contours, True, (0, 255, 0), 1
+        )
     else:
         image_with_detected_objects = image.copy()
 
@@ -46,16 +50,27 @@ def draw_detected_objects(image, detected_bbs, detected_centroids, contours=None
         else:
             color = detected_colors
 
-        image_with_detected_objects = cv2.rectangle(image_with_detected_objects, detected_bbs[i][0], detected_bbs[i][1],
-                                                    color, 1)
-        image_with_detected_objects = cv2.circle(image_with_detected_objects, detected_centroids[i], 3, color, -1)
+        image_with_detected_objects = cv2.rectangle(
+            image_with_detected_objects,
+            detected_bbs[i][0],
+            detected_bbs[i][1],
+            color,
+            1,
+        )
+        image_with_detected_objects = cv2.circle(
+            image_with_detected_objects, detected_centroids[i], 3, color, -1
+        )
 
     return image_with_detected_objects
 
 
-def draw_tracked_objects(image, tracked_bbs, tracks, contours=None, tracked_colors=(0, 0, 255)):
+def draw_tracked_objects(
+    image, tracked_bbs, tracks, contours=None, tracked_colors=(0, 0, 255)
+):
     if contours is not None:
-        image_with_tracked_objects = cv2.polylines(image.copy(), contours, True, (0, 255, 0), 1)
+        image_with_tracked_objects = cv2.polylines(
+            image.copy(), contours, True, (0, 255, 0), 1
+        )
     else:
         image_with_tracked_objects = image.copy()
 
@@ -65,10 +80,13 @@ def draw_tracked_objects(image, tracked_bbs, tracks, contours=None, tracked_colo
         else:
             color = tracked_colors
 
-        image_with_tracked_objects = cv2.rectangle(image_with_tracked_objects, tracked_bbs[i][0], tracked_bbs[i][1],
-                                                   color, 1)
+        image_with_tracked_objects = cv2.rectangle(
+            image_with_tracked_objects, tracked_bbs[i][0], tracked_bbs[i][1], color, 1
+        )
         for j in range(len(tracks[i]) - 1):
-            image_with_tracked_objects = cv2.line(image_with_tracked_objects, tracks[i][j], tracks[i][j + 1], color, 1)
+            image_with_tracked_objects = cv2.line(
+                image_with_tracked_objects, tracks[i][j], tracks[i][j + 1], color, 1
+            )
 
     return image_with_tracked_objects
 
@@ -110,7 +128,14 @@ def video_to_img(back_projs):
     k = 1
     while k < len(back_projs):
         estimated_fg.append(
-            cv2.addWeighted(estimated_fg[k - 1], 1 - (1 / len(back_projs)), back_projs[k], 1 / len(back_projs), 0))
+            cv2.addWeighted(
+                estimated_fg[k - 1],
+                1 - (1 / len(back_projs)),
+                back_projs[k],
+                1 / len(back_projs),
+                0,
+            )
+        )
         fg = np.add(fg, estimated_fg[k])
         k += 1
     return fg
