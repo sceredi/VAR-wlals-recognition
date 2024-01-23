@@ -6,7 +6,7 @@ from app.roi.extractor import RoiExtractor
 
 def plot_video(video: Video):
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox)
-    frames = roi_extractor.extract()
+    frames = roi_extractor.extract(remove_background=False)
     plotter = FramesPlotter(frames)
     plotter.plot()
 
