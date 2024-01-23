@@ -9,16 +9,21 @@ class FramesPlotter:
     def __init__(self, frames: List["np.ndarray"]):
         self.frames = frames
 
-    def plot(self):
+    def plot_grid(self):
         num_frames = len(self.frames)
         side_length = int(math.ceil(math.sqrt(num_frames)))
         _, axes = plt.subplots(side_length, side_length)
         axes = axes.flatten()
         for i, (frame, ax) in enumerate(zip(self.frames, axes)):
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            ax.imshow(frame)
-            ax.set_title(f"Frame {i+1}")
-            ax.axis("off")
-        for i in range(num_frames, len(axes)):
-            axes[i].axis("off")
+            self._update(ax, frame, f"Frame {i+1}")
         plt.show()
+
+    def _to_rgb(self, frame) -> "np.ndarray":
+        return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    def _update(self, ax, frame, title):
+        frame = self._to_rgb(frame)
+        ax.clear()
+        ax.imshow(frame)
+        ax.set_title(title)
+        ax.axis("off")
