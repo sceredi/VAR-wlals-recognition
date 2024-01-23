@@ -15,6 +15,7 @@ def plot_video(video: Video):
 
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        plot_video(video)
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
+    plot_video(dataset.videos[0])
