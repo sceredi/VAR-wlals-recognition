@@ -1,6 +1,7 @@
 from app.dataset.dataset import Dataset
 from app.dataset.video import Video
 from app.edge.detector import EdgeDetector
+from app.extractor.hog_extractor import HOGExtractor
 from app.plotter.framesPlotter import FramesPlotter
 from app.roi.extractor import RoiExtractor
 from app.flow.calculator import FlowCalculator
@@ -19,9 +20,19 @@ def plot_video(video: Video):
     plotter.plot_grid()
 
 
+def plot_video_with_hog(video: Video):
+    roi_extractor = RoiExtractor(video.get_frames(), video.bbox)
+    frames = roi_extractor.extract(remove_background=False)
+    hog_extractor = HOGExtractor(frames)
+    hog_frames = hog_extractor.process_frames()
+    plotter = FramesPlotter(hog_frames)
+    plotter.plot_grid()
+
+
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
     for video in dataset.videos:
         print("Plotting video: ", video.get_path())
-        plot_video(video)
+        #plot_video(video)
+        plot_video_with_hog(video)
     # plot_video(dataset.videos[0])

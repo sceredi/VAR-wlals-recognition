@@ -7,3 +7,5 @@ pandas==1.5.3
 rembg==2.0.53
 sklearn-pandas==2.2.0
 tensorflow==2.15.0
+opendatasets==0.1.22
+scikit-image~=0.22.0
