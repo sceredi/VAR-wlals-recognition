@@ -7,15 +7,15 @@ import numpy as np
 
 
 class Frame:
-    def __init__(self, rgb: np.ndarray):
+    def __init__(self, rgb: np.ndarray) -> None:
         self.rgb = rgb
         self.gray = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
         self.mask = np.zeros_like(rgb, dtype=np.uint8)
 
-    def set_keypoints(self, keypoints: np.ndarray):
+    def set_keypoints(self, keypoints: np.ndarray) -> None:
         self.keypoints = keypoints
 
-    def set_descriptors(self, descriptors: np.ndarray):
+    def set_descriptors(self, descriptors: np.ndarray) -> None:
         self.descriptors = descriptors
 
 
@@ -23,5 +23,11 @@ from typing import List
 
 
 class Frames:
-    def __init__(self, frames: List[np.ndarray]):
+    def __init__(self, frames: List[np.ndarray]) -> None:
         self.frames = [Frame(frame) for frame in frames]
+
+    def __getitem__(self, index) -> Frame:
+        return self.frames[index]
+
+    def __len__(self) -> int:
+        return len(self.frames)
