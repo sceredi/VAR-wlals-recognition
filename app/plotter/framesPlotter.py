@@ -6,8 +6,9 @@ import cv2
 
 
 class FramesPlotter:
-    def __init__(self, frames: List["np.ndarray"]):
+    def __init__(self, frames: List["np.ndarray"], to_rgb=True):
         self.frames = frames
+        self.to_rgb = to_rgb
 
     def plot_grid(self):
         num_frames = len(self.frames)
@@ -16,14 +17,20 @@ class FramesPlotter:
         axes = axes.flatten()
         for i, (frame, ax) in enumerate(zip(self.frames, axes)):
             self._update(ax, frame, f"Frame {i+1}")
+        for ax in axes[num_frames:]:
+            self._remove_axis(ax)
         plt.show()
+
+    def _remove_axis(self, ax):
+        ax.axis("off")
 
     def _to_rgb(self, frame) -> "np.ndarray":
         return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     def _update(self, ax, frame, title):
-        frame = self._to_rgb(frame)
+        if self.to_rgb:
+            frame = self._to_rgb(frame)
         ax.clear()
         ax.imshow(frame)
         ax.set_title(title)
-        ax.axis("off")
+        self._remove_axis(ax)

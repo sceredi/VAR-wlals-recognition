@@ -70,4 +70,3 @@ class Video:
             frames.append(frame)
             frame_number += 1
         return frames
-

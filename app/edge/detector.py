@@ -4,6 +4,7 @@ from typing import List
 import cv2
 import numpy as np
 
+
 class EdgeDetector:
     def __init__(self, frames: List["np.ndarray"]) -> None:
         self.frames = frames
@@ -14,7 +15,7 @@ class EdgeDetector:
             frame = self.detect_edges(frame)
             frames.append(frame)
         return frames
-    
+
     def detect_edges(self, frame: "np.ndarray") -> "np.ndarray":
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (9, 9), 0)
