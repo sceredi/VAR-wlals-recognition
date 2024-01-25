@@ -11,19 +11,14 @@ class HandsDetector:
     def __init__(
         self,
         frames: List["np.ndarray"],
-        classifier=cv2.CascadeClassifier("app/hand/haarcascades/hand.xml"),
-        params=dict(
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(30, 30),
-        ),
+        classifier,
     ):
-        self.frames = Frames(frames)
         self.classifier = classifier
-        self.params = params
+        self.frames = Frames(frames)
 
     def _frame_detect(self, frame: Frame):
-        return self.classifier.detectMultiScale(frame.gray, **self.params)
+        gray_hist = cv2.equalizeHist(frame.gray)
+        return self.classifier.detectMultiScale(gray_hist)
 
     def detect(self):
         rects = []
