@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 from skimage.feature import hog
 import matplotlib.pyplot as plt
 from typing import List, Tuple
@@ -44,7 +45,7 @@ class HOGExtractor:
         processed_frames = []
         for frame in self.frames:
             hog_features, hog_image = self.extract_features(frame)
-            self.visualize_hog(frame, hog_image)
+            # self.visualize_hog(frame, hog_image)
             processed_frames.append(hog_image)
 
         return processed_frames
