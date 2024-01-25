@@ -6,22 +6,30 @@ from typing import List, Tuple
 
 
 class HOGExtractor:
-    def __init__(self, frames: List["np.ndarray"], orientations=9, pixels_per_cell=(8, 8), cells_per_block=(1, 1)) -> None:
+    def __init__(
+        self,
+        frames: List["np.ndarray"],
+        orientations=9,
+        pixels_per_cell=(8, 8),
+        cells_per_block=(1, 1),
+    ) -> None:
         self.frames = frames
         self.orientations = orientations
         self.pixels_per_cell = pixels_per_cell
         self.cells_per_block = cells_per_block
 
         self.hog_params = {
-            'orientations': orientations,
-            'pixels_per_cell': pixels_per_cell,
-            'cells_per_block': cells_per_block,
-            'block_norm': 'L2-Hys',
-            'visualize': True,
-            'transform_sqrt': True
+            "orientations": orientations,
+            "pixels_per_cell": pixels_per_cell,
+            "cells_per_block": cells_per_block,
+            "block_norm": "L2-Hys",
+            "visualize": True,
+            "transform_sqrt": True,
         }
 
-    def extract_features(self, frame: "np.ndarray") -> Tuple["np.ndarray", "np.ndarray"]:
+    def extract_features(
+        self, frame: "np.ndarray"
+    ) -> Tuple["np.ndarray", "np.ndarray"]:
         # Converti il frame in scala di grigi
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -34,11 +42,11 @@ class HOGExtractor:
         # Visualizza l'immagine HOG
         plt.figure(figsize=(8, 4))
         plt.subplot(121)
-        plt.imshow(frame, cmap='gray')
-        plt.title('Frame Originale')
+        plt.imshow(frame, cmap="gray")
+        plt.title("Frame Originale")
         plt.subplot(122)
-        plt.imshow(hog_image, cmap='gray')
-        plt.title('HOG Features')
+        plt.imshow(hog_image, cmap="gray")
+        plt.title("HOG Features")
         plt.show()
 
     def process_frames(self) -> List["np.ndarray"]:

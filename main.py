@@ -50,13 +50,12 @@ def get_hog_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]
 
 
 def get_hands_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
-
     classifier = cv2.CascadeClassifier()
     # if not classifier.load(cv2.samples.findFile('app/hand/haarcascades/hand.xml')):
     #     print('Error loading hand cascade')
     #     exit(1)
-    if not classifier.load(cv2.samples.findFile('app/hand/haarcascades/face.xml')):
-        print('Error loading face cascade')
+    if not classifier.load(cv2.samples.findFile("app/hand/haarcascades/face.xml")):
+        print("Error loading face cascade")
         exit(1)
     hands_detector = HandsDetector(frames, classifier)
     hands_frames, _ = hands_detector.detect()
