@@ -57,7 +57,7 @@ in pkgs.mkShell rec {
   # Run this command, only after creating the virtual environment
   postVenvCreation = ''
     unset SOURCE_DATE_EPOCH
-    pip install -r shell-requirements.txt
+    pip install -r requirements.txt
     pip install --upgrade -q git+https://github.com/keras-team/keras-cv
   '';
 
