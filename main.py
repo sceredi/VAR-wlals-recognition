@@ -1,12 +1,11 @@
 from typing import List
-from matplotlib.pyplot import cla
 import numpy as np
 import cv2
 from app.dataset.dataset import Dataset
 from app.dataset.video import Video
 from app.edge.detector import EdgeDetector
 from app.extractor.hog_extractor import HOGExtractor
-from app.hand.detector import HandsDetector
+from app.haar.detector import HaarDetector
 from app.plotter.framesPlotter import FramesPlotter
 from app.roi.extractor import RoiExtractor
 from app.flow.calculator import FlowCalculator
@@ -49,19 +48,19 @@ def get_hog_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]
     return hog_frames
 
 
-def get_hands_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
+def get_haar_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
     classifier = cv2.CascadeClassifier()
-    # if not classifier.load(cv2.samples.findFile('app/hand/haarcascades/hand.xml')):
+    # if not classifier.load(cv2.samples.findFile('app/haar/haarcascades/hand.xml')):
     #     print('Error loading hand cascade')
     #     exit(1)
-    if not classifier.load(cv2.samples.findFile("app/hand/haarcascades/face.xml")):
+    if not classifier.load(cv2.samples.findFile("app/haar/haarcascades/face.xml")):
         print("Error loading face cascade")
         exit(1)
-    hands_detector = HandsDetector(frames, classifier)
-    hands_frames, _ = hands_detector.detect()
+    haar_detector = HaarDetector(frames, classifier)
+    face_frames, _ = haar_detector.detect()
     if plot:
-        plot_frames(hands_frames)
-    return hands_frames
+        plot_frames(face_frames)
+    return face_frames
 
 
 def plot_video(current_video: Video) -> None:
@@ -69,7 +68,7 @@ def plot_video(current_video: Video) -> None:
     edge_frames = get_edge_frames(roi_frames)
     flow_frames = get_flow_frames(roi_frames)
     hog_frames = get_hog_frames(roi_frames)
-    hands_frames = get_hands_frames(roi_frames, plot=True)
+    haar_frames = get_haar_frames(roi_frames, plot=True)
 
 
 if __name__ == "__main__":
