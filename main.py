@@ -16,9 +16,9 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
     plotter.plot_grid()
 
 
-def get_roi_frames(video: Video, plot=False) -> List["np.ndarray"]:
+def get_roi_frames(video: Video, remove_background=False, plot=False) -> List["np.ndarray"]:
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox)
-    roi_frames = roi_extractor.extract(remove_background=False)
+    roi_frames = roi_extractor.extract(remove_background=remove_background)
     if plot:
         plot_frames(roi_frames)
     return roi_frames
@@ -68,7 +68,7 @@ def plot_video(current_video: Video) -> None:
     edge_frames = get_edge_frames(roi_frames)
     flow_frames = get_flow_frames(roi_frames)
     hog_frames = get_hog_frames(roi_frames)
-    haar_frames = get_haar_frames(roi_frames, plot=True)
+    haar_frames = get_haar_frames(roi_frames)
 
 
 if __name__ == "__main__":
