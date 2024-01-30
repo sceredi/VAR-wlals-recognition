@@ -10,7 +10,7 @@ class FlowCalculator:
         self,
         frames: List["np.ndarray"],
         feature_params=dict(
-            maxCorners=50, qualityLevel=0.05, minDistance=5, blockSize=5
+            maxCorners=100, qualityLevel=0.05, minDistance=5, blockSize=5
         ),
         lk_params=dict(
             winSize=(15, 15),
