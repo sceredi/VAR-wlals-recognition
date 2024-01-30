@@ -10,16 +10,19 @@ class FlowCalculator:
         self,
         frames: List["np.ndarray"],
         feature_params=dict(
-            maxCorners=100, qualityLevel=0.05, minDistance=5, blockSize=5
+            maxCorners=1000, qualityLevel=0.05, minDistance=10, blockSize=10
         ),
         lk_params=dict(
-            winSize=(15, 15),
+            winSize=(50, 50),
             maxLevel=2,
             criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03),
         ),
     ):
         self.frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) for frame in frames]
         self.feature_params = feature_params
+        self.feature_params["maxCorners"] = int(
+            self.feature_params["maxCorners"] * len(self.frames)
+        )
         self.lk_params = lk_params
 
     def _get_features(self, frame: "np.ndarray") -> "np.ndarray":

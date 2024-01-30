@@ -24,7 +24,7 @@ class EdgeDetector:
     def _preprocess(self, frame: "np.ndarray") -> "np.ndarray":
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # Apply Gaussian Blur 
-        frame = cv2.GaussianBlur(frame, (5, 5), 0)
+        frame = cv2.GaussianBlur(frame, (11, 11), 0)
         # Equalize Histogram
         frame = cv2.equalizeHist(frame)
         return frame
