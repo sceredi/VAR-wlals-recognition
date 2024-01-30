@@ -33,7 +33,6 @@ class SkinExtractor:
         
         # Calculate mean color of the head region
         mean_color = np.mean(hsv_head, axis=(0, 1))
-        print(f"Mean color: {mean_color}")
         
         # Define color range around the mean color
         tolerance = 50  # Adjust as needed
@@ -57,8 +56,6 @@ class SkinExtractor:
             upper_skin_value = 255
         lower_skin = np.array([lower_skin_hue, lower_skin_saturation, lower_skin_value], dtype=np.uint8)
         upper_skin = np.array([upper_skin_hue, upper_skin_saturation, upper_skin_value], dtype=np.uint8)
-        print(f"Lower skin: {lower_skin}")
-        print(f"Upper skin: {upper_skin}")
         
         # Convert frame to HSV color space
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
