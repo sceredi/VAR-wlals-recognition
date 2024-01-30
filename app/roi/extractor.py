@@ -6,7 +6,9 @@ import cv2
 
 
 class RoiExtractor:
-    def __init__(self, frames: List["np.ndarray"], bbox: List[int], resize: None | int = None) -> None:
+    def __init__(
+        self, frames: List["np.ndarray"], bbox: List[int], resize: None | int = None
+    ) -> None:
         self.frames = frames
         self.bbox = bbox
         self.resize = resize
@@ -26,7 +28,7 @@ class RoiExtractor:
 
     def _remove_bg(self, frame: "np.ndarray"):
         return remove(frame)
-    
+
     def _resize(self, frame: "np.ndarray") -> "np.ndarray":
         if self.resize is None:
             return frame
@@ -45,9 +47,7 @@ class RoiExtractor:
             return frame
         pad_width = self.resize - frame.shape[0]
         pad_height = self.resize - frame.shape[1]
-        my_padded_image = np.pad(frame,
-                                 ((0, pad_width), (0, pad_height), (0, 0)),
-                                 'constant')
+        my_padded_image = np.pad(
+            frame, ((0, pad_width), (0, pad_height), (0, 0)), "constant"
+        )
         return my_padded_image
-
-

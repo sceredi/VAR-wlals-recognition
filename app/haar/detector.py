@@ -39,5 +39,4 @@ class HaarDetector:
                     x, y, w, h = rect
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-
         return drawn_frames, rects

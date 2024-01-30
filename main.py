@@ -17,7 +17,9 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
     plotter.plot_grid()
 
 
-def get_roi_frames(video: Video, remove_background=False, plot=False) -> List["np.ndarray"]:
+def get_roi_frames(
+    video: Video, remove_background=False, plot=False
+) -> List["np.ndarray"]:
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=512)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
     if plot:
@@ -63,6 +65,7 @@ def get_haar_frames(frames: List["np.ndarray"], plot=False):
         plot_frames(face_frames)
     return face_frames, rects
 
+
 def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
     skin_extractor = SkinExtractor(frames, face_rects)
     skin_frames = skin_extractor.extract()
@@ -80,7 +83,6 @@ def plot_video(current_video: Video) -> None:
     # edge_frames = get_edge_frames(skin_frames, plot=True)
     # # TODO: Remove this also from FlowCalculator this is a temporary fix
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-
 
 
 if __name__ == "__main__":

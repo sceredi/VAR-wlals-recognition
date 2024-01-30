@@ -26,14 +26,14 @@ class SkinExtractor:
         y = int(y + (h - new_h) / 2)
         w = new_w
         h = new_h
-        head_region = frame[y:y+h, x:x+w]
-        
+        head_region = frame[y : y + h, x : x + w]
+
         # Convert head region to HSV color space
         hsv_head = cv2.cvtColor(head_region, cv2.COLOR_BGR2HSV)
-        
+
         # Calculate mean color of the head region
         mean_color = np.mean(hsv_head, axis=(0, 1))
-        
+
         # Define color range around the mean color
         tolerance = 50  # Adjust as needed
         lower_skin_hue = mean_color[0] - tolerance
@@ -54,12 +54,16 @@ class SkinExtractor:
             lower_skin_value = 0
         if upper_skin_value > 255:
             upper_skin_value = 255
-        lower_skin = np.array([lower_skin_hue, lower_skin_saturation, lower_skin_value], dtype=np.uint8)
-        upper_skin = np.array([upper_skin_hue, upper_skin_saturation, upper_skin_value], dtype=np.uint8)
-        
+        lower_skin = np.array(
+            [lower_skin_hue, lower_skin_saturation, lower_skin_value], dtype=np.uint8
+        )
+        upper_skin = np.array(
+            [upper_skin_hue, upper_skin_saturation, upper_skin_value], dtype=np.uint8
+        )
+
         # Convert frame to HSV color space
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        
+
         # Threshold the HSV image to get only skin color within the range
         mask = cv2.inRange(hsv, lower_skin, upper_skin)
 
@@ -68,10 +72,7 @@ class SkinExtractor:
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
         new_frame = cv2.bitwise_and(frame, frame, mask=mask)
-        
 
-        
-        
         return new_frame
 
     def extract(self):
