@@ -7,6 +7,7 @@ import numpy as np
 from app.dataset.frames import Frame, Frames
 
 
+# TODO: find only best detection
 class HaarDetector:
     def __init__(
         self,

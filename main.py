@@ -20,7 +20,7 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
 def get_roi_frames(
     video: Video, remove_background=False, plot=False
 ) -> List["np.ndarray"]:
-    roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=512)
+    roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=125)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
     if plot:
         plot_frames(roi_frames)
@@ -59,7 +59,7 @@ def get_haar_frames(frames: List["np.ndarray"], plot=False):
     if not classifier.load(cv2.samples.findFile("app/haar/haarcascades/face.xml")):
         print("Error loading face cascade")
         exit(1)
-    haar_detector = HaarDetector(frames, classifier)
+    haar_detector = HaarDetector(frames, classifier, detections_to_keep=3)
     face_frames, rects = haar_detector.detect()
     if plot:
         plot_frames(face_frames)
@@ -79,16 +79,61 @@ def plot_video(current_video: Video) -> None:
     # hog_frames = get_hog_frames(roi_frames)
     haar_frames, face_rects = get_haar_frames(roi_frames)
     skin_frames = get_skin_frames(roi_frames, face_rects)
-    flow_frames = get_flow_frames(skin_frames, plot=True)
-    # edge_frames = get_edge_frames(skin_frames, plot=True)
-    # # TODO: Remove this also from FlowCalculator this is a temporary fix
-    # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
+    edge_frames = get_edge_frames(skin_frames)
+    edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
+    flow_frames = get_flow_frames(edge_frames, plot=True)
+
+from scipy.spatial.distance import euclidean
+import dtw
+from sklearn.svm import SVC
+
+def svm_test(dataset: Dataset):
+    videos = [video for video in dataset.videos if video.gloss == "book" or video.gloss == "drink"]
+    X_train = []
+    Y_train = []
+    X_test = []
+    Y_test = []
+    for video in videos:
+        print("Processing video: ", video.get_path())
+        roi_frames = get_roi_frames(video, remove_background=False)
+        hog_frames = get_hog_frames(roi_frames)
+        # roi_frames = np.array(roi_frames).flatten()
+        hog_frames = [frame.flatten() for frame in hog_frames]
+        hog_frames = np.array(hog_frames).flatten()
+        features = hog_frames
+        features = np.array([0,0,0])
+        print(features.shape)
+        if video.split == "test":
+            X_test.append(features)
+            if video.gloss == "book":
+                Y_train.append(0)
+            else:
+                Y_train.append(1)
+        else:
+            X_train.append(features)
+            if video.gloss == "book":
+                Y_test.append(0)
+            else:
+                Y_test.append(1)
+    svc = SVC(kernel='precomputed')
+    print("Training SVM...")
+    X_train = np.array(X_train)
+    print(X_train.shape)
+    svc.fit(X_train, Y_train)
+    print("Testing SVM...")
+    y_pred = svc.predict(X_test)
+    correct_predictions = np.sum(y_pred == Y_test)
+    total_predictions = len(Y_test)
+    accuracy = correct_predictions / total_predictions * 100
+
+    print(f"Accuracy: {accuracy:.2f}%")
 
 
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
+    # svm_test(dataset)
     for video in dataset.videos:
         print("Plotting video: ", video.get_path())
-        plot_video(video)
+        # plot_video(video)
         # plot_video_with_hog(video)
     # plot_video(dataset.videos[0])
