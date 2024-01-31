@@ -69,4 +69,10 @@ class Video:
                 break
             frames.append(frame)
             frame_number += 1
-        return frames
+        # 194 is the number of frames in the longest video
+        # all other frames will be padded with the last frame
+        pad_frames = np.tile(frames[-1], (194 - len(frames), 1, 1, 1))
+        return np.concatenate([frames, pad_frames])
+    
+    def __len__(self) -> int:
+        return len(self.get_frames())

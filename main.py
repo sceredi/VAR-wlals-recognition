@@ -1,3 +1,4 @@
+import os
 from typing import List
 import numpy as np
 import cv2
@@ -20,7 +21,7 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
 def get_roi_frames(
     video: Video, remove_background=False, plot=False
 ) -> List["np.ndarray"]:
-    roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=125)
+    roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=224)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
     if plot:
         plot_frames(roi_frames)
@@ -75,13 +76,13 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 
 def plot_video(current_video: Video) -> None:
-    roi_frames = get_roi_frames(current_video, remove_background=True)
+    roi_frames = get_roi_frames(current_video, remove_background=True, plot=True)
     # hog_frames = get_hog_frames(roi_frames)
-    haar_frames, face_rects = get_haar_frames(roi_frames)
-    skin_frames = get_skin_frames(roi_frames, face_rects)
-    edge_frames = get_edge_frames(skin_frames)
-    edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    flow_frames = get_flow_frames(edge_frames, plot=True)
+    # haar_frames, face_rects = get_haar_frames(roi_frames)
+    # skin_frames = get_skin_frames(roi_frames, face_rects)
+    # edge_frames = get_edge_frames(skin_frames)
+    # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
+    # flow_frames = get_flow_frames(edge_frames, plot=True)
 
 from scipy.spatial.distance import euclidean
 import dtw
@@ -101,8 +102,6 @@ def svm_test(dataset: Dataset):
         hog_frames = [frame.flatten() for frame in hog_frames]
         hog_frames = np.array(hog_frames).flatten()
         features = hog_frames
-        features = np.array([0,0,0])
-        print(features.shape)
         if video.split == "test":
             X_test.append(features)
             if video.gloss == "book":
@@ -128,12 +127,24 @@ def svm_test(dataset: Dataset):
 
     print(f"Accuracy: {accuracy:.2f}%")
 
+def fix_and_save(dataset: Dataset):
+    for video in dataset.videos:
+        print("Processing video: ", video.get_path())
+        roi_frames = get_roi_frames(video, remove_background=True)
+        folder = "data/preprocessed/"+video.video_id
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        for i, frame in enumerate(roi_frames):
+            cv2.imwrite(folder+"/"+str(i)+".jpg", frame)
+        break
+
 
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
-    # svm_test(dataset)
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        # plot_video(video)
+    # fix_and_save(dataset)
+    svm_test(dataset)
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
         # plot_video_with_hog(video)
     # plot_video(dataset.videos[0])
