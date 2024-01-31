@@ -17,9 +17,9 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
     plotter.plot_grid()
 
 
-def get_roi_frames(video: Video, plot=False) -> List["np.ndarray"]:
-    roi_extractor = RoiExtractor(video.get_frames(), video.bbox)
-    roi_frames = roi_extractor.extract(remove_background=False)
+def get_roi_frames(current_video: Video, plot=False) -> List["np.ndarray"]:
+    roi_extractor = RoiExtractor(current_video.get_frames(), current_video.bbox)
+    roi_frames = roi_extractor.extract(remove_background=True)
     if plot:
         plot_frames(roi_frames)
     return roi_frames
@@ -49,12 +49,42 @@ def get_hog_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]
     return hog_frames
 
 
+def detect_contour(frames: List[np.ndarray], plot=False) -> List[np.ndarray]:
+
+    result_frames = []
+    for frame in frames:
+        # Converte il frame in scala di grigi
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Applica un filtro di smoothing (ad esempio, filtro Gaussiano)
+        blurred_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
+
+        # Esegui la binarizzazione per enfatizzare i contorni delle mani
+        _, binary_frame = cv2.threshold(blurred_frame, 100, 255, cv2.THRESH_BINARY)
+
+        # Trova i contorni nell'immagine binarizzata
+        contours, _ = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Trova i contorni che potrebbero rappresentare le mani
+        contours = [contour for contour in contours if cv2.contourArea(contour) > 1000]
+
+        # Disegna i contorni sul frame originale
+        result_frame = frame.copy()
+        cv2.drawContours(result_frame, contours, -1, (0, 255, 0), 2)
+
+        result_frames.append(result_frame)
+
+    if plot:
+        plot_frames(result_frames)
+    return result_frames
+
+
 def get_hands_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
     classifier = cv2.CascadeClassifier()
     # if not classifier.load(cv2.samples.findFile('app/hand/haarcascades/hand.xml')):
     #     print('Error loading hand cascade')
     #     exit(1)
-    if not classifier.load(cv2.samples.findFile("app/hand/haarcascades/face.xml")):
+    if not classifier.load(cv2.samples.findFile("app/hand/haarcascades/hand.xml")):
         print("Error loading face cascade")
         exit(1)
     hands_detector = HandsDetector(frames, classifier)
@@ -69,7 +99,7 @@ def plot_video(current_video: Video) -> None:
     edge_frames = get_edge_frames(roi_frames)
     flow_frames = get_flow_frames(roi_frames)
     hog_frames = get_hog_frames(roi_frames)
-    hands_frames = get_hands_frames(roi_frames, plot=True)
+    hands_frames = detect_contour(roi_frames, plot=True)
 
 
 if __name__ == "__main__":

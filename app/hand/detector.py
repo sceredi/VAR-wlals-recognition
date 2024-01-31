@@ -18,7 +18,7 @@ class HandsDetector:
 
     def _frame_detect(self, frame: Frame):
         gray_hist = cv2.equalizeHist(frame.gray)
-        return self.classifier.detectMultiScale(gray_hist)
+        return self.classifier.detectMultiScale(gray_hist, scaleFactor=1.1, minNeighbors=5)
 
     def detect(self):
         rects = []
