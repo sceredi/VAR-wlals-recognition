@@ -11,6 +11,10 @@ from app.haar.detector import HaarDetector
 from app.plotter.framesPlotter import FramesPlotter
 from app.roi.extractor import RoiExtractor
 from app.flow.calculator import FlowCalculator
+import time
+from scipy.spatial.distance import euclidean
+import dtw
+from sklearn.svm import SVC
 
 
 def plot_frames(frames: List["np.ndarray"]) -> None:
@@ -19,7 +23,7 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
 
 
 def get_roi_frames(
-    video: Video, remove_background=False, plot=False
+        video: Video, remove_background=False, plot=False
 ) -> List["np.ndarray"]:
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=224)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
@@ -84,10 +88,6 @@ def plot_video(current_video: Video) -> None:
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
     # flow_frames = get_flow_frames(edge_frames, plot=True)
 
-from scipy.spatial.distance import euclidean
-import dtw
-from sklearn.svm import SVC
-
 def svm_test(dataset: Dataset):
     videos = [video for video in dataset.videos if video.gloss == "book" or video.gloss == "drink"]
     X_train = []
@@ -127,24 +127,31 @@ def svm_test(dataset: Dataset):
 
     print(f"Accuracy: {accuracy:.2f}%")
 
+
 def fix_and_save(dataset: Dataset):
     for video in dataset.videos:
         print("Processing video: ", video.get_path())
         roi_frames = get_roi_frames(video, remove_background=True)
-        folder = "data/preprocessed/"+video.video_id
+        folder = "data/preprocessed/" + video.video_id
         if not os.path.exists(folder):
             os.makedirs(folder)
         for i, frame in enumerate(roi_frames):
-            cv2.imwrite(folder+"/"+str(i)+".jpg", frame)
+            cv2.imwrite(folder + "/" + str(i) + ".jpg", frame)
         break
 
 
 if __name__ == "__main__":
+    start_time = time.perf_counter()
+    # -------------------------------------
     dataset = Dataset("data/WLASL_v0.3.json")
-    # fix_and_save(dataset)
-    svm_test(dataset)
+    fix_and_save(dataset)
+    # svm_test(dataset)
     # for video in dataset.videos:
     #     print("Plotting video: ", video.get_path())
     #     plot_video(video)
-        # plot_video_with_hog(video)
+    #     plot_video_with_hog(video)
     # plot_video(dataset.videos[0])
+    # -------------------------------------
+    end_time = time.perf_counter()
+    execution_time = end_time - start_time
+    print(f"Execution Time: {execution_time} seconds")
