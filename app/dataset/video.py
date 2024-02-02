@@ -70,7 +70,7 @@ class Video:
                 break
             frames.append(frame)
             frame_number += 1
-        # 194 is the number of frames in the longest video
+        # 232 is the number of frames in the longest video
         # all other frames will be padded with the last frame
         # pad_frames = np.tile(frames[-1], (194 - len(frames), 1, 1, 1))
         # new_frames = np.concatenate([frames, pad_frames])
@@ -84,7 +84,7 @@ class Video:
     def __len__(self) -> int:
         return len(self.get_frames())
 
-    def get_frames_padded(self, frames, target_num_frames=200) -> List["np.ndarray"]:
+    def get_frames_padded(self, frames, target_num_frames=232) -> List["np.ndarray"]:
         num_frames_to_add = target_num_frames - len(frames)
         last_frame = frames[-1]
         pad_frames = np.tile(last_frame, (num_frames_to_add, 1, 1, 1))
@@ -92,7 +92,7 @@ class Video:
         return new_frames
 
     def get_frames_interpolated(
-        self, frames, target_num_frames=200
+        self, frames, target_num_frames=232
     ) -> List["np.ndarray"]:
         x_old = np.linspace(0, 1, len(frames))
         x_new = np.linspace(0, 1, target_num_frames)
