@@ -64,7 +64,7 @@ class Video:
         frame_number = self.frame_start
         if self.frame_end == -1:
             self.frame_end = int(self.get_video_capture().get(cv2.CAP_PROP_FRAME_COUNT))
-        while frame_number <= self.frame_end:
+        while frame_number < self.frame_end - 1:
             ret, frame = self.get_frame(frame_number)
             if not ret:
                 break
