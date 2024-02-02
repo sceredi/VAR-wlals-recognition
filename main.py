@@ -5,6 +5,7 @@ import cv2
 from app.dataset.dataset import Dataset
 from app.dataset.video import Video
 from app.edge.detector import EdgeDetector
+from app.extractor.contour_extractor import ContourDetector
 from app.extractor.hog_extractor import HOGExtractor
 from app.extractor.skin import SkinExtractor
 from app.haar.detector import HaarDetector
@@ -59,35 +60,13 @@ def get_hog_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]
         plot_frames(hog_frames)
     return hog_frames
 
+
 def detect_contour(frames: List[np.ndarray], plot=False) -> List[np.ndarray]:
-
-    result_frames = []
-    for frame in frames:
-        # Converte il frame in scala di grigi
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        # Applica un filtro di smoothing (ad esempio, filtro Gaussiano)
-        blurred_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
-
-        # Esegui la binarizzazione per enfatizzare i contorni delle mani
-        _, binary_frame = cv2.threshold(blurred_frame, 100, 255, cv2.THRESH_BINARY)
-
-        # Trova i contorni nell'immagine binarizzata
-        contours, _ = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Trova i contorni che potrebbero rappresentare le mani
-        contours = [contour for contour in contours if cv2.contourArea(contour) > 1000]
-
-        # Disegna i contorni sul frame originale
-        result_frame = frame.copy()
-        cv2.drawContours(result_frame, contours, -1, (0, 255, 0), 2)
-
-        result_frames.append(result_frame)
-
+    contour_detector = ContourDetector(frames)
+    contour_frames = contour_detector.detect()
     if plot:
-        plot_frames(result_frames)
-    return result_frames
-
+        plot_frames(contour_frames)
+    return contour_frames
 
 
 def get_haar_frames(frames: List["np.ndarray"], plot=False):
@@ -125,7 +104,6 @@ def plot_video(current_video: Video) -> None:
 
 
 def svm_test(dataset: Dataset, glosses: List[str]):
-
     videos = [video for video in dataset.videos if video.gloss in glosses]
     X_train = []
     Y_train = []
@@ -141,7 +119,6 @@ def svm_test(dataset: Dataset, glosses: List[str]):
         haar_frames, face_rects = get_haar_frames(roi_frames)
         skin_frames = get_skin_frames(roi_frames, face_rects)
         edge_frames = get_edge_frames(skin_frames)
-        # roi_frames = np.array(roi_frames).flatten()
         hog_frames = [frame.flatten() for frame in hog_frames]
         skin_frames = [frame.flatten() for frame in skin_frames]
         edge_frames = [frame.flatten() for frame in edge_frames]
