@@ -80,13 +80,14 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 
 def plot_video(current_video: Video) -> None:
-    roi_frames = get_roi_frames(current_video, remove_background=True, plot=True)
+    roi_frames = get_roi_frames(current_video, remove_background=False)
     # hog_frames = get_hog_frames(roi_frames)
-    # haar_frames, face_rects = get_haar_frames(roi_frames)
+    haar_frames, face_rects = get_haar_frames(roi_frames, plot=True)
     # skin_frames = get_skin_frames(roi_frames, face_rects)
     # edge_frames = get_edge_frames(skin_frames)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
     # flow_frames = get_flow_frames(edge_frames, plot=True)
+
 
 def svm_test(dataset: Dataset):
     videos = [video for video in dataset.videos if video.gloss == "book" or video.gloss == "drink"]
@@ -144,11 +145,11 @@ if __name__ == "__main__":
     start_time = time.perf_counter()
     # -------------------------------------
     dataset = Dataset("data/WLASL_v0.3.json")
-    fix_and_save(dataset)
+    # fix_and_save(dataset)
     # svm_test(dataset)
-    # for video in dataset.videos:
-    #     print("Plotting video: ", video.get_path())
-    #     plot_video(video)
+    for video in dataset.videos:
+        print("Plotting video: ", video.get_path())
+        plot_video(video)
     #     plot_video_with_hog(video)
     # plot_video(dataset.videos[0])
     # -------------------------------------

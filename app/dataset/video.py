@@ -76,7 +76,6 @@ class Video:
         # new_frames = np.concatenate([frames, pad_frames])
         # Supponiamo che video_frames sia una lista di array rappresentanti i frame del video
 
-        print("get_frames_padded")
         frames = self.get_frames_padded(frames)
         # print("get_frames_equalized")
         # frames = self.get_frames_equalized(frames)
@@ -87,7 +86,6 @@ class Video:
 
     def get_frames_padded(self, frames, target_num_frames=200) -> List["np.ndarray"]:
         num_frames_to_add = target_num_frames - len(frames)
-        print("num_frames_to_add", num_frames_to_add)
         last_frame = frames[-1]
         pad_frames = np.tile(last_frame, (num_frames_to_add, 1, 1, 1))
         new_frames = np.concatenate([frames, pad_frames])
