@@ -7,7 +7,7 @@ import cv2
 
 class RoiExtractor:
     def __init__(
-            self, frames: List["np.ndarray"], bbox: List[int], resize: None | int = None
+        self, frames: List["np.ndarray"], bbox: List[int], resize: None | int = None
     ) -> None:
         self.frames = frames
         self.bbox = bbox
@@ -19,7 +19,7 @@ class RoiExtractor:
     def extract(self, remove_background=False) -> List["np.ndarray"]:
         frames = []
         for frame in self.frames:
-            frame = frame[self.bbox[1]: self.bbox[3], self.bbox[0]: self.bbox[2]]
+            frame = frame[self.bbox[1] : self.bbox[3], self.bbox[0] : self.bbox[2]]
             if remove_background:
                 frame = self._remove_bg(frame)
             frame = self._resize(frame)

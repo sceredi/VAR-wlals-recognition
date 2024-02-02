@@ -23,7 +23,7 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
 
 
 def get_roi_frames(
-        video: Video, remove_background=False, plot=False
+    video: Video, remove_background=False, plot=False
 ) -> List["np.ndarray"]:
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=224)
     roi_frames = roi_extractor.extract(remove_background=remove_background)

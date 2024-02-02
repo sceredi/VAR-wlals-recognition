@@ -40,7 +40,11 @@ class HaarDetector:
         # x[2] * x[3]: ordina le detections in base all'area
         # x[2] / x[3]: ordina le detections in base all'aspect ratio
         # detections = sorted(detections, key=lambda x: (self.avg_std_area_sorting_criteria(x, avg_area, std_area), x[-1], x[2] * x[3]), reverse=True)
-        detections = sorted(detections, key=lambda x: (self.avg_std_area_sorting_criteria(x, avg_area, std_area)), reverse=True)
+        detections = sorted(
+            detections,
+            key=lambda x: (self.avg_std_area_sorting_criteria(x, avg_area, std_area)),
+            reverse=True,
+        )
 
         # restituisce solo la migliore
         if detections:

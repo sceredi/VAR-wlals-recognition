@@ -7,14 +7,14 @@ from scipy.interpolate import interp1d
 
 class Video:
     def __init__(
-            self,
-            gloss: str,
-            video_id: str,
-            split: str,
-            frame_start: int,
-            frame_end: int,
-            fps: int,
-            bbox: List[int],
+        self,
+        gloss: str,
+        video_id: str,
+        split: str,
+        frame_start: int,
+        frame_end: int,
+        fps: int,
+        bbox: List[int],
     ) -> None:
         self.video_capture = None
         self.gloss = gloss
@@ -91,13 +91,16 @@ class Video:
         new_frames = np.concatenate([frames, pad_frames])
         return new_frames
 
-    def get_frames_interpolated(self, frames, target_num_frames=200) -> List["np.ndarray"]:
-
+    def get_frames_interpolated(
+        self, frames, target_num_frames=200
+    ) -> List["np.ndarray"]:
         x_old = np.linspace(0, 1, len(frames))
         x_new = np.linspace(0, 1, target_num_frames)
 
         # Calcola l'interpolatore per il video corrente
-        interpolator = interp1d(x_old, frames, kind='linear', axis=None, fill_value="extrapolate")
+        interpolator = interp1d(
+            x_old, frames, kind="linear", axis=None, fill_value="extrapolate"
+        )
 
         # Applica l'interpolazione al nuovo vettore di tempo
         new_frames = interpolator(x_new)
