@@ -15,6 +15,10 @@ import time
 from scipy.spatial.distance import euclidean
 import dtw
 from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix
+import seaborn as sn
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def plot_frames(frames: List["np.ndarray"]) -> None:
@@ -23,7 +27,7 @@ def plot_frames(frames: List["np.ndarray"]) -> None:
 
 
 def get_roi_frames(
-    video: Video, remove_background=False, plot=False
+        video: Video, remove_background=False, plot=False
 ) -> List["np.ndarray"]:
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=224)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
@@ -120,14 +124,7 @@ def plot_video(current_video: Video) -> None:
     contour_frames = detect_contour(roi_frames, plot=True)
 
 
-def svm_test(dataset: Dataset):
-    glosses = [
-        "book",
-        "drink",
-        "computer",
-        # "before",
-        # "chair",
-    ]
+def svm_test(dataset: Dataset, glosses: List[str]):
 
     videos = [video for video in dataset.videos if video.gloss in glosses]
     X_train = []
@@ -163,19 +160,28 @@ def svm_test(dataset: Dataset):
     X_train = np.array(X_train)
     print(f"X_train shape: {X_train.shape}")
     print(f"Y_train shape: {len(Y_train)}")
-    svc = SVC()
+    svc = SVC(verbose=True)
     print("Training SVM...")
     svc.fit(X_train, Y_train)
     print("Testing SVM...")
     X_test = np.array(X_test)
     print(f"X_test shape: {X_test.shape}")
     print(f"Y_test shape: {len(Y_test)}")
-    y_pred = svc.predict(X_test)
-    correct_predictions = np.sum(y_pred == Y_test)
+    Y_pred = svc.predict(X_test)
+    correct_predictions = np.sum(Y_pred == Y_test)
     total_predictions = len(Y_test)
+    print("X_test", X_test)
+    print("Y_test", Y_test)
+    print("Y_pred", Y_pred)
     accuracy = correct_predictions / total_predictions * 100
 
     print(f"Accuracy: {accuracy:.2f}%")
+
+    cfm = confusion_matrix(Y_test, Y_pred)
+    df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
+    plt.figure(figsize=(10, 7))
+    cfm_plot = sn.heatmap(df_cfm, annot=True)
+    cfm_plot.figure.savefig("cfm.png")
 
 
 def fix_and_save(dataset: Dataset):
@@ -187,18 +193,19 @@ def fix_and_save(dataset: Dataset):
             os.makedirs(folder)
         for i, frame in enumerate(roi_frames):
             cv2.imwrite(folder + "/" + str(i) + ".jpg", frame)
-        break
 
 
 if __name__ == "__main__":
     start_time = time.perf_counter()
     # -------------------------------------
     dataset = Dataset("data/WLASL_v0.3.json")
+    glosses = pd.read_csv("data/wlasl_class_list.txt", sep='\t', header=None)
+    glosses = glosses[1].tolist()
     # fix_and_save(dataset)
-    # svm_test(dataset)
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        plot_video(video)
+    svm_test(dataset, glosses[:3])
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
     #     plot_video_with_hog(video)
     # plot_video(dataset.videos[0])
     # -------------------------------------

@@ -8,7 +8,9 @@ opencv-python==4.8.0.76
 pandas==1.5.3
 rembg==2.0.53
 scipy==1.12.0
+scikit-image~=0.22.0
+scikit-learn==1.4.0
+seaborn==0.13.2
 sklearn-pandas==2.2.0
 tensorflow==2.15.0
 opendatasets==0.1.22
-scikit-image~=0.22.0
