@@ -90,37 +90,55 @@ def plot_video(current_video: Video) -> None:
 
 
 def svm_test(dataset: Dataset):
-    videos = [video for video in dataset.videos if video.gloss == "book" or video.gloss == "drink"]
+    glosses = [
+        "book",
+        "drink",
+        "computer",
+        # "before",
+        # "chair",
+    ]
+
+    videos = [video for video in dataset.videos if video.gloss in glosses]
     X_train = []
     Y_train = []
     X_test = []
     Y_test = []
+    i = 1
     for video in videos:
+        print(f"Processing video {i}/{len(videos)}")
+        i += 1
         print("Processing video: ", video.get_path())
         roi_frames = get_roi_frames(video, remove_background=False)
         hog_frames = get_hog_frames(roi_frames)
+        haar_frames, face_rects = get_haar_frames(roi_frames)
+        skin_frames = get_skin_frames(roi_frames, face_rects)
+        edge_frames = get_edge_frames(skin_frames)
         # roi_frames = np.array(roi_frames).flatten()
         hog_frames = [frame.flatten() for frame in hog_frames]
+        skin_frames = [frame.flatten() for frame in skin_frames]
+        edge_frames = [frame.flatten() for frame in edge_frames]
         hog_frames = np.array(hog_frames).flatten()
-        features = hog_frames
-        if video.split == "test":
-            X_test.append(features)
-            if video.gloss == "book":
-                Y_train.append(0)
-            else:
-                Y_train.append(1)
-        else:
+        skin_frames = np.array(skin_frames).flatten()
+        edge_frames = np.array(edge_frames).flatten()
+
+        features = np.concatenate((hog_frames, skin_frames, edge_frames))
+        print(features.shape)
+        if video.split == "train":
             X_train.append(features)
-            if video.gloss == "book":
-                Y_test.append(0)
-            else:
-                Y_test.append(1)
-    svc = SVC(kernel='precomputed')
-    print("Training SVM...")
+            Y_train.append(glosses.index(video.gloss))
+        else:
+            X_test.append(features)
+            Y_test.append(glosses.index(video.gloss))
     X_train = np.array(X_train)
-    print(X_train.shape)
+    print(f"X_train shape: {X_train.shape}")
+    print(f"Y_train shape: {len(Y_train)}")
+    svc = SVC()
+    print("Training SVM...")
     svc.fit(X_train, Y_train)
     print("Testing SVM...")
+    X_test = np.array(X_test)
+    print(f"X_test shape: {X_test.shape}")
+    print(f"Y_test shape: {len(Y_test)}")
     y_pred = svc.predict(X_test)
     correct_predictions = np.sum(y_pred == Y_test)
     total_predictions = len(Y_test)
