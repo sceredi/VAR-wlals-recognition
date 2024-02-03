@@ -64,7 +64,6 @@ class HaarDetector:
             best_detection = detections[0]
             return [best_detection]
         else:
-            print("No detections found")
             return []
 
     def detect(self):
