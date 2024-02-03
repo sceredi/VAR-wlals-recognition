@@ -1,4 +1,5 @@
 import joblib
+import os
 
 from app.extractor.hog_extractor import HOGExtractor
 from app.roi.extractor import RoiExtractor
@@ -28,6 +29,8 @@ class FeatureExtractor:
 
     def extract_and_save_all_features(self, output_filename):
         for video in self.dataset.videos:
+            if video.video_id != "69241":
+                break
             print(f"Processing video: {video.get_path()}")
             features = self.extract_features(video)
             self.all_features[video.video_id] = features
@@ -39,3 +42,10 @@ class FeatureExtractor:
 
     def load_features(self, filename):
         return joblib.load(filename)
+
+    def delete_features(self, filename):
+        if os.path.exists(filename):
+            os.remove(filename)
+            print(f"Il file {filename} è stato eliminato con successo.")
+        else:
+            print(f"Il file {filename} non esiste.")

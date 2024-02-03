@@ -25,6 +25,8 @@ import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from app.utilities.file_zipper import FileZipper
+
 
 def plot_frames(frames: List["np.ndarray"]) -> None:
     plotter = FramesPlotter(frames)
@@ -254,9 +256,18 @@ if __name__ == "__main__":
 
     feature_extractor = FeatureExtractor(dataset, glosses)
     feature_extractor.extract_and_save_all_features("all_video_features.joblib")
+
+    file_zipper = FileZipper()
+    file_to_zip = "all_video_features.joblib"
+    file_zipper.zip_file(file_to_zip)
+
+    zip_filename = "all_video_features.joblib.zip"
+    file_zipper.unzip_file(zip_filename)
+
     features = feature_extractor.load_features("all_video_features.joblib")
     print(features.keys())
     print(features.values())
+    feature_extractor.delete_features("all_video_features.joblib")
 
     # -------------------------------------
     end_time = time.perf_counter()
