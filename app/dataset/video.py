@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import os
+from typing_extensions import deprecated
 import cv2
 import numpy as np
 from scipy.interpolate import interp1d
@@ -62,29 +63,19 @@ class Video:
     def get_frames(self) -> List["np.ndarray"]:
         frames = []
         frame_number = self.frame_start
-        if self.frame_end == -1:
-            self.frame_end = int(self.get_video_capture().get(cv2.CAP_PROP_FRAME_COUNT))
-        while frame_number < self.frame_end - 1:
+        while True:
             ret, frame = self.get_frame(frame_number)
             if not ret:
                 break
             frames.append(frame)
             frame_number += 1
-        # 232 is the number of frames in the longest video
-        # all other frames will be padded with the last frame
-        # pad_frames = np.tile(frames[-1], (194 - len(frames), 1, 1, 1))
-        # new_frames = np.concatenate([frames, pad_frames])
-        # Supponiamo che video_frames sia una lista di array rappresentanti i frame del video
-
-        frames = self.get_frames_padded(frames)
-        # print("get_frames_equalized")
-        # frames = self.get_frames_equalized(frames)
         return frames
 
     def __len__(self) -> int:
         return len(self.get_frames())
 
-    def get_frames_padded(self, frames, target_num_frames=232) -> List["np.ndarray"]:
+    @deprecated("The dataset is now padded to 232 frames")
+    def get_frames_padded(self, frames, target_num_frames=232):
         num_frames_to_add = target_num_frames - len(frames)
         last_frame = frames[-1]
         pad_frames = np.tile(last_frame, (num_frames_to_add, 1, 1, 1))

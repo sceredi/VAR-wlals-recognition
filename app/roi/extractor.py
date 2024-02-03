@@ -1,10 +1,12 @@
 # Purpose: Extracts a region of interest from a list of frames
+from typing_extensions import deprecated
 import numpy as np
 from typing import List, Tuple
 from rembg import remove
 import cv2
 
 
+@deprecated("Roi is already extracted in the dataset, this class is now obsolete")
 class RoiExtractor:
     def __init__(
         self, frames: List["np.ndarray"], bbox: List[int], resize: None | int = None

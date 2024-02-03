@@ -99,14 +99,14 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 
 def plot_video(current_video: Video) -> None:
-    roi_frames = get_roi_frames(current_video, remove_background=False)
-    # hog_frames = get_hog_frames(roi_frames)
-    haar_frames, face_rects = get_haar_frames(roi_frames, plot=True)
-    # skin_frames = get_skin_frames(roi_frames, face_rects)
+    frames = current_video.get_frames()
+    # hog_frames = get_hog_frames(frames)
+    haar_frames, face_rects = get_haar_frames(frames, plot=True)
+    # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(skin_frames)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
     # flow_frames = get_flow_frames(edge_frames, plot=True)
-    contour_frames = detect_contour(roi_frames, plot=True)
+    contour_frames = detect_contour(frames, plot=True)
 
 
 def compute_dtw_distance(seq1, seq2):

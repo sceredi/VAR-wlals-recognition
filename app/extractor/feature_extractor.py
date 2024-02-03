@@ -16,8 +16,8 @@ class FeatureExtractor:
         return new_frames
 
     def extract_features(self, video):
-        roi_frames = RoiExtractor(video.get_frames(), video.bbox, resize=224).extract(remove_background=False)
-        hog_frames = HOGExtractor(roi_frames).process_frames()
+        frames = video.get_frames()
+        hog_frames = HOGExtractor(frames).process_frames()
         hog_sequence = self.flatten_frames(hog_frames)
         # skin_sequence = self.flatten_frames(get_skin_frames(get_roi_frames(video)))
 
