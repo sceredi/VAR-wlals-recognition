@@ -105,12 +105,12 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
     # hog_frames = get_hog_frames(frames)
-    haar_frames, face_rects = get_haar_frames(frames, plot=True)
-    # skin_frames = get_skin_frames(frames, face_rects)
-    # edge_frames = get_edge_frames(skin_frames)
+    haar_frames, face_rects = get_haar_frames(frames)
+    skin_frames = get_skin_frames(frames, face_rects, plot=True)
+    # edge_frames = get_edge_frames(skin_frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    # flow_frames = get_flow_frames(edge_frames, plot=True)
-    contour_frames = detect_contour(frames, plot=True)
+    flow_frames = get_flow_frames(skin_frames, plot=True)
+    # contour_frames = detect_contour(frames, plot=True)
 
 
 def compute_dtw_distance(seq1, seq2):
@@ -131,22 +131,24 @@ def process_video(videos, glosses):
     X_test = []
     Y_test = []
     i = 1
-    for video in videos[:5]:
+    for video in videos:
         print(f"Processing video {i}/{len(videos)}")
         i += 1
         print("Processing video: ", video.get_path())
         roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
-        hog_frames = get_hog_frames(roi_frames)
+        # hog_frames = get_hog_frames(roi_frames)
         haar_frames, face_rects = get_haar_frames(roi_frames)
         skin_frames = get_skin_frames(roi_frames, face_rects)
-        edge_frames = get_edge_frames(skin_frames)
+        # edge_frames = get_edge_frames(skin_frames)
+        flow_frames = get_flow_frames(skin_frames)
 
-        hog_frames = flatten_frames(hog_frames)
+
+        # hog_frames = flatten_frames(hog_frames)
         skin_frames = flatten_frames(skin_frames)
         # edge_frames = flatten_frames(edge_frames)
+        flow_frames = flatten_frames(flow_frames)
 
-        features = np.concatenate((hog_frames, skin_frames))  # , edge_frames))
-        print(features.shape)
+        features = np.concatenate((flow_frames))  # , edge_frames))
         if video.split == "train":
             X_train.append(features)
             Y_train.append(glosses.index(video.gloss))
@@ -159,12 +161,12 @@ def process_video(videos, glosses):
 def svm_test(dataset: Dataset, glosses: List[str]):
     videos = [video for video in dataset.videos if video.gloss in glosses]
     X_train, X_test, Y_train, Y_test = process_video(videos, glosses)
-
-    X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
-    X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
-
-    X_train = np.array(X_train_dtw).reshape(-1, 1)
-    X_test = np.array(X_test_dtw).reshape(-1, 1)
+    #
+    # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
+    # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
+    #
+    # X_train = np.array(X_train_dtw).reshape(-1, 1)
+    # X_test = np.array(X_test_dtw).reshape(-1, 1)
 
     print(f"X_train shape: {X_train.shape}")
     print(f"Y_train shape: {len(Y_train)}")
@@ -179,6 +181,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     total_predictions = len(Y_test)
     print("X_test", X_test)
     print("Y_test", Y_test)
+    # adds a , between each element of the list
+    Y_pred = ", ".join(map(str, Y_pred))
     print("Y_pred", Y_pred)
 
     accuracy = correct_predictions / total_predictions * 100
@@ -284,12 +288,10 @@ if __name__ == "__main__":
     # for video in dataset.videos:
     #     print("Plotting video: ", video.get_path())
     #     plot_video(video)
-    #     plot_video_with_hog(video)
-    # plot_video(dataset.videos[0])
-
+    #
     # -------------------------------------
 
-    # svm_test(dataset, glosses[:2])
+    svm_test(dataset, glosses[:3])
 
     similarity_matrix = similarity_matrix(dataset, glosses[0])
     print(similarity_matrix)
