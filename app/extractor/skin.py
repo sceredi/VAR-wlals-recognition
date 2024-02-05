@@ -35,7 +35,7 @@ class SkinExtractor:
         mean_color = np.mean(hsv_head, axis=(0, 1))
 
         # Define color range around the mean color
-        tolerance = 50  # Adjust as needed
+        tolerance = 30  # Adjust as needed
         lower_skin_hue = mean_color[0] - tolerance
         upper_skin_hue = mean_color[0] + tolerance
         lower_skin_saturation = mean_color[1] - tolerance
