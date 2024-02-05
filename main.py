@@ -5,6 +5,7 @@ import cv2
 from fastdtw import fastdtw
 # from dtaidistance import dtw
 from dtw import *
+from tslearn.metrics import cdist_dtw
 
 from app.dataset.dataset import Dataset
 from app.dataset.video import Video
@@ -18,12 +19,15 @@ from app.plotter.framesPlotter import FramesPlotter
 from app.roi.extractor import RoiExtractor
 from app.flow.calculator import FlowCalculator
 import time
-from scipy.spatial.distance import euclidean
+from scipy.spatial.distance import euclidean, cdist
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
+from tslearn.clustering import TimeSeriesKMeans
+from tslearn.preprocessing import TimeSeriesScalerMinMax
+from sklearn.preprocessing import MinMaxScaler
 
 from app.utilities.file_zipper import FileZipper
 
@@ -117,7 +121,7 @@ def compute_dtw_distance(seq1, seq2):
 
 def flatten_frames(frames):
     new_frames = [frame.flatten() for frame in frames]
-    # new_frames = np.array(new_frames).flatten()
+    # new_frames = np.array(new_frames).flatten() # non de-commentare con una feature
     return new_frames
 
 
@@ -131,7 +135,7 @@ def process_video(videos, glosses):
         print(f"Processing video {i}/{len(videos)}")
         i += 1
         print("Processing video: ", video.get_path())
-        roi_frames = get_roi_frames(video, remove_background=False)
+        roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
         hog_frames = get_hog_frames(roi_frames)
         haar_frames, face_rects = get_haar_frames(roi_frames)
         skin_frames = get_skin_frames(roi_frames, face_rects)
@@ -198,44 +202,71 @@ def fix_and_save(dataset: Dataset):
             cv2.imwrite(folder + "/" + str(i) + ".jpg", frame)
 
 
-def prova_dtw(dataset: Dataset, glosses: List[str]):
-    distances = []
-    videos = [video for video in dataset.videos if video.gloss in glosses]
-
-    for i in range(len(videos)):
-        for j in range(i + 1, len(videos)):
-            print(f"Processing video pair: {videos[i].get_path()} and {videos[j].get_path()}")
-
-            # Estrai le caratteristiche HOG per entrambi i video
-            hog_sequence1 = flatten_frames(get_hog_frames(get_roi_frames(videos[i])))
-            hog_sequence2 = flatten_frames(get_hog_frames(get_roi_frames(videos[j])))
-
-            # Calcola la distanza DTW
-            distance, path = compute_dtw_distance(hog_sequence1, hog_sequence2)
-            distances.append((videos[i].get_path(), videos[j].get_path(), distance, path))
-
-            # print(f"DTW Distance: {distance}")
-
-            print(f"DTW distance between {videos[i]} and {videos[j]}: {distance}")
-
-            plt.figure(figsize=(8, 6))
-            plt.plot(path, marker='o', linestyle='-', color='b')
-            plt.title('Distanza DTW tra sequenze temporali')
-            plt.xlabel('Coppie di sequenze')
-            plt.ylabel('Distanza DTW')
-            plt.show()
+def dtw_kernel(sequence1, sequence2):
+    distance, path = fastdtw(sequence1, sequence2)
+    print(f"Distance: {distance}")
+    normalized_distance = distance / (1 + distance)
+    similarity = np.exp(-normalized_distance)
+    return similarity
 
 
-    # Stampa le distanze
-    # for video1, video2, distance, path in distances:
-    #     print(f"DTW distance between {video1} and {video2}: {distance}")
+def process_video_pair(i, j, videos):
+    print(f"Processing video pair: {videos[i].get_path()} and {videos[j].get_path()}")
+
+    frames_i = videos[i].get_frames()
+    frames_j = videos[j].get_frames()
+
+    hog_sequence1 = flatten_frames(get_hog_frames(frames_i))
+    # haar_frames1, face_rects1 = get_haar_frames(frames_i)
+    # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
+    # contour_sequence1 = flatten_frames(detect_contour(frames_i))
+
+    hog_sequence2 = flatten_frames(get_hog_frames(frames_j))
+    # haar_frames2, face_rects2 = get_haar_frames(frames_j)
+    # skin_sequence2 = flatten_frames(get_skin_frames(frames_j, face_rects2))
+    # contour_sequence2 = flatten_frames(detect_contour(frames_j))
     #
-    #     plt.figure(figsize=(8, 6))
-    #     plt.plot(path, marker='o', linestyle='-', color='b')
-    #     plt.title('Distanza DTW tra sequenze temporali')
-    #     plt.xlabel('Coppie di sequenze')
-    #     plt.ylabel('Distanza DTW')
-    #     plt.show()
+    # sequence1 = np.concatenate((hog_sequence1, skin_sequence1, contour_sequence1))
+    # sequence2 = np.concatenate((hog_sequence2, skin_sequence2, contour_sequence2))
+
+    return dtw_kernel(hog_sequence1, hog_sequence2)
+
+
+def similarity_matrix(dataset: Dataset, gloss: str):
+    videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
+
+    n = len(videos)
+    sim_matrix = np.zeros((n, n))
+    print(f"Processing gloss: {gloss}")
+    print(f"Number of videos: {n}")
+    print(f"Dimension of similarity matrix: {sim_matrix.shape}")
+    print(f"--------------------------------------------")
+    z = 0
+    zz = (((n * n) - n) // 2) + n  # numero elementi matrice triangolare superiore + diagonale
+    for i in range(n):
+        for j in range(i, n):
+            z += 1
+            print(f"Processing video: {z}/{zz}")
+            sim_matrix[i, j] = 1.0 if i == j else process_video_pair(i, j, videos)
+            sim_matrix[j, i] = sim_matrix[i, j]
+            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}")
+            print(f"--------------------------------------------")
+    return sim_matrix
+
+
+def aggregate_similarity_matrix(similarity_matrix, method='mean'):
+    if method == 'mean':
+        return np.mean(similarity_matrix)
+    elif method == 'max':
+        return np.max(similarity_matrix)
+    elif method == 'min':
+        return np.min(similarity_matrix)
+    elif method == 'sum':
+        return np.sum(similarity_matrix)
+    elif method == 'median':
+        return np.median(similarity_matrix)
+    else:
+        raise ValueError("Metodo di aggregazione non valido.")
 
 
 if __name__ == "__main__":
@@ -244,30 +275,53 @@ if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
     glosses = pd.read_csv("data/wlasl_class_list.txt", sep='\t', header=None)
     glosses = glosses[1].tolist()
+    # -------------------------------------
+
     # fix_and_save(dataset)
-    # svm_test(dataset, glosses[:2])
+
+    # -------------------------------------
+
     # for video in dataset.videos:
     #     print("Plotting video: ", video.get_path())
     #     plot_video(video)
     #     plot_video_with_hog(video)
     # plot_video(dataset.videos[0])
 
-    # prova_dtw(dataset, glosses[:2])
+    # -------------------------------------
 
-    feature_extractor = FeatureExtractor(dataset, glosses)
-    feature_extractor.extract_and_save_all_features("all_video_features.joblib")
+    # svm_test(dataset, glosses[:2])
 
-    file_zipper = FileZipper()
-    file_to_zip = "all_video_features.joblib"
-    file_zipper.zip_file(file_to_zip)
+    similarity_matrix = similarity_matrix(dataset, glosses[0])
+    print(similarity_matrix)
 
-    zip_filename = "all_video_features.joblib.zip"
-    file_zipper.unzip_file(zip_filename)
+    # similarity_matrix_book_hog_train = [[1.0, 1.43478064e-06, 1.78389937e-06, 1.00215394e-06],
+    #                                 [1.43478064e-06, 1.0, 1.69621180e-06, 1.05909392e-06],
+    #                                 [1.78389937e-06, 1.69621180e-06, 1.0, 1.18465465e-06],
+    #                                 [1.00215394e-06, 1.05909392e-06, 1.18465465e-06, 1.0]]
+    #
+    # similarity_matrix_book_hog_train_norm = [[1.0, 0.36787997, 0.3678801, 0.36787981],
+    #                                     [0.36787997, 1.0, 0.36788007, 0.36787983],
+    #                                     [0.3678801, 0.36788007, 1.0, 0.36787988],
+    #                                     [0.36787981, 0.36787983, 0.36787988, 1.0]]
+    # aggregated_value = aggregate_similarity_matrix(similarity_matrix_book_hog_train_norm, method='mean')
+    # print("Aggregated Value:", aggregated_value)
 
-    features = feature_extractor.load_features("all_video_features.joblib")
-    print(features.keys())
-    print(features.values())
-    feature_extractor.delete_features("all_video_features.joblib")
+    # -------------------------------------
+
+    # feature_extractor = FeatureExtractor(dataset, glosses)
+    # feature_extractor.extract_and_save_all_features("all_video_features.joblib")
+    #
+    # file_zipper = FileZipper()
+    # file_to_zip = "all_video_features.joblib"
+    # file_zipper.zip_file(file_to_zip)
+    #
+    # zip_filename = "all_video_features.joblib.zip"
+    # file_zipper.unzip_file(zip_filename)
+    #
+    # features = feature_extractor.load_features("all_video_features.joblib")
+    # print(features.keys())
+    # print(features.values())
+    # feature_extractor.delete_features("all_video_features.joblib")
 
     # -------------------------------------
     end_time = time.perf_counter()
