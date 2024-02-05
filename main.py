@@ -121,7 +121,7 @@ def compute_dtw_distance(seq1, seq2):
 
 def flatten_frames(frames):
     new_frames = [frame.flatten() for frame in frames]
-    # new_frames = np.array(new_frames).flatten() # non de-commentare con una feature
+    new_frames = np.array(new_frames).flatten() # non de-commentare con una feature
     return new_frames
 
 
@@ -136,19 +136,22 @@ def process_video(videos, glosses):
         i += 1
         print("Processing video: ", video.get_path())
         roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
-        # hog_frames = get_hog_frames(roi_frames)
+        hog_frames = get_hog_frames(roi_frames)
         haar_frames, face_rects = get_haar_frames(roi_frames)
         skin_frames = get_skin_frames(roi_frames, face_rects)
         # edge_frames = get_edge_frames(skin_frames)
         flow_frames = get_flow_frames(skin_frames)
 
 
-        # hog_frames = flatten_frames(hog_frames)
+        hog_frames = flatten_frames(hog_frames)
         skin_frames = flatten_frames(skin_frames)
         # edge_frames = flatten_frames(edge_frames)
         flow_frames = flatten_frames(flow_frames)
+        print(hog_frames[0].shape)
+        print(skin_frames[0].shape)
+        print(flow_frames[0].shape)
 
-        features = np.concatenate((flow_frames))  # , edge_frames))
+        features = np.concatenate((flow_frames, hog_frames, skin_frames))  # , edge_frames))
         if video.split == "train":
             X_train.append(features)
             Y_train.append(glosses.index(video.gloss))
@@ -161,7 +164,7 @@ def process_video(videos, glosses):
 def svm_test(dataset: Dataset, glosses: List[str]):
     videos = [video for video in dataset.videos if video.gloss in glosses]
     X_train, X_test, Y_train, Y_test = process_video(videos, glosses)
-    #
+
     # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
     # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
     #
@@ -291,10 +294,10 @@ if __name__ == "__main__":
     #
     # -------------------------------------
 
-    svm_test(dataset, glosses[:3])
+    svm_test(dataset, glosses[:5])
 
-    similarity_matrix = similarity_matrix(dataset, glosses[0])
-    print(similarity_matrix)
+    # similarity_matrix = similarity_matrix(dataset, glosses[0])
+    # print(similarity_matrix)
 
     # similarity_matrix_book_hog_train = [[1.0, 1.43478064e-06, 1.78389937e-06, 1.00215394e-06],
     #                                 [1.43478064e-06, 1.0, 1.69621180e-06, 1.05909392e-06],
