@@ -55,9 +55,11 @@ def get_edge_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"
     return edge_frames
 
 
-def get_flow_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
-    flow_calculator = FlowCalculator(frames)
-    flow_frames = flow_calculator.calculate()
+def get_flow_frames(frames: List["np.ndarray"],last_frame_index: int = -1, plot=False) -> List["np.ndarray"]:
+    if last_frame_index == -1:
+        last_frame_index = len(frames) - 1
+    flow_calculator = FlowCalculator(frames, last_frame_index)
+    flow_frames = flow_calculator.calculate(should_plot=False)
     if plot:
         plot_frames(flow_frames)
     return flow_frames
@@ -105,11 +107,11 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
     # hog_frames = get_hog_frames(frames)
-    haar_frames, face_rects = get_haar_frames(frames)
-    skin_frames = get_skin_frames(frames, face_rects, plot=True)
+    # haar_frames, face_rects = get_haar_frames(frames)
+    # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(skin_frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    flow_frames = get_flow_frames(skin_frames, plot=True)
+    flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
     # contour_frames = detect_contour(frames, plot=True)
 
 
@@ -288,9 +290,9 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    # for video in dataset.videos:
-    #     print("Plotting video: ", video.get_path())
-    #     plot_video(video)
+    for video in dataset.videos:
+        print("Plotting video: ", video.get_path())
+        plot_video(video)
     #
     # -------------------------------------
 

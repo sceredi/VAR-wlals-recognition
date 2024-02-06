@@ -71,6 +71,14 @@ class Video:
             frame_number += 1
         return frames
 
+    def get_end(self) -> int:
+        if self.frame_end != -1:
+            return self.frame_end
+        ret = self.get_video_capture().get(cv2.CAP_PROP_FRAME_COUNT)
+        print(f"Video {self.video_id} has {ret} frames")
+        self.video_capture.release()
+        return int(ret)
+
     def __len__(self) -> int:
         return len(self.get_frames())
 
