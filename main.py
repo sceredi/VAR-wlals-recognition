@@ -59,7 +59,7 @@ def get_flow_frames(frames: List["np.ndarray"],last_frame_index: int = -1, plot=
     if last_frame_index == -1:
         last_frame_index = len(frames) - 1
     flow_calculator = FlowCalculator(frames, last_frame_index)
-    flow_frames = flow_calculator.calculate(should_plot=False)
+    flow_frames = flow_calculator.calculate(plot_each_frame=False)
     if plot:
         plot_frames(flow_frames)
     return flow_frames
