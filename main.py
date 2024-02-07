@@ -29,6 +29,7 @@ import matplotlib.pyplot as plt
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.preprocessing import TimeSeriesScalerMinMax
 from sklearn.preprocessing import MinMaxScaler
+from app.pca.compute import compute_pca
 
 from app.utilities.file_zipper import FileZipper
 
@@ -145,7 +146,7 @@ def process_video(videos, glosses):
         roi_frames = video.get_frames()
         hog_features, _ = get_hog_frames(roi_frames)
 
-        features = np.array(hog_features).flatten()
+        features = compute_pca(hog_features, n_components=50)
 
         if video.split == "train":
             X_train.append(features)
