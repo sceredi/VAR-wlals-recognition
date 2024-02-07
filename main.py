@@ -20,6 +20,7 @@ from app.extractor.feature_extractor import FeatureExtractor
 from app.extractor.hog_extractor import HOGExtractor
 from app.extractor.skin import SkinExtractor
 from app.haar.detector import HaarDetector
+from app.pca.compute import compute_pca
 from app.plotter.framesPlotter import FramesPlotter
 from app.roi.extractor import RoiExtractor
 from app.flow.calculator import FlowCalculator
@@ -153,7 +154,7 @@ def process_video(videos, glosses):
         roi_frames = video.get_frames()
         hog_features, _ = get_hog_frames(roi_frames)
 
-        features = np.array(hog_features).flatten()
+        features = compute_pca(hog_features, n_components=50)
 
         if video.split == "train":
             X_train.append(features)
