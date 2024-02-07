@@ -119,12 +119,12 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    hog_frames = get_hog_frames(frames, plot=True)
+    hog_features, hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end)
+    # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
     # contour_frames = detect_contour(frames, plot=True)
 
 
@@ -391,12 +391,9 @@ def process_video_pair(video_i, video_j):
     frames_i = video_i.get_frames()
     frames_j = video_j.get_frames()
 
-    _, hog_frames1 = get_hog_frames(frames_i)
-    hog_sequence1 = flatten_frames(hog_frames1)
-    print(f"hog_sequence1 len: {len(hog_sequence1)}")
-    haar_frames1, face_rects1 = get_haar_frames(frames_i)
-    haar_sequence1 = flatten_frames(haar_frames1)
-    print(f"haar_sequence1 len: {len(haar_sequence1)}")
+    _, hog_frames_i = get_hog_frames(frames_i)
+    hog_sequence1 = flatten_frames(hog_frames_i)
+    # haar_frames1, face_rects1 = get_haar_frames(frames_i)
     # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
     # print(f"skin_sequence1 len: {len(skin_sequence1)}")
     edge_sequence1 = flatten_frames(get_edge_frames(frames_i))
