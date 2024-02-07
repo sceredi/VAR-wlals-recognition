@@ -49,11 +49,13 @@ class HOGExtractor:
         plt.title("HOG Features")
         plt.show()
 
-    def process_frames(self) -> List["np.ndarray"]:
+    def process_frames(self) -> Tuple[List["np.ndarray"], List["np.ndarray"]]:
         processed_frames = []
+        processed_features = []
         for frame in self.frames:
             hog_features, hog_image = self.extract_features(frame)
             # self.visualize_hog(frame, hog_image)
             processed_frames.append(hog_image)
+            processed_features.append(hog_features)
 
-        return processed_frames
+        return processed_features, processed_frames

@@ -1,8 +1,9 @@
 import os
-from typing import List
+from typing import List, Tuple
 import numpy as np
 import cv2
 from fastdtw import fastdtw
+
 # from dtaidistance import dtw
 from dtw import *
 from tslearn.metrics import cdist_dtw
@@ -32,13 +33,13 @@ from sklearn.preprocessing import MinMaxScaler
 from app.utilities.file_zipper import FileZipper
 
 
-def plot_frames(frames: List["np.ndarray"]) -> None:
-    plotter = FramesPlotter(frames)
+def plot_frames(frames: List["np.ndarray"], is_gray_scale=False) -> None:
+    plotter = FramesPlotter(frames, to_rgb=not is_gray_scale)
     plotter.plot_grid()
 
 
 def get_roi_frames(
-        video: Video, remove_background=False, plot=False
+    video: Video, remove_background=False, plot=False
 ) -> List["np.ndarray"]:
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=224)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
@@ -55,7 +56,9 @@ def get_edge_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"
     return edge_frames
 
 
-def get_flow_frames(frames: List["np.ndarray"],last_frame_index: int = -1, plot=False) -> List["np.ndarray"]:
+def get_flow_frames(
+    frames: List["np.ndarray"], last_frame_index: int = -1, plot=False
+) -> List["np.ndarray"]:
     if last_frame_index == -1:
         last_frame_index = len(frames) - 1
     flow_calculator = FlowCalculator(frames, last_frame_index)
@@ -65,12 +68,14 @@ def get_flow_frames(frames: List["np.ndarray"],last_frame_index: int = -1, plot=
     return flow_frames
 
 
-def get_hog_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
+def get_hog_frames(
+    frames: List["np.ndarray"], plot=False
+) -> Tuple[List["np.ndarray"], List["np.ndarray"]]:
     hog_extractor = HOGExtractor(frames)
-    hog_frames = hog_extractor.process_frames()
+    hog_features, hog_frames = hog_extractor.process_frames()
     if plot:
-        plot_frames(hog_frames)
-    return hog_frames
+        plot_frames(hog_frames, is_gray_scale=True)
+    return hog_features, hog_frames
 
 
 def detect_contour(frames: List[np.ndarray], plot=False) -> List[np.ndarray]:
@@ -106,12 +111,12 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    # hog_frames = get_hog_frames(frames)
+    hog_features, hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(skin_frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
+    # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
     # contour_frames = detect_contour(frames, plot=True)
 
 
@@ -123,7 +128,7 @@ def compute_dtw_distance(seq1, seq2):
 
 def flatten_frames(frames):
     new_frames = [frame.flatten() for frame in frames]
-    new_frames = np.array(new_frames).flatten() # non de-commentare con una feature
+    new_frames = np.array(new_frames).flatten()  # non de-commentare con una feature
     return new_frames
 
 
@@ -137,23 +142,11 @@ def process_video(videos, glosses):
         print(f"Processing video {i}/{len(videos)}")
         i += 1
         print("Processing video: ", video.get_path())
-        roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
-        hog_frames = get_hog_frames(roi_frames)
-        haar_frames, face_rects = get_haar_frames(roi_frames)
-        skin_frames = get_skin_frames(roi_frames, face_rects)
-        # edge_frames = get_edge_frames(skin_frames)
-        flow_frames = get_flow_frames(skin_frames)
+        roi_frames = video.get_frames()
+        hog_features, _ = get_hog_frames(roi_frames)
 
+        features = np.array(hog_features).flatten()
 
-        hog_frames = flatten_frames(hog_frames)
-        skin_frames = flatten_frames(skin_frames)
-        # edge_frames = flatten_frames(edge_frames)
-        flow_frames = flatten_frames(flow_frames)
-        print(hog_frames[0].shape)
-        print(skin_frames[0].shape)
-        print(flow_frames[0].shape)
-
-        features = np.concatenate((flow_frames, hog_frames, skin_frames))  # , edge_frames))
         if video.split == "train":
             X_train.append(features)
             Y_train.append(glosses.index(video.gloss))
@@ -225,12 +218,14 @@ def process_video_pair(i, j, videos):
     frames_i = videos[i].get_frames()
     frames_j = videos[j].get_frames()
 
-    hog_sequence1 = flatten_frames(get_hog_frames(frames_i))
+    _, hog_frames_i = get_hog_frames(frames_i)
+    hog_sequence1 = flatten_frames(hog_frames_i)
     # haar_frames1, face_rects1 = get_haar_frames(frames_i)
     # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
     # contour_sequence1 = flatten_frames(detect_contour(frames_i))
 
-    hog_sequence2 = flatten_frames(get_hog_frames(frames_j))
+    _, hog_frames_j = get_hog_frames(frames_j)
+    hog_sequence2 = flatten_frames(hog_frames_j)
     # haar_frames2, face_rects2 = get_haar_frames(frames_j)
     # skin_sequence2 = flatten_frames(get_skin_frames(frames_j, face_rects2))
     # contour_sequence2 = flatten_frames(detect_contour(frames_j))
@@ -242,7 +237,11 @@ def process_video_pair(i, j, videos):
 
 
 def similarity_matrix(dataset: Dataset, gloss: str):
-    videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
+    videos = [
+        video
+        for video in dataset.videos
+        if video.gloss == gloss and video.split == "train"
+    ]
 
     n = len(videos)
     sim_matrix = np.zeros((n, n))
@@ -251,28 +250,32 @@ def similarity_matrix(dataset: Dataset, gloss: str):
     print(f"Dimension of similarity matrix: {sim_matrix.shape}")
     print(f"--------------------------------------------")
     z = 0
-    zz = (((n * n) - n) // 2) + n  # numero elementi matrice triangolare superiore + diagonale
+    zz = (
+        ((n * n) - n) // 2
+    ) + n  # numero elementi matrice triangolare superiore + diagonale
     for i in range(n):
         for j in range(i, n):
             z += 1
             print(f"Processing video: {z}/{zz}")
             sim_matrix[i, j] = 1.0 if i == j else process_video_pair(i, j, videos)
             sim_matrix[j, i] = sim_matrix[i, j]
-            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}")
+            print(
+                f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}"
+            )
             print(f"--------------------------------------------")
     return sim_matrix
 
 
-def aggregate_similarity_matrix(similarity_matrix, method='mean'):
-    if method == 'mean':
+def aggregate_similarity_matrix(similarity_matrix, method="mean"):
+    if method == "mean":
         return np.mean(similarity_matrix)
-    elif method == 'max':
+    elif method == "max":
         return np.max(similarity_matrix)
-    elif method == 'min':
+    elif method == "min":
         return np.min(similarity_matrix)
-    elif method == 'sum':
+    elif method == "sum":
         return np.sum(similarity_matrix)
-    elif method == 'median':
+    elif method == "median":
         return np.median(similarity_matrix)
     else:
         raise ValueError("Metodo di aggregazione non valido.")
@@ -282,7 +285,7 @@ if __name__ == "__main__":
     start_time = time.perf_counter()
     # -------------------------------------
     dataset = Dataset("data/WLASL_v0.3.json")
-    glosses = pd.read_csv("data/wlasl_class_list.txt", sep='\t', header=None)
+    glosses = pd.read_csv("data/wlasl_class_list.txt", sep="\t", header=None)
     glosses = glosses[1].tolist()
     # -------------------------------------
 
@@ -290,9 +293,9 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        plot_video(video)
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
     #
     # -------------------------------------
 
