@@ -225,6 +225,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
 
     # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
     # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
+    # for elem in X_test_dtw:
+    #     print(elem.shape)
     #
     # X_train = np.array(X_train_dtw).reshape(-1, 1)
     # X_test = np.array(X_test_dtw).reshape(-1, 1)
