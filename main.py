@@ -153,8 +153,14 @@ def process_video(videos, glosses):
         print("Processing video: ", video.get_path())
         roi_frames = video.get_frames()
         hog_features, _ = get_hog_frames(roi_frames)
+        print("HOG features shape: ", hog_features[0].shape)
 
         features = compute_pca(hog_features, n_components=50)
+        # Flatten HOG features into 1D arrays
+        features = [hog_image.flatten() for hog_image in features]
+        features = np.array(features).flatten()
+
+        print(f"Features shape: {features.shape}")
 
         if video.split == "train":
             X_train.append(features)
@@ -202,6 +208,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
 
     # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
     # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
+    # for elem in X_test_dtw:
+    #     print(elem.shape)
     #
     # X_train = np.array(X_train_dtw).reshape(-1, 1)
     # X_test = np.array(X_test_dtw).reshape(-1, 1)
@@ -223,7 +231,7 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     print("X_test", X_test)
     print("Y_test", Y_test)
     # adds a , between each element of the list
-    Y_pred = ", ".join(map(str, Y_pred))
+    # Y_pred = ", ".join(map(str, Y_pred))
     print("Y_pred", Y_pred)
 
     accuracy = correct_predictions / total_predictions * 100
@@ -524,9 +532,7 @@ if __name__ == "__main__":
     #
     # -------------------------------------
 
-    # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
-    # knn_classifier(dataset, glosses[:3])
-    # svm_test_similarity(dataset, glosses[:10])
+    svm_test(dataset, glosses[:3])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
