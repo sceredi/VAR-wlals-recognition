@@ -5,7 +5,8 @@ import cv2
 from fastdtw import fastdtw
 
 # from dtaidistance import dtw
-from dtw import *
+from dtw import dtw
+from pandas.core.generic import gc
 from tslearn.metrics import cdist_dtw
 
 from app.dataset.dataset import Dataset
@@ -29,7 +30,7 @@ import matplotlib.pyplot as plt
 from tslearn.clustering import TimeSeriesKMeans
 from tslearn.preprocessing import TimeSeriesScalerMinMax
 from sklearn.preprocessing import MinMaxScaler
-from app.pca.compute import compute_pca
+from app.pca.compute import custom_pca
 
 from app.utilities.file_zipper import FileZipper
 
@@ -140,19 +141,19 @@ def process_video(videos, glosses):
     Y_test = []
     i = 1
     for video in videos:
-        print(f"Processing video {i}/{len(videos)}")
         i += 1
-        print("Processing video: ", video.get_path())
         roi_frames = video.get_frames()
         hog_features, _ = get_hog_frames(roi_frames)
-        print("HOG features shape: ", hog_features[0].shape)
+        pca = custom_pca(n_components=20)
+        pca.fit(hog_features)
+        features = pca.transform(hog_features)
+        del pca
+        gc.collect()
 
-        features = compute_pca(hog_features, n_components=50)
         # Flatten HOG features into 1D arrays
         features = [hog_image.flatten() for hog_image in features]
-        features = np.array(features).flatten()
+        features = np.array(features)
 
-        print(f"Features shape: {features.shape}")
 
         if video.split == "train":
             X_train.append(features)
@@ -163,9 +164,25 @@ def process_video(videos, glosses):
     return np.array(X_train), np.array(X_test), Y_train, Y_test
 
 
+def calculate_dtw_distance(sequences):
+    num_sequences = len(sequences)
+    dtw_matrix = np.zeros((num_sequences, num_sequences))
+    for i in range(num_sequences):
+        for j in range(i, num_sequences):
+            dtw_matrix[i, j] = fastdtw(sequences[i], sequences[j], dist=euclidean)[0]
+            dtw_matrix[j, i] = dtw_matrix[i, j]
+    return [row for row in dtw_matrix]
+
+
 def svm_test(dataset: Dataset, glosses: List[str]):
     videos = [video for video in dataset.videos if video.gloss in glosses]
     X_train, X_test, Y_train, Y_test = process_video(videos, glosses)
+    X_tot = np.concatenate((X_train, X_test))
+    X_tot = calculate_dtw_distance(X_tot)
+    X_train = X_tot[:len(X_train)]
+    X_test = X_tot[len(X_train):]
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
 
     # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
     # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
@@ -308,7 +325,7 @@ if __name__ == "__main__":
     #
     # -------------------------------------
 
-    svm_test(dataset, glosses[:3])
+    svm_test(dataset, glosses[:30])
 
     # similarity_matrix = similarity_matrix(dataset, glosses[0])
     # print(similarity_matrix)
