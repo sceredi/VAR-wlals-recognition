@@ -34,9 +34,9 @@ import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
 from tslearn.clustering import TimeSeriesKMeans
-from tslearn.preprocessing import TimeSeriesScalerMinMax, TimeSeriesResampler
-from sklearn.preprocessing import MinMaxScaler, RobustScaler
-from sklearn.preprocessing import StandardScaler
+from tslearn.preprocessing import TimeSeriesScalerMinMax
+from sklearn.preprocessing import MinMaxScaler
+from app.pca.compute import custom_pca
 
 from app.utilities.file_zipper import FileZipper
 
@@ -150,17 +150,18 @@ def process_video(videos, glosses):
         print(f"Processing gloss: {video.gloss}")
         print(f"Processing video {i}/{len(videos)}")
         i += 1
-        print("Processing video: ", video.get_path())
         roi_frames = video.get_frames()
         hog_features, _ = get_hog_frames(roi_frames)
-        print("HOG features shape: ", hog_features[0].shape)
+        pca = custom_pca(n_components=20)
+        pca.fit(hog_features)
+        features = pca.transform(hog_features)
+        del pca
+        gc.collect()
 
-        features = compute_pca(hog_features, n_components=50)
         # Flatten HOG features into 1D arrays
         features = [hog_image.flatten() for hog_image in features]
-        features = np.array(features).flatten()
+        features = np.array(features)
 
-        print(f"Features shape: {features.shape}")
 
         if video.split == "train":
             X_train.append(features)
@@ -173,6 +174,16 @@ def process_video(videos, glosses):
     X_train = X_train.reshape((X_train.shape[0], -1))
     X_test = X_test.reshape((X_test.shape[0], -1))
     return X_train, X_test, Y_train, Y_test
+
+
+def calculate_dtw_distance(sequences):
+    num_sequences = len(sequences)
+    dtw_matrix = np.zeros((num_sequences, num_sequences))
+    for i in range(num_sequences):
+        for j in range(i, num_sequences):
+            dtw_matrix[i, j] = fastdtw(sequences[i], sequences[j], dist=euclidean)[0]
+            dtw_matrix[j, i] = dtw_matrix[i, j]
+    return [row for row in dtw_matrix]
 
 
 def svm_test(dataset: Dataset, glosses: List[str]):
@@ -532,7 +543,7 @@ if __name__ == "__main__":
     #
     # -------------------------------------
 
-    svm_test(dataset, glosses[:3])
+    svm_test(dataset, glosses[:30])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]

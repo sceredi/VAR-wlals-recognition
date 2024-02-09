@@ -18,7 +18,7 @@ let
 in pkgs.mkShell rec {
   name = "impurePythonEnv";
   venvDir = "./.venv";
-  buildInputs = [
+  nativeBuildInputs = [
     (python.withPackages (ps: with ps; [ opencv4 ]))
     # A Python interpreter including the 'venv' module is required to bootstrap
     # the environment.
@@ -35,6 +35,7 @@ in pkgs.mkShell rec {
     # pythonPackages.opencv4
     # pythonPackages.requests
     pythonPackages.matplotlib
+    pythonPackages.scikit-learn
 
     # In this particular example, in order to compile any binary extensions they may
     # require, the Python modules listed in the hypothetical requirements.txt need
@@ -52,6 +53,8 @@ in pkgs.mkShell rec {
     libuuid
     stdenv.cc.cc.lib
     gcc-unwrapped
+    gcc-unwrapped.lib
+    libgccjit.out
   ];
 
   # Run this command, only after creating the virtual environment
