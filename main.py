@@ -141,6 +141,7 @@ def process_video(videos, glosses):
     Y_test = []
     i = 1
     for video in videos:
+        print(f"Processing video {i}/{len(videos)}")
         i += 1
         roi_frames = video.get_frames()
         hog_features, _ = get_hog_frames(roi_frames)
