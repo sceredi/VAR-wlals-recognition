@@ -34,9 +34,9 @@ import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
 from tslearn.clustering import TimeSeriesKMeans
-from tslearn.preprocessing import TimeSeriesScalerMinMax
-from sklearn.preprocessing import MinMaxScaler
-from app.pca.compute import custom_pca
+from tslearn.preprocessing import TimeSeriesScalerMinMax, TimeSeriesResampler
+from sklearn.preprocessing import MinMaxScaler, RobustScaler
+from sklearn.preprocessing import StandardScaler
 
 from app.utilities.file_zipper import FileZipper
 
@@ -150,19 +150,21 @@ def process_video(videos, glosses):
         print(f"Processing gloss: {video.gloss}")
         print(f"Processing video {i}/{len(videos)}")
         i += 1
-        roi_frames = video.get_frames()
-        hog_features, _ = get_hog_frames(roi_frames)
-        pca = custom_pca(n_components=20)
-        pca.fit(hog_features)
-        features = pca.transform(hog_features)
-        del pca
-        gc.collect()
+        print("Processing video: ", video.get_path())
+        roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
+        hog_frames = get_hog_frames(roi_frames)
+        # haar_frames, face_rects = get_haar_frames(roi_frames)
+        # skin_frames = get_skin_frames(roi_frames, face_rects)
+        # edge_frames = get_edge_frames(roi_frames)
+        contour_frames = detect_contour(roi_frames)
 
-        # Flatten HOG features into 1D arrays
-        features = [hog_image.flatten() for hog_image in features]
-        features = np.array(features)
+        hog_frames = flatten_frames(hog_frames)
+        # skin_frames = flatten_frames(skin_frames)
+        # edge_frames = flatten_frames(edge_frames)
+        contour_frames = flatten_frames(contour_frames)
 
-
+        features = np.concatenate((hog_frames, contour_frames), axis=1)
+        print(features.shape)
         if video.split == "train":
             X_train.append(features)
             Y_train.append(glosses.index(video.gloss))
@@ -223,8 +225,6 @@ def svm_test(dataset: Dataset, glosses: List[str]):
 
     # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
     # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
-    # for elem in X_test_dtw:
-    #     print(elem.shape)
     #
     # X_train = np.array(X_train_dtw).reshape(-1, 1)
     # X_test = np.array(X_test_dtw).reshape(-1, 1)
@@ -391,9 +391,11 @@ def process_video_pair(video_i, video_j):
     frames_i = video_i.get_frames()
     frames_j = video_j.get_frames()
 
-    _, hog_frames_i = get_hog_frames(frames_i)
-    hog_sequence1 = flatten_frames(hog_frames_i)
-    # haar_frames1, face_rects1 = get_haar_frames(frames_i)
+    hog_sequence1 = flatten_frames(get_hog_frames(frames_i))
+    print(f"hog_sequence1 len: {len(hog_sequence1)}")
+    haar_frames1, face_rects1 = get_haar_frames(frames_i)
+    haar_sequence1 = flatten_frames(haar_frames1)
+    print(f"haar_sequence1 len: {len(haar_sequence1)}")
     # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
     # print(f"skin_sequence1 len: {len(skin_sequence1)}")
     edge_sequence1 = flatten_frames(get_edge_frames(frames_i))
@@ -473,11 +475,62 @@ def similarity_matrix(dataset: Dataset, gloss: str):
         for j in range(i, n):
             z += 1
             print(f"Processing video: {z}/{zz}")
-            sim_matrix[i, j] = 1.0 if i == j else process_video_pair(i, j, videos)
-            sim_matrix[j, i] = sim_matrix[i, j]
-            print(
-                f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}"
-            )
+            # sim_matrix[i, j] = 1.0 if i == j else process_video_pair(i, j, videos)
+            # sim_matrix[j, i] = sim_matrix[i, j]
+
+            if i == j:
+                similarity = 1.0
+                similarity_hog = 1.0
+                # similarity_skin = 1.0
+                similarity_contour = 1.0
+            else:
+                # similarity_hog, similarity_contour = process_video_pair(i, j, videos)
+                similarity = process_video_pair_std(i, j, videos)
+
+            sim_matrix[i, j] = similarity
+            sim_matrix[j, i] = similarity
+
+            # sim_matrix_hog[i, j] = similarity_hog
+            # sim_matrix_hog[j, i] = similarity_hog
+
+            # sim_matrix_skin[i, j] = similarity_skin
+            # sim_matrix_skin[j, i] = similarity_skin
+
+            # sim_matrix_contour[i, j] = similarity_contour
+            # sim_matrix_contour[j, i] = similarity_contour
+
+            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}")
+            # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_hog[i, j]}")
+            # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_skin[i, j]}")
+            # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_contour[i, j]}")
+            print(f"--------------------------------------------")
+
+    # mean_sim_matrix_hog = np.mean(sim_matrix_hog)
+    # mean_sim_matrix_skin = np.mean(sim_matrix_skin)
+    # mean_sim_matrix_contour = np.mean(sim_matrix_contour)
+
+    # sim_dict = {
+    #     gloss: [mean_sim_matrix_hog, mean_sim_matrix_contour]
+    # }
+
+    return sim_matrix  # sim_dict
+
+def similarity_matrix_training(videos):
+    n = len(videos)
+    M = np.zeros((n, n))
+    print(f"Number of videos: {n}")
+    print(f"--------------------------------------------")
+    z = 0
+    zz = (((n * n) - n) // 2) + n
+    for i in range(n):
+        for j in range(i, n):
+            z += 1
+            print(f"Processing video: {z}/{zz}")
+            similarity = 1.0 if i == j else process_video_pair(videos[i], videos[j])
+            M[i, j] = similarity
+            # M[j, i] = similarity
+
+            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}")
             print(f"--------------------------------------------")
 
     # mean_sim_matrix_hog = np.mean(sim_matrix_hog)
@@ -549,7 +602,9 @@ if __name__ == "__main__":
     #
     # -------------------------------------
 
-    # svm_test(dataset, glosses[:30])
+    # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
+    # knn_classifier(dataset, glosses[:3])
+    svm_test_similarity(dataset, glosses[1:3])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
