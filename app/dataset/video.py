@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from scipy.interpolate import interp1d
 
+from app.features.features_container import FeaturesContainer
+
 
 class Video:
     def __init__(
@@ -25,6 +27,7 @@ class Video:
         self.bbox = bbox
         self.frame_start = frame_start
         self.frame_end = frame_end
+        self.features_container = FeaturesContainer(self)
 
     @classmethod
     def from_instance(cls, gloss: str, instance: dict) -> "Video":
@@ -60,7 +63,11 @@ class Video:
         ret, frame = self.get_video_capture().read()
         return ret, frame
 
-    def get_frames(self) -> List["np.ndarray"]:
+    def get_frames(self, last_frame = None) -> List["np.ndarray"]:
+        if last_frame is None:
+            last_frame = self.get_end()
+        else:
+            last_frame = self.frame_end
         frames = []
         frame_number = self.frame_start
         while frame_number < self.frame_end:
@@ -106,3 +113,7 @@ class Video:
         new_frames = (new_frames * 255.0).astype(np.uint8)
 
         return new_frames
+
+    
+    def get_features_container(self) -> FeaturesContainer:
+        return self.features_container
