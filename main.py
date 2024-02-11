@@ -260,8 +260,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
 
 
 def svm_test_similarity(dataset: Dataset, glosses: List[str]):
-    max_train_videos_per_gloss = 3
-    max_test_videos_per_gloss = 2
+    max_train_videos_per_gloss = 100000
+    max_test_videos_per_gloss = 100000
     selected_videos_train = []
     selected_videos_test = []
 
@@ -594,17 +594,15 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        print(f"features length: {len(video.features_container.get_all_features())}")
-        # plot_video(video)
-
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
     #
     # -------------------------------------
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
     # knn_classifier(dataset, glosses[:3])
-    svm_test_similarity(dataset, glosses[1:3])
+    svm_test_similarity(dataset, glosses[:30])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
