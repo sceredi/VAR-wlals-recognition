@@ -62,9 +62,11 @@ def get_edge_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"
     return edge_frames
 
 
-def get_flow_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
-    flow_calculator = FlowCalculator(frames)
-    flow_frames = flow_calculator.calculate()
+def get_flow_frames(frames: List["np.ndarray"],last_frame_index: int = -1, plot=False) -> List["np.ndarray"]:
+    if last_frame_index == -1:
+        last_frame_index = len(frames) - 1
+    flow_calculator = FlowCalculator(frames, last_frame_index)
+    flow_frames = flow_calculator.calculate(plot_each_frame=False)
     if plot:
         plot_frames(flow_frames)
     return flow_frames
@@ -112,12 +114,12 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
     # hog_frames = get_hog_frames(frames)
-    haar_frames, face_rects = get_haar_frames(frames, plot=True)
+    # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
-    # edge_frames = get_edge_frames(skin_frames)
+    # edge_frames = get_edge_frames(skin_frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    # flow_frames = get_flow_frames(edge_frames, plot=True)
-    contour_frames = detect_contour(frames, plot=True)
+    flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
+    # contour_frames = detect_contour(frames, plot=True)
 
 
 def compute_dtw_distance(seq1, seq2):
@@ -223,6 +225,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     total_predictions = len(Y_test)
     print("X_test", X_test)
     print("Y_test", Y_test)
+    # adds a , between each element of the list
+    Y_pred = ", ".join(map(str, Y_pred))
     print("Y_pred", Y_pred)
 
     accuracy = correct_predictions / total_predictions * 100
@@ -501,7 +505,7 @@ def similarity_matrix(dataset: Dataset, gloss: str):
                 similarity_contour = 1.0
             else:
                 # similarity_hog, similarity_contour = process_video_pair(i, j, videos)
-                similarity = process_video_pair_std(i, j, videos)
+                similarity = process_video_pair(i, j, videos)
 
             sim_matrix[i, j] = similarity
             sim_matrix[j, i] = similarity
@@ -581,12 +585,10 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    # for video in dataset.videos:
-    #     print("Plotting video: ", video.get_path())
-    #     plot_video(video)
-    #     plot_video_with_hog(video)
-    # plot_video(dataset.videos[0])
-
+    for video in dataset.videos:
+        print("Plotting video: ", video.get_path())
+        plot_video(video)
+    #
     # -------------------------------------
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%

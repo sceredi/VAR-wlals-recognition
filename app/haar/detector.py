@@ -76,7 +76,7 @@ class HaarDetector:
             val += 1
             avg_pos = self.calculate_average_position(all_detections)
             detections = self._frame_detect(frame, avg_pos)
-            if detections == []:
+            if detections == [] and all_detections != []:
                 detections = all_detections[-1]
             all_detections.append(detections)
             rects.append(detections)
@@ -92,7 +92,7 @@ class HaarDetector:
         for i, frame in enumerate(self.frames[:10]):
             avg_pos = self.calculate_average_position(all_detections)
             detections = self._frame_detect(frame, avg_pos)
-            if detections == []:
+            if detections == [] and all_detections != []:
                 detections = all_detections[-1]
             all_detections[i] = detections
             rects[i] = detections
