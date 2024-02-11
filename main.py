@@ -113,13 +113,13 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    hog_features, hog_frames = get_hog_frames(frames, plot=True)
+    # hog_features, hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(skin_frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
     # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
-    # contour_frames = detect_contour(frames, plot=True)
+    contour_frames = detect_contour(frames, plot=True)
 
 
 def compute_dtw_distance(seq1, seq2):
@@ -173,6 +173,10 @@ def calculate_dtw_distance(sequences):
             dtw_matrix[i, j] = fastdtw(sequences[i], sequences[j], dist=euclidean)[0]
             dtw_matrix[j, i] = dtw_matrix[i, j]
     return [row for row in dtw_matrix]
+
+
+def dtw_per_class(dataset: Dataset, glosses: List[str]):
+    videos = [video for video in dataset.videos if video.gloss in glosses]
 
 
 def svm_test(dataset: Dataset, glosses: List[str]):
@@ -320,13 +324,15 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    # for video in dataset.videos:
-    #     print("Plotting video: ", video.get_path())
-    #     plot_video(video)
+    for video in dataset.videos:
+        print("Plotting video: ", video.get_path())
+        print(f"features length: {len(video.features_container.get_all_features())}")
+        # plot_video(video)
+
     #
     # -------------------------------------
 
-    svm_test(dataset, glosses[:30])
+    # svm_test(dataset, glosses[:30])
 
     # similarity_matrix = similarity_matrix(dataset, glosses[0])
     # print(similarity_matrix)
