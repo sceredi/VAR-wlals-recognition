@@ -240,8 +240,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
 
 
 def svm_test_similarity(dataset: Dataset, glosses: List[str]):
-    max_train_videos_per_gloss = 3
-    max_test_videos_per_gloss = 2
+    max_train_videos_per_gloss = 100000
+    max_test_videos_per_gloss = 100000
     selected_videos_train = []
     selected_videos_test = []
 
@@ -429,23 +429,28 @@ def process_video_pair(video_i, video_j):
     haar_frames1, face_rects1 = get_haar_frames(frames_i)
     haar_sequence1 = flatten_frames(haar_frames1)
     print(f"haar_sequence1 len: {len(haar_sequence1)}")
-    # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
+    skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
+    print(f"skin_sequence1 len: {len(skin_sequence1)}")
     edge_sequence1 = flatten_frames(get_edge_frames(frames_i))
     print(f"edge_sequence1 len: {len(edge_sequence1)}")
     contour_sequence1 = flatten_frames(detect_contour(frames_i))
     print(f"contour_sequence1 len: {len(contour_sequence1)}")
+    flow_sequence1 = flatten_frames(get_flow_frames(frames_i))
+    print(f"flow_sequence1 len: {len(flow_sequence1)}")
 
     hog_sequence2 = flatten_frames(get_hog_frames(frames_j))
     print(f"hog_sequence2 len: {len(hog_sequence2)}")
     haar_frames2, face_rects2 = get_haar_frames(frames_j)
     haar_sequence2 = flatten_frames(haar_frames2)
-    # skin_sequence2 = flatten_frames(get_skin_frames(frames_j, face_rects2))
     print(f"haar_sequence1 len: {len(haar_sequence2)}")
+    skin_sequence2 = flatten_frames(get_skin_frames(frames_j, face_rects2))
+    print(f"skin_sequence2 len: {len(skin_sequence2)}")
     edge_sequence2 = flatten_frames(get_edge_frames(frames_j))
     print(f"edge_sequence2 len: {len(edge_sequence2)}")
     contour_sequence2 = flatten_frames(detect_contour(frames_j))
     print(f"contour_sequence2 len: {len(contour_sequence2)}")
-    # print(f"skin_sequence2 len: {len(skin_sequence2)}")
+    flow_sequence2 = flatten_frames(get_flow_frames(frames_j))
+    print(f"flow_sequence2 len: {len(flow_sequence2)}")
 
     hog_sequence1 = standardize_features(hog_sequence1)
     hog_sequence2 = standardize_features(hog_sequence2)
@@ -453,11 +458,15 @@ def process_video_pair(video_i, video_j):
     haar_sequence2 = standardize_features(haar_sequence2)
     edge_sequence1 = standardize_features(edge_sequence1)
     edge_sequence2 = standardize_features(edge_sequence2)
+    skin_sequence1 = standardize_features(skin_sequence1)
+    skin_sequence2 = standardize_features(skin_sequence2)
     contour_sequence1 = standardize_features(contour_sequence1)
     contour_sequence2 = standardize_features(contour_sequence2)
+    flow_sequence1 = standardize_features(flow_sequence1)
+    flow_sequence2 = standardize_features(flow_sequence2)
 
-    sequence1 = np.concatenate((hog_sequence1, haar_sequence1, edge_sequence1, contour_sequence1), axis=1)
-    sequence2 = np.concatenate((hog_sequence2, haar_sequence2, edge_sequence2, contour_sequence2), axis=1)
+    sequence1 = np.concatenate((hog_sequence1, haar_sequence1, edge_sequence1, contour_sequence1, skin_sequence1, flow_sequence1), axis=1)
+    sequence2 = np.concatenate((hog_sequence2, haar_sequence2, edge_sequence2, contour_sequence2, skin_sequence2, flow_sequence2), axis=1)
 
     similarity = dtw_kernel(sequence1, sequence2)
     # similarity_skin = dtw_kernel(skin_sequence1, skin_sequence2)
@@ -585,15 +594,15 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        plot_video(video)
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
     #
     # -------------------------------------
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
     # knn_classifier(dataset, glosses[:3])
-    svm_test_similarity(dataset, glosses[1:3])
+    svm_test_similarity(dataset, glosses[:30])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
