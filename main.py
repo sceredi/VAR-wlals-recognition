@@ -260,8 +260,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
 
 
 def svm_test_similarity(dataset: Dataset, glosses: List[str]):
-    max_train_videos_per_gloss = 100000
-    max_test_videos_per_gloss = 100000
+    max_train_videos_per_gloss = 3
+    max_test_videos_per_gloss = 2
     selected_videos_train = []
     selected_videos_test = []
 
