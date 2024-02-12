@@ -63,7 +63,7 @@ class Video:
     def get_frames(self) -> List["np.ndarray"]:
         frames = []
         frame_number = self.frame_start
-        while True:
+        while frame_number < self.frame_end:
             ret, frame = self.get_frame(frame_number)
             if not ret:
                 break
