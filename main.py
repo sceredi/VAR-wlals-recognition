@@ -119,13 +119,13 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    # hog_features, hog_frames = get_hog_frames(frames, plot=True)
+    # hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
-    contour_frames = detect_contour(frames, plot=True)
+    # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end)
+    # contour_frames = detect_contour(frames, plot=True)
 
 
 def compute_dtw_distance(seq1, seq2):
@@ -602,7 +602,7 @@ if __name__ == "__main__":
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
     # knn_classifier(dataset, glosses[:3])
-    svm_test_similarity(dataset, glosses[:30])
+    svm_test_similarity(dataset, glosses[1:3])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
