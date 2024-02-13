@@ -27,15 +27,9 @@ class HOGExtractor:
             "transform_sqrt": True,
         }
 
-    def extract_features(
-        self, frame: "np.ndarray"
-    ) -> Tuple["np.ndarray", "np.ndarray"]:
-        # Converti il frame in scala di grigi
+    def extract_features(self, frame: "np.ndarray") -> Tuple["np.ndarray", "np.ndarray"]:
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        # Calcola l'HOG per il frame
         hog_features, hog_image = hog(gray_frame, **self.hog_params)
-
         return hog_features, hog_image
 
     def visualize_hog(self, frame: "np.ndarray", hog_image: "np.ndarray") -> None:
@@ -55,5 +49,4 @@ class HOGExtractor:
             hog_features, hog_image = self.extract_features(frame)
             # self.visualize_hog(frame, hog_image)
             processed_frames.append(hog_image)
-
         return processed_frames

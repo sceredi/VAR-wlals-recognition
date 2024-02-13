@@ -113,12 +113,12 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    # hog_frames = get_hog_frames(frames)
+    # hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
-    # edge_frames = get_edge_frames(skin_frames, plot=True)
+    # edge_frames = get_edge_frames(frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
-    flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
+    # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end)
     # contour_frames = detect_contour(frames, plot=True)
 
 
@@ -433,8 +433,8 @@ def process_video_pair(video_i, video_j):
     # print(f"skin_sequence1 len: {len(skin_sequence1)}")
     edge_sequence1 = flatten_frames(get_edge_frames(frames_i))
     print(f"edge_sequence1 len: {len(edge_sequence1)}")
-    contour_sequence1 = flatten_frames(detect_contour(frames_i))
-    print(f"contour_sequence1 len: {len(contour_sequence1)}")
+    # contour_sequence1 = flatten_frames(detect_contour(frames_i))
+    # print(f"contour_sequence1 len: {len(contour_sequence1)}")
     # flow_sequence1 = flatten_frames(get_flow_frames(frames_i))
     # print(f"flow_sequence1 len: {len(flow_sequence1)}")
 
@@ -447,8 +447,8 @@ def process_video_pair(video_i, video_j):
     # print(f"skin_sequence2 len: {len(skin_sequence2)}")
     edge_sequence2 = flatten_frames(get_edge_frames(frames_j))
     print(f"edge_sequence2 len: {len(edge_sequence2)}")
-    contour_sequence2 = flatten_frames(detect_contour(frames_j))
-    print(f"contour_sequence2 len: {len(contour_sequence2)}")
+    # contour_sequence2 = flatten_frames(detect_contour(frames_j))
+    # print(f"contour_sequence2 len: {len(contour_sequence2)}")
     # flow_sequence2 = flatten_frames(get_flow_frames(frames_j))
     # print(f"flow_sequence2 len: {len(flow_sequence2)}")
 
@@ -460,13 +460,13 @@ def process_video_pair(video_i, video_j):
     edge_sequence2 = standardize_features(edge_sequence2)
     # skin_sequence1 = standardize_features(skin_sequence1)
     # skin_sequence2 = standardize_features(skin_sequence2)
-    contour_sequence1 = standardize_features(contour_sequence1)
-    contour_sequence2 = standardize_features(contour_sequence2)
+    # contour_sequence1 = standardize_features(contour_sequence1)
+    # contour_sequence2 = standardize_features(contour_sequence2)
     # flow_sequence1 = standardize_features(flow_sequence1)
     # flow_sequence2 = standardize_features(flow_sequence2)
 
-    sequence1 = np.concatenate((hog_sequence1, haar_sequence1, edge_sequence1, contour_sequence1), axis=1)
-    sequence2 = np.concatenate((hog_sequence2, haar_sequence2, edge_sequence2, contour_sequence2), axis=1)
+    sequence1 = np.concatenate((hog_sequence1, haar_sequence1, edge_sequence1), axis=1)
+    sequence2 = np.concatenate((hog_sequence2, haar_sequence2, edge_sequence2), axis=1)
 
     similarity = dtw_kernel(sequence1, sequence2)
     # similarity_skin = dtw_kernel(skin_sequence1, skin_sequence2)
@@ -602,7 +602,7 @@ if __name__ == "__main__":
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
     # knn_classifier(dataset, glosses[:3])
-    svm_test_similarity(dataset, glosses[:10])
+    svm_test_similarity(dataset, glosses[1:3])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]

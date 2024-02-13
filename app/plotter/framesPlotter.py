@@ -12,7 +12,9 @@ class FramesPlotter:
 
     def plot_grid(self):
         num_frames = len(self.frames)
+        print(num_frames)
         side_length = int(math.ceil(math.sqrt(num_frames)))
+        print(side_length)
         _, axes = plt.subplots(side_length, side_length)
         axes = axes.flatten()
         for i, (frame, ax) in enumerate(zip(self.frames, axes)):
