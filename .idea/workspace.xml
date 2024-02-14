@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d1bf8091-e73c-454f-8058-4947e1b47185" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/sim/similarity_matrix_10_3_2.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/edge/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/edge/detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/extractor/contour_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/extractor/contour_extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/plotter/framesPlotter.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/plotter/framesPlotter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfm/cfm.png" beforeDir="false" afterPath="$PROJECT_DIR$/cfm/cfm.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/extractor/hog_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/extractor/hog_extractor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -143,7 +141,7 @@
       <workItem from="1706197300445" duration="1869000" />
       <workItem from="1706719833203" duration="14475000" />
       <workItem from="1706866867778" duration="23256000" />
-      <workItem from="1707821163544" duration="3663000" />
+      <workItem from="1707821163544" duration="10444000" />
     </task>
     <servers />
   </component>
@@ -162,7 +160,7 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/VAR_wlals_recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1707763917466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/VAR_wlals_recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1707908117674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wlasl_recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1705745757837" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wlasl_recognition$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1705845571056" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
   </component>

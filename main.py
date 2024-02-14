@@ -268,7 +268,12 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     print(selected_videos_test)
 
     # SIMILARITY MATRIX WITH DTW
-    X_train = similarity_matrix_training(selected_videos_train)
+    # X_train = similarity_matrix_training(selected_videos_train)
+    with open('sim/similarity_matrix_10_3_2.json', 'r') as file:
+        lines = file.read()
+    matrice = np.array(eval(lines), dtype=float)
+    print(matrice)
+    X_train = matrice
 
     X_test = np.zeros((len(selected_videos_test), len(X_train)))
     for i in range(len(X_test)):
@@ -602,7 +607,7 @@ if __name__ == "__main__":
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
     # knn_classifier(dataset, glosses[:3])
-    svm_test_similarity(dataset, glosses[1:3])
+    svm_test_similarity(dataset, glosses[:10])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
@@ -647,3 +652,4 @@ if __name__ == "__main__":
     end_time = time.perf_counter()
     execution_time = end_time - start_time
     print(f"Execution Time: {execution_time} seconds")
+

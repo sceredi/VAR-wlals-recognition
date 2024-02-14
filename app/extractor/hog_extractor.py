@@ -11,7 +11,7 @@ class HOGExtractor:
         frames: List["np.ndarray"],
         orientations=9,
         pixels_per_cell=(8, 8),
-        cells_per_block=(1, 1),
+        cells_per_block=(2, 2),
     ) -> None:
         self.frames = frames
         self.orientations = orientations
