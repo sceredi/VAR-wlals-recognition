@@ -9,6 +9,7 @@ from app.extractor.contour_extractor import ContourDetector
 from app.edge.detector import EdgeDetector
 from app.extractor.skin import SkinExtractor
 from app.haar.detector import HaarDetector
+from app.lbp.extractor import LPBExtractor
 
 
 class FeaturesContainer:
@@ -28,8 +29,10 @@ class FeaturesContainer:
         _, face_rects = self._get_haar_features(frames)
         skin_features = self.get_skin_features(frames, face_rects)
         print(f"skin_features shape: {np.array(skin_features).shape}")
+        lpb_frames = self.get_lpb_features(frames)
+        print(f"lpb_frames shape: {np.array(lpb_frames).shape}")
         return np.concatenate(
-            [hog_features, flow_frames, contour_features, edge_features, skin_features],
+            [hog_features, flow_frames, contour_features, edge_features, skin_features, lpb_frames],
             axis=1,
         )
 
@@ -74,3 +77,6 @@ class FeaturesContainer:
         if flatten:
             features = features.reshape(features.shape[0], -1)
         return features
+
+    def get_lpb_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
+        return LPBExtractor(frames).extract()
