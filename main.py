@@ -119,7 +119,7 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    # hog_frames = get_hog_frames(frames, plot=True)
+    hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(frames, plot=True)
@@ -594,9 +594,9 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    # for video in dataset.videos:
-    #     print("Plotting video: ", video.get_path())
-    #     plot_video(video)
+    for video in dataset.videos:
+        print("Plotting video: ", video.get_path())
+        plot_video(video)
     #
     # -------------------------------------
 
