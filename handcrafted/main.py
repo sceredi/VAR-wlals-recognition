@@ -491,7 +491,7 @@ def similarity_matrix(dataset: Dataset, gloss: str):
                 similarity_contour = 1.0
             else:
                 # similarity_hog, similarity_contour = process_video_pair(i, j, videos)
-                similarity = process_video_pair_std(i, j, videos)
+                similarity = process_video_pair(i, j, videos)
 
             sim_matrix[i, j] = similarity
             sim_matrix[j, i] = similarity
@@ -544,15 +544,10 @@ def similarity_matrix_training(videos):
             )
             print(f"--------------------------------------------")
 
-    # mean_sim_matrix_hog = np.mean(sim_matrix_hog)
-    # mean_sim_matrix_skin = np.mean(sim_matrix_skin)
-    # mean_sim_matrix_contour = np.mean(sim_matrix_contour)
-
-    # sim_dict = {
-    #     gloss: [mean_sim_matrix_hog, mean_sim_matrix_contour]
-    # }
-
-    return sim_matrix  # sim_dict
+    M = M + M.T - np.diag(M.diagonal())
+    np.set_printoptions(precision=17, suppress=True)
+    print(M)
+    return M
 
 
 def similarity_matrix_training(videos):
