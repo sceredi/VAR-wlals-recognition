@@ -20,7 +20,7 @@ from app.extractor.feature_extractor import FeatureExtractor
 from app.extractor.hog_extractor import HOGExtractor
 from app.extractor.skin import SkinExtractor
 from app.haar.detector import HaarDetector
-from app.pca.compute import compute_pca
+from app.pca.compute import custom_pca
 from app.plotter.framesPlotter import FramesPlotter
 from app.roi.extractor import RoiExtractor
 from app.flow.calculator import FlowCalculator
@@ -425,8 +425,8 @@ def process_video_pair(video_i, video_j):
 
     hog_sequence1 = standardize_features(hog_sequence1)
     hog_sequence2 = standardize_features(hog_sequence2)
-    haar_sequence1 = standardize_features(haar_sequence1)
-    haar_sequence2 = standardize_features(haar_sequence2)
+    # haar_sequence1 = standardize_features(haar_sequence1)
+    # haar_sequence2 = standardize_features(haar_sequence2)
     edge_sequence1 = standardize_features(edge_sequence1)
     edge_sequence2 = standardize_features(edge_sequence2)
     # skin_sequence1 = standardize_features(skin_sequence1)
@@ -436,8 +436,8 @@ def process_video_pair(video_i, video_j):
     # flow_sequence1 = standardize_features(flow_sequence1)
     # flow_sequence2 = standardize_features(flow_sequence2)
 
-    sequence1 = np.concatenate((hog_sequence1, haar_sequence1, edge_sequence1), axis=1)
-    sequence2 = np.concatenate((hog_sequence2, haar_sequence2, edge_sequence2), axis=1)
+    sequence1 = np.concatenate((hog_sequence1, edge_sequence1), axis=1)
+    sequence2 = np.concatenate((hog_sequence2, edge_sequence2), axis=1)
 
     similarity = dtw_kernel(sequence1, sequence2)
     # similarity_skin = dtw_kernel(skin_sequence1, skin_sequence2)
@@ -600,9 +600,9 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        print(f"features length: {len(video.features_container.get_all_features())}")
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     print(f"features length: {len(video.features_container.get_all_features())}")
         # plot_video(video)
 
     #
