@@ -193,15 +193,9 @@ def dtw_per_class(dataset: Dataset, glosses: List[str]):
     videos = [video for video in dataset.videos if video.gloss in glosses]
 
 
-def calculate_dtw_distance(sequences):
-    num_sequences = len(sequences)
-    dtw_matrix = np.zeros((num_sequences, num_sequences))
-    for i in range(num_sequences):
-        for j in range(i, num_sequences):
-            dtw_matrix[i, j] = fastdtw(sequences[i], sequences[j], dist=euclidean)[0]
-            dtw_matrix[j, i] = dtw_matrix[i, j]
-    return [row for row in dtw_matrix]
 
+def dtw_per_class(dataset: Dataset, glosses: List[str]):
+    videos = [video for video in dataset.videos if video.gloss in glosses]
 
 
 def svm_test(dataset: Dataset, glosses: List[str]):
