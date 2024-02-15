@@ -371,7 +371,7 @@ def fix_and_save(dataset: Dataset):
     for video in dataset.videos:
         print("Processing video: ", video.get_path())
         roi_frames = get_roi_frames(video, remove_background=True)
-        folder = "data/preprocessed/" + video.video_id
+        folder = "../data/preprocessed/" + video.video_id
         if not os.path.exists(folder):
             os.makedirs(folder)
         for i, frame in enumerate(roi_frames):
