@@ -151,7 +151,9 @@ def process_video(videos, glosses):
         print(f"Processing video {i}/{len(videos)}")
         i += 1
         print("Processing video: ", video.get_path())
-        roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
+        roi_frames = (
+            video.get_frames()
+        )  # get_roi_frames(video, remove_background=False)
         _, hog_frames = get_hog_frames(roi_frames)
         # haar_frames, face_rects = get_haar_frames(roi_frames)
         # skin_frames = get_skin_frames(roi_frames, face_rects)
@@ -188,10 +190,8 @@ def calculate_dtw_distance(sequences):
     return [row for row in dtw_matrix]
 
 
-
 def dtw_per_class(dataset: Dataset, glosses: List[str]):
     videos = [video for video in dataset.videos if video.gloss in glosses]
-
 
 
 def dtw_per_class(dataset: Dataset, glosses: List[str]):
@@ -227,7 +227,9 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     print(selected_videos_train)
     print(selected_videos_test)
 
-    X_train, X_test, Y_train, Y_test = process_video(selected_videos_train + selected_videos_test, glosses)
+    X_train, X_test, Y_train, Y_test = process_video(
+        selected_videos_train + selected_videos_test, glosses
+    )
 
     # X_train_dtw = [compute_dtw_distance(seq, X_train[0]) for seq in X_train]
     # X_test_dtw = [compute_dtw_distance(seq, X_test[0]) for seq in X_test]
@@ -311,7 +313,9 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
         for j in range(len(X_train)):
             z += 1
             print(f"Processing video: {z}/{zz}")
-            similarity = process_video_pair(selected_videos_test[i], selected_videos_train[j])
+            similarity = process_video_pair(
+                selected_videos_test[i], selected_videos_train[j]
+            )
             X_test[i, j] = similarity
 
     Y_train = []
@@ -366,10 +370,10 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     cfm_plot.figure.savefig("cfm/cfm.png")
 
     plt.figure(figsize=(10, 7))
-    plt.scatter(X_test[:, 0], Y_test, c=Y_pred, cmap='viridis', edgecolors='k')
-    plt.title('Classificazioni risultanti da SVC con kernel RBF e DTW')
-    plt.xlabel('DTW Distance')
-    plt.ylabel('Classe')
+    plt.scatter(X_test[:, 0], Y_test, c=Y_pred, cmap="viridis", edgecolors="k")
+    plt.title("Classificazioni risultanti da SVC con kernel RBF e DTW")
+    plt.xlabel("DTW Distance")
+    plt.ylabel("Classe")
     plt.show()
 
 
@@ -393,51 +397,54 @@ def dtw_kernel(sequence1, sequence2):
     return similarity
 
 
-def process_video_pair(video_i, video_j):
+def process_video_pair(video_i: Video, video_j: Video):
     print(f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}")
+    sequence1 = video_i.features_container.get_all_features()
 
-    frames_i = video_i.get_frames()
-    frames_j = video_j.get_frames()
+    sequence2 = video_j.features_container.get_all_features()
 
-    _, hog_frames_i = get_hog_frames(frames_i)
-    hog_sequence1 = flatten_frames(hog_frames_i)
-    # haar_frames1, face_rects1 = get_haar_frames(frames_i)
-    # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
-    # print(f"skin_sequence1 len: {len(skin_sequence1)}")
-    edge_sequence1 = flatten_frames(get_edge_frames(frames_i))
-    print(f"edge_sequence1 len: {len(edge_sequence1)}")
-    # contour_sequence1 = flatten_frames(detect_contour(frames_i))
-    # print(f"contour_sequence1 len: {len(contour_sequence1)}")
-    # flow_sequence1 = flatten_frames(get_flow_frames(frames_i))
-    # print(f"flow_sequence1 len: {len(flow_sequence1)}")
-
-    _, hog_frames_j = get_hog_frames(frames_j)
-    hog_sequence2 = flatten_frames(hog_frames_j)
-    # haar_frames2, face_rects2 = get_haar_frames(frames_j)
-    # skin_sequence2 = flatten_frames(get_skin_frames(frames_j, face_rects2))
-    # print(f"skin_sequence2 len: {len(skin_sequence2)}")
-    edge_sequence2 = flatten_frames(get_edge_frames(frames_j))
-    print(f"edge_sequence2 len: {len(edge_sequence2)}")
-    # contour_sequence2 = flatten_frames(detect_contour(frames_j))
-    # print(f"contour_sequence2 len: {len(contour_sequence2)}")
-    # flow_sequence2 = flatten_frames(get_flow_frames(frames_j))
-    # print(f"flow_sequence2 len: {len(flow_sequence2)}")
-
-    hog_sequence1 = standardize_features(hog_sequence1)
-    hog_sequence2 = standardize_features(hog_sequence2)
-    # haar_sequence1 = standardize_features(haar_sequence1)
-    # haar_sequence2 = standardize_features(haar_sequence2)
-    edge_sequence1 = standardize_features(edge_sequence1)
-    edge_sequence2 = standardize_features(edge_sequence2)
-    # skin_sequence1 = standardize_features(skin_sequence1)
-    # skin_sequence2 = standardize_features(skin_sequence2)
-    # contour_sequence1 = standardize_features(contour_sequence1)
-    # contour_sequence2 = standardize_features(contour_sequence2)
-    # flow_sequence1 = standardize_features(flow_sequence1)
-    # flow_sequence2 = standardize_features(flow_sequence2)
-
-    sequence1 = np.concatenate((hog_sequence1, edge_sequence1), axis=1)
-    sequence2 = np.concatenate((hog_sequence2, edge_sequence2), axis=1)
+    # frames_i = video_i.get_frames()
+    # frames_j = video_j.get_frames()
+    #
+    # _, hog_frames_i = get_hog_frames(frames_i)
+    # hog_sequence1 = flatten_frames(hog_frames_i)
+    # # haar_frames1, face_rects1 = get_haar_frames(frames_i)
+    # # skin_sequence1 = flatten_frames(get_skin_frames(frames_i, face_rects1))
+    # # print(f"skin_sequence1 len: {len(skin_sequence1)}")
+    # edge_sequence1 = flatten_frames(get_edge_frames(frames_i))
+    # print(f"edge_sequence1 len: {len(edge_sequence1)}")
+    # # contour_sequence1 = flatten_frames(detect_contour(frames_i))
+    # # print(f"contour_sequence1 len: {len(contour_sequence1)}")
+    # # flow_sequence1 = flatten_frames(get_flow_frames(frames_i))
+    # # print(f"flow_sequence1 len: {len(flow_sequence1)}")
+    #
+    # _, hog_frames_j = get_hog_frames(frames_j)
+    # hog_sequence2 = flatten_frames(hog_frames_j)
+    # # haar_frames2, face_rects2 = get_haar_frames(frames_j)
+    # # skin_sequence2 = flatten_frames(get_skin_frames(frames_j, face_rects2))
+    # # print(f"skin_sequence2 len: {len(skin_sequence2)}")
+    # edge_sequence2 = flatten_frames(get_edge_frames(frames_j))
+    # print(f"edge_sequence2 len: {len(edge_sequence2)}")
+    # # contour_sequence2 = flatten_frames(detect_contour(frames_j))
+    # # print(f"contour_sequence2 len: {len(contour_sequence2)}")
+    # # flow_sequence2 = flatten_frames(get_flow_frames(frames_j))
+    # # print(f"flow_sequence2 len: {len(flow_sequence2)}")
+    #
+    # hog_sequence1 = standardize_features(hog_sequence1)
+    # hog_sequence2 = standardize_features(hog_sequence2)
+    # # haar_sequence1 = standardize_features(haar_sequence1)
+    # # haar_sequence2 = standardize_features(haar_sequence2)
+    # edge_sequence1 = standardize_features(edge_sequence1)
+    # edge_sequence2 = standardize_features(edge_sequence2)
+    # # skin_sequence1 = standardize_features(skin_sequence1)
+    # # skin_sequence2 = standardize_features(skin_sequence2)
+    # # contour_sequence1 = standardize_features(contour_sequence1)
+    # # contour_sequence2 = standardize_features(contour_sequence2)
+    # # flow_sequence1 = standardize_features(flow_sequence1)
+    # # flow_sequence2 = standardize_features(flow_sequence2)
+    #
+    # sequence1 = np.concatenate((hog_sequence1, edge_sequence1), axis=1)
+    # sequence2 = np.concatenate((hog_sequence2, edge_sequence2), axis=1)
 
     similarity = dtw_kernel(sequence1, sequence2)
     # similarity_skin = dtw_kernel(skin_sequence1, skin_sequence2)
@@ -505,7 +512,9 @@ def similarity_matrix(dataset: Dataset, gloss: str):
             # sim_matrix_contour[i, j] = similarity_contour
             # sim_matrix_contour[j, i] = similarity_contour
 
-            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}")
+            print(
+                f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix[i, j]}"
+            )
             # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_hog[i, j]}")
             # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_skin[i, j]}")
             # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_contour[i, j]}")
@@ -521,6 +530,7 @@ def similarity_matrix(dataset: Dataset, gloss: str):
 
     return sim_matrix  # sim_dict
 
+
 def similarity_matrix_training(videos):
     n = len(videos)
     M = np.zeros((n, n))
@@ -536,7 +546,9 @@ def similarity_matrix_training(videos):
             M[i, j] = similarity
             # M[j, i] = similarity
 
-            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}")
+            print(
+                f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}"
+            )
             print(f"--------------------------------------------")
 
     # mean_sim_matrix_hog = np.mean(sim_matrix_hog)
@@ -565,7 +577,9 @@ def similarity_matrix_training(videos):
             M[i, j] = similarity
             # M[j, i] = similarity
 
-            print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}")
+            print(
+                f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}"
+            )
             print(f"--------------------------------------------")
     M = M + M.T - np.diag(M.diagonal())
     np.set_printoptions(precision=17, suppress=True)
@@ -603,7 +617,7 @@ if __name__ == "__main__":
     # for video in dataset.videos:
     #     print("Plotting video: ", video.get_path())
     #     print(f"features length: {len(video.features_container.get_all_features())}")
-        # plot_video(video)
+    # plot_video(video)
 
     #
     # -------------------------------------

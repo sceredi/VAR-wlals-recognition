@@ -113,7 +113,3 @@ class Video:
         new_frames = (new_frames * 255.0).astype(np.uint8)
 
         return new_frames
-
-    
-    def get_features_container(self) -> FeaturesContainer:
-        return self.features_container
