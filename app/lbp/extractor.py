@@ -5,12 +5,12 @@ import cv2
 from skimage.feature import local_binary_pattern
 
 
-class LPBExtractor:
+class LBPExtractor:
     def __init__(self, frames: List["np.ndarray"]) -> None:
         self.frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) for frame in frames]
 
     def extract_single(
-        self, frame: "np.ndarray", radius: int = 1, n_points: int = 8
+        self, frame: "np.ndarray", radius: int = 1, n_points: int = 25
     ) -> "np.ndarray":
         lbp = local_binary_pattern(frame, n_points, radius, method="uniform")
 

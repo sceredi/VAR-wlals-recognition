@@ -140,7 +140,7 @@ def flatten_frames(frames):
     return new_frames
 
 
-def process_video(videos, glosses):
+def process_video(videos: List[Video], glosses):
     X_train = []
     Y_train = []
     X_test = []
@@ -151,21 +151,11 @@ def process_video(videos, glosses):
         print(f"Processing video {i}/{len(videos)}")
         i += 1
         print("Processing video: ", video.get_path())
-        roi_frames = (
-            video.get_frames()
-        )  # get_roi_frames(video, remove_background=False)
-        _, hog_frames = get_hog_frames(roi_frames)
-        # haar_frames, face_rects = get_haar_frames(roi_frames)
-        # skin_frames = get_skin_frames(roi_frames, face_rects)
-        # edge_frames = get_edge_frames(roi_frames)
-        contour_frames = detect_contour(roi_frames)
+        frames = video.get_frames(last_frame=240)
+        hog_features = video.features_container.get_hog_features(frames)
 
-        _, hog_frames = flatten_frames(hog_frames)
-        # skin_frames = flatten_frames(skin_frames)
-        # edge_frames = flatten_frames(edge_frames)
-        contour_frames = flatten_frames(contour_frames)
 
-        features = np.concatenate((hog_frames, contour_frames), axis=1)
+        features = np.concatenate((hog_features), axis=1)
         print(features.shape)
         if video.split == "train":
             X_train.append(features)
@@ -202,8 +192,8 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     # videos = [video for video in dataset.videos if video.gloss in glosses]
     # X_train, X_test, Y_train, Y_test = process_video(videos, glosses)
 
-    max_train_videos_per_gloss = 10
-    max_test_videos_per_gloss = 10
+    max_train_videos_per_gloss = 3
+    max_test_videos_per_gloss = 2
     selected_videos_train = []
     selected_videos_test = []
 
@@ -399,12 +389,13 @@ def dtw_kernel(sequence1, sequence2):
 
 def process_video_pair(video_i: Video, video_j: Video):
     print(f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}")
-    sequence1 = video_i.features_container.get_all_features()
 
-    sequence2 = video_j.features_container.get_all_features()
-
-    # frames_i = video_i.get_frames()
-    # frames_j = video_j.get_frames()
+    frames_i = video_i.get_frames()
+    frames_j = video_j.get_frames()
+    hog_features_i, _ = video_i.features_container.get_hog_features(frames_i)
+    hog_features_j, _ = video_j.features_container.get_hog_features(frames_j)
+    lbp_features_i = video_i.features_container.get_lbp_features(frames_i)
+    lbp_features_j = video_j.features_container.get_lbp_features(frames_j)
     #
     # _, hog_frames_i = get_hog_frames(frames_i)
     # hog_sequence1 = flatten_frames(hog_frames_i)
@@ -430,8 +421,10 @@ def process_video_pair(video_i: Video, video_j: Video):
     # # flow_sequence2 = flatten_frames(get_flow_frames(frames_j))
     # # print(f"flow_sequence2 len: {len(flow_sequence2)}")
     #
-    # hog_sequence1 = standardize_features(hog_sequence1)
-    # hog_sequence2 = standardize_features(hog_sequence2)
+    hog_sequence1 = standardize_features(hog_features_i)
+    hog_sequence2 = standardize_features(hog_features_j)
+    lbp_sequence1 = standardize_features(lbp_features_i)
+    lbp_sequence2 = standardize_features(lbp_features_j)
     # # haar_sequence1 = standardize_features(haar_sequence1)
     # # haar_sequence2 = standardize_features(haar_sequence2)
     # edge_sequence1 = standardize_features(edge_sequence1)
@@ -443,8 +436,8 @@ def process_video_pair(video_i: Video, video_j: Video):
     # # flow_sequence1 = standardize_features(flow_sequence1)
     # # flow_sequence2 = standardize_features(flow_sequence2)
     #
-    # sequence1 = np.concatenate((hog_sequence1, edge_sequence1), axis=1)
-    # sequence2 = np.concatenate((hog_sequence2, edge_sequence2), axis=1)
+    sequence1 = np.concatenate((hog_sequence1, lbp_sequence1), axis=1)
+    sequence2 = np.concatenate((hog_sequence2, lbp_sequence2), axis=1)
 
     similarity = dtw_kernel(sequence1, sequence2)
     # similarity_skin = dtw_kernel(skin_sequence1, skin_sequence2)

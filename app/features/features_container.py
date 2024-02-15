@@ -1,7 +1,9 @@
 from typing import List, Tuple
 import cv2
+from matplotlib.cbook import flatten
 
 import numpy as np
+from app.color_histogram.extractor import ColorHistogram
 
 from app.extractor.hog_extractor import HOGExtractor
 from app.flow.calculator import FlowCalculator
@@ -9,8 +11,7 @@ from app.extractor.contour_extractor import ContourDetector
 from app.edge.detector import EdgeDetector
 from app.extractor.skin import SkinExtractor
 from app.haar.detector import HaarDetector
-from app.lbp.extractor import LPBExtractor
-
+from app.lbp.extractor import LBPExtractor
 
 class FeaturesContainer:
     def __init__(self, video) -> None:
@@ -18,7 +19,7 @@ class FeaturesContainer:
 
     def get_all_features(self, until_frame_number: None | int = None) -> "np.ndarray":
         frames = self.video.get_frames(last_frame=until_frame_number)
-        hog_features, _ = self.get_hog_features(frames)
+        # hog_features, _ = self.get_hog_features(frames)
         # print(f"hog_features shape: {np.array(hog_features).shape}")
         # flow_frames = self.get_flow_features(frames)
         # print(f"flow_frames shape: {np.array(flow_frames).shape}")
@@ -26,13 +27,15 @@ class FeaturesContainer:
         # print(f"contour_features shape: {np.array(contour_features).shape}")
         # edge_features = self.get_edge_features(frames)
         # print(f"edge_features shape: {np.array(edge_features).shape}")
-        # _, face_rects = self._get_haar_features(frames)
-        # skin_features = self.get_skin_features(frames, face_rects)
-        # print(f"skin_features shape: {np.array(skin_features).shape}")
-        lbp_frames = self.get_lbp_features(frames)
-        # print(f"lpb_frames shape: {np.array(lpb_frames).shape}")
+        _, face_rects = self._get_haar_features(frames)
+        skin_features = self.get_skin_features(frames, face_rects, flatten = False)
+        print(f"skin_features shape: {np.array(skin_features).shape}")
+        lbp_frames = self.get_lbp_features(skin_features)
+        print(f"lbp_frames shape: {np.array(lbp_frames).shape}")
+        # color_histogram = self.get_color_histogram(frames, flatten=True)
+        # print(f"color_histogram shape: {np.array(color_histogram).shape}")
         return np.concatenate(
-            [hog_features, lbp_frames],
+            [lbp_frames],
             axis=1,
         )
 
@@ -79,4 +82,10 @@ class FeaturesContainer:
         return features
 
     def get_lbp_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
-        return LPBExtractor(frames).extract()
+        return LBPExtractor(frames).extract()
+
+    def get_color_histogram(self, frames, to_color = cv2.COLOR_BGR2HSV, flatten: bool = True):
+        features = ColorHistogram(frames).extract(to_color)
+        if flatten:
+            features = features.reshape(features.shape[0], -1)
+        return features
