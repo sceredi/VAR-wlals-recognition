@@ -30,6 +30,7 @@ class HOGExtractor:
     def extract_features(self, frame: "np.ndarray") -> Tuple["np.ndarray", "np.ndarray"]:
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         hog_features, hog_image = hog(gray_frame, **self.hog_params)
+        hog_image = (hog_image * 255).astype(np.uint8)
         return hog_features, hog_image
 
     def visualize_hog(self, frame: "np.ndarray", hog_image: "np.ndarray") -> None:

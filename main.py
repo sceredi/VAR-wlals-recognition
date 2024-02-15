@@ -62,7 +62,7 @@ def get_edge_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"
     return edge_frames
 
 
-def get_flow_frames(frames: List["np.ndarray"],last_frame_index: int = -1, plot=False) -> List["np.ndarray"]:
+def get_flow_frames(frames: List["np.ndarray"], last_frame_index: int = -1, plot=False) -> List["np.ndarray"]:
     if last_frame_index == -1:
         last_frame_index = len(frames) - 1
     flow_calculator = FlowCalculator(frames, last_frame_index)
@@ -113,7 +113,7 @@ def get_skin_frames(frames: List["np.ndarray"], face_rects, plot=False):
 
 def plot_video(current_video: Video) -> None:
     frames = current_video.get_frames()
-    # hog_frames = get_hog_frames(frames, plot=True)
+    hog_frames = get_hog_frames(frames, plot=True)
     # haar_frames, face_rects = get_haar_frames(frames)
     # skin_frames = get_skin_frames(frames, face_rects)
     # edge_frames = get_edge_frames(frames, plot=True)
@@ -276,8 +276,13 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     X_train = matrice
 
     X_test = np.zeros((len(selected_videos_test), len(X_train)))
+
+    z = 0
+    zz = len(selected_videos_test) * len(selected_videos_train)
     for i in range(len(X_test)):
         for j in range(len(X_train)):
+            z += 1
+            print(f"Processing video: {z}/{zz}")
             similarity = process_video_pair(selected_videos_test[i], selected_videos_train[j])
             X_test[i, j] = similarity
 
@@ -311,7 +316,7 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
 
     score = svc.score(X_test, Y_test)
     print("Correct classification rate:", score)
-    print(f"Accuracy: {score*100:.2f}%")
+    print(f"Accuracy: {score * 100:.2f}%")
 
     n_classes = len(set(Y_train))
 
@@ -338,69 +343,6 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     plt.xlabel('DTW Distance')
     plt.ylabel('Classe')
     plt.show()
-
-
-def knn_classifier(dataset: Dataset, glosses: List[str]):
-    # c = 0
-    # videos = [video for video in dataset.videos if video.gloss in glosses and c < 5 and (c := c + 1)]
-
-    max_train_videos_per_gloss = 10
-    max_test_videos_per_gloss = 10
-    selected_videos_train = []
-    selected_videos_test = []
-
-    train_videos_per_gloss_count = {}
-    test_videos_per_gloss_count = {}
-
-    for video in dataset.videos:
-        if video.gloss in glosses:
-            if video.split == "train":
-                count_train = train_videos_per_gloss_count.get(video.gloss, 0)
-                if count_train < max_train_videos_per_gloss:
-                    train_videos_per_gloss_count[video.gloss] = count_train + 1
-                    selected_videos_train.append(video)
-            if video.split == "test" or video.split == "val":
-                count_test = test_videos_per_gloss_count.get(video.gloss, 0)
-                if count_test < max_test_videos_per_gloss:
-                    test_videos_per_gloss_count[video.gloss] = count_test + 1
-                    selected_videos_test.append(video)
-
-    gc.collect()
-    print(selected_videos_train)
-    print(selected_videos_test)
-
-    X_train, X_test, Y_train, Y_test = process_video(selected_videos_train + selected_videos_test, glosses)
-
-    X_train = TimeSeriesResampler(sz=50).fit_transform(X_train)
-    X_test = TimeSeriesResampler(sz=50).fit_transform(X_test)
-
-    print(f"X_train shape: {X_train.shape}")
-    print(f"Y_train shape: {len(Y_train)}")
-    knn_classifier = KNeighborsTimeSeriesClassifier(n_neighbors=5,
-                                                    metric='dtw',
-                                                    n_jobs=-1,
-                                                    verbose=10)  # KNeighborsClassifier(n_neighbors=3, metric=dtw_kernel)
-    print("Training KNeighborsClassifier...")
-    knn_classifier.fit(X_train, Y_train)
-    print("Testing KNeighborsClassifier...")
-    print(f"X_test shape: {X_test.shape}")
-    print(f"Y_test shape: {len(Y_test)}")
-    Y_pred = knn_classifier.predict(X_test)
-
-    correct_predictions = np.sum(Y_pred == Y_test)
-    total_predictions = len(Y_test)
-    print("X_test", X_test)
-    print("Y_test", Y_test)
-    print("Y_pred", Y_pred)
-
-    accuracy = correct_predictions / total_predictions * 100
-    print(f"Accuracy: {accuracy:.2f}%")
-
-    cfm = confusion_matrix(Y_test, Y_pred)
-    df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
-    plt.figure(figsize=(10, 7))
-    cfm_plot = sn.heatmap(df_cfm, annot=True)
-    cfm_plot.figure.savefig("cfm/cfm4.png")
 
 
 def fix_and_save(dataset: Dataset):
@@ -549,6 +491,7 @@ def similarity_matrix(dataset: Dataset, gloss: str):
 
     return sim_matrix  # sim_dict
 
+
 def similarity_matrix_training(videos):
     n = len(videos)
     M = np.zeros((n, n))
@@ -599,15 +542,15 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    # for video in dataset.videos:
-    #     print("Plotting video: ", video.get_path())
-    #     plot_video(video)
+    for video in dataset.videos:
+        print("Plotting video: ", video.get_path())
+        plot_video(video)
     #
     # -------------------------------------
 
     # svm_test(dataset, glosses[:3])  # con 10 10: 55.56%
     # knn_classifier(dataset, glosses[:3])
-    svm_test_similarity(dataset, glosses[:10])
+    # svm_test_similarity(dataset, glosses[:10])
 
     # for gloss in glosses:
     #     videos = [video for video in dataset.videos if video.gloss == gloss and video.split == "train"]
@@ -652,4 +595,3 @@ if __name__ == "__main__":
     end_time = time.perf_counter()
     execution_time = end_time - start_time
     print(f"Execution Time: {execution_time} seconds")
-
