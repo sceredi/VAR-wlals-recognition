@@ -598,8 +598,8 @@ def aggregate_similarity_matrix(similarity_matrix, method="mean"):
 if __name__ == "__main__":
     start_time = time.perf_counter()
     # -------------------------------------
-    dataset = Dataset("data/WLASL_v0.3.json")
-    glosses = pd.read_csv("data/wlasl_class_list.txt", sep="\t", header=None)
+    dataset = Dataset("../data/WLASL_v0.3.json")
+    glosses = pd.read_csv("../data/wlasl_class_list.txt", sep="\t", header=None)
     glosses = glosses[1].tolist()
     # -------------------------------------
 

@@ -51,7 +51,7 @@ class Video:
         return os.path.isfile(self.get_path()) == False
 
     def get_path(self) -> str:
-        return f"data/videos/{self.video_id}.mp4"
+        return f"../data/videos/{self.video_id}.mp4"
 
     def get_video_capture(self) -> "cv2.VideoCapture":
         if self.video_capture is None:
