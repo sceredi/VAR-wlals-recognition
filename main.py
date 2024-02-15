@@ -152,13 +152,13 @@ def process_video(videos, glosses):
         i += 1
         print("Processing video: ", video.get_path())
         roi_frames = video.get_frames()  # get_roi_frames(video, remove_background=False)
-        hog_frames = get_hog_frames(roi_frames)
+        _, hog_frames = get_hog_frames(roi_frames)
         # haar_frames, face_rects = get_haar_frames(roi_frames)
         # skin_frames = get_skin_frames(roi_frames, face_rects)
         # edge_frames = get_edge_frames(roi_frames)
         contour_frames = detect_contour(roi_frames)
 
-        hog_frames = flatten_frames(hog_frames)
+        _, hog_frames = flatten_frames(hog_frames)
         # skin_frames = flatten_frames(skin_frames)
         # edge_frames = flatten_frames(edge_frames)
         contour_frames = flatten_frames(contour_frames)
@@ -288,12 +288,12 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     print(selected_videos_test)
 
     # SIMILARITY MATRIX WITH DTW
-    # X_train = similarity_matrix_training(selected_videos_train)
-    with open('sim/similarity_matrix_10_3_2.json', 'r') as file:
-        lines = file.read()
-    matrice = np.array(eval(lines), dtype=float)
-    print(matrice)
-    X_train = matrice
+    X_train = similarity_matrix_training(selected_videos_train)
+    # with open('sim/similarity_matrix_10_3_2.json', 'r') as file:
+    #     lines = file.read()
+    # matrice = np.array(eval(lines), dtype=float)
+    # print(matrice)
+    # X_train = matrice
 
     X_test = np.zeros((len(selected_videos_test), len(X_train)))
 
@@ -391,7 +391,8 @@ def process_video_pair(video_i, video_j):
     frames_i = video_i.get_frames()
     frames_j = video_j.get_frames()
 
-    hog_sequence1 = flatten_frames(get_hog_frames(frames_i))
+    _, hog_frames1 = get_hog_frames(frames_i)
+    hog_sequence1 = flatten_frames(hog_frames1)
     print(f"hog_sequence1 len: {len(hog_sequence1)}")
     haar_frames1, face_rects1 = get_haar_frames(frames_i)
     haar_sequence1 = flatten_frames(haar_frames1)
@@ -594,9 +595,9 @@ if __name__ == "__main__":
 
     # -------------------------------------
 
-    for video in dataset.videos:
-        print("Plotting video: ", video.get_path())
-        plot_video(video)
+    # for video in dataset.videos:
+    #     print("Plotting video: ", video.get_path())
+    #     plot_video(video)
     #
     # -------------------------------------
 
