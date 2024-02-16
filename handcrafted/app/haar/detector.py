@@ -4,7 +4,7 @@ from typing import List
 import cv2
 import numpy as np
 
-from app.dataset.frames import Frame, Frames
+from handcrafted.app.dataset.frames import Frame, Frames
 
 
 class HaarDetector:

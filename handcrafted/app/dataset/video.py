@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from scipy.interpolate import interp1d
 
-from app.features.features_container import FeaturesContainer
+from handcrafted.app.features.features_container import FeaturesContainer
 
 
 class Video:
@@ -51,7 +51,7 @@ class Video:
         return os.path.isfile(self.get_path()) == False
 
     def get_path(self) -> str:
-        return f"../data/videos/{self.video_id}.mp4"
+        return f"data/videos/{self.video_id}.mp4"
 
     def get_video_capture(self) -> "cv2.VideoCapture":
         if self.video_capture is None:
