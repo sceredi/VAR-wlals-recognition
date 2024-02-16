@@ -7,4 +7,4 @@ class Launcher:
         print(len(self._load_data().videos))
 
     def _load_data(self) -> Dataset:
-        return Dataset("../../data/WLASL_v0.3.json")
+        return Dataset("data/WLASL_v0.3.json")
