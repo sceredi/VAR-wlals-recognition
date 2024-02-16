@@ -16,5 +16,8 @@ scikit-learn==1.2.2
 seaborn==0.13.2
 sklearn-pandas==2.2.0
 tensorflow==2.15.0
+torch==2.2.0
+torchsummary==1.5.1
+torchvision==0.17.0
 tslearn==0.6.3
 opendatasets==0.1.22
