@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from app.dataset.video import Video
+from handcrafted.app.dataset.video import Video
 
 
 class Dataset:

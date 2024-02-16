@@ -1,5 +1,5 @@
 import cv2
-from app.utilities.utils import video_to_img
+from handcrafted.app.utilities.utils import video_to_img
 
 
 def preprocess(video_src):

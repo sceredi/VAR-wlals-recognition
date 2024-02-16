@@ -12,18 +12,18 @@ from tslearn.datasets import CachedDatasets
 from tslearn.metrics import cdist_dtw
 from tslearn.svm import TimeSeriesSVC
 
-from app.dataset.dataset import Dataset
-from app.dataset.video import Video
-from app.edge.detector import EdgeDetector
-from app.extractor.contour_extractor import ContourDetector
-from app.extractor.feature_extractor import FeatureExtractor
-from app.extractor.hog_extractor import HOGExtractor
-from app.extractor.skin import SkinExtractor
-from app.haar.detector import HaarDetector
-from app.pca.compute import custom_pca
-from app.plotter.framesPlotter import FramesPlotter
-from app.roi.extractor import RoiExtractor
-from app.flow.calculator import FlowCalculator
+from handcrafted.app.dataset.dataset import Dataset
+from handcrafted.app.dataset.video import Video
+from handcrafted.app.edge.detector import EdgeDetector
+from handcrafted.app.extractor.contour_extractor import ContourDetector
+from handcrafted.app.extractor.feature_extractor import FeatureExtractor
+from handcrafted.app.extractor.hog_extractor import HOGExtractor
+from handcrafted.app.extractor.skin import SkinExtractor
+from handcrafted.app.haar.detector import HaarDetector
+from handcrafted.app.pca.compute import custom_pca
+from handcrafted.app.plotter.framesPlotter import FramesPlotter
+from handcrafted.app.roi.extractor import RoiExtractor
+from handcrafted.app.flow.calculator import FlowCalculator
 import time
 from scipy.spatial.distance import euclidean, cdist
 from sklearn.svm import SVC, LinearSVC
@@ -38,7 +38,7 @@ from tslearn.preprocessing import TimeSeriesScalerMinMax, TimeSeriesResampler
 from sklearn.preprocessing import MinMaxScaler, RobustScaler
 from sklearn.preprocessing import StandardScaler
 
-from app.utilities.file_zipper import FileZipper
+from handcrafted.app.utilities.file_zipper import FileZipper
 
 
 def plot_frames(frames: List["np.ndarray"], is_gray_scale=False) -> None:
@@ -371,7 +371,7 @@ def fix_and_save(dataset: Dataset):
     for video in dataset.videos:
         print("Processing video: ", video.get_path())
         roi_frames = get_roi_frames(video, remove_background=True)
-        folder = "../data/preprocessed/" + video.video_id
+        folder = "data/preprocessed/" + video.video_id
         if not os.path.exists(folder):
             os.makedirs(folder)
         for i, frame in enumerate(roi_frames):
@@ -550,31 +550,6 @@ def similarity_matrix_training(videos):
     return M
 
 
-def similarity_matrix_training(videos):
-    n = len(videos)
-    M = np.zeros((n, n))
-    print(f"Number of videos: {n}")
-    print(f"--------------------------------------------")
-    z = 0
-    zz = (((n * n) - n) // 2) + n
-    for i in range(n):
-        for j in range(i, n):
-            z += 1
-            print(f"Processing video: {z}/{zz}")
-            similarity = 1.0 if i == j else process_video_pair(videos[i], videos[j])
-            M[i, j] = similarity
-            # M[j, i] = similarity
-
-            print(
-                f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}"
-            )
-            print(f"--------------------------------------------")
-    M = M + M.T - np.diag(M.diagonal())
-    np.set_printoptions(precision=17, suppress=True)
-    print(M)
-    return M
-
-
 def aggregate_similarity_matrix(similarity_matrix, method="mean"):
     if method == "mean":
         return np.mean(similarity_matrix)
@@ -593,8 +568,8 @@ def aggregate_similarity_matrix(similarity_matrix, method="mean"):
 if __name__ == "__main__":
     start_time = time.perf_counter()
     # -------------------------------------
-    dataset = Dataset("../data/WLASL_v0.3.json")
-    glosses = pd.read_csv("../data/wlasl_class_list.txt", sep="\t", header=None)
+    dataset = Dataset("data/WLASL_v0.3.json")
+    glosses = pd.read_csv("data/wlasl_class_list.txt", sep="\t", header=None)
     glosses = glosses[1].tolist()
     # -------------------------------------
 

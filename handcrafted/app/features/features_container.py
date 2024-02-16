@@ -3,15 +3,15 @@ import cv2
 from matplotlib.cbook import flatten
 
 import numpy as np
-from app.color_histogram.extractor import ColorHistogram
+from handcrafted.app.color_histogram.extractor import ColorHistogram
 
-from app.extractor.hog_extractor import HOGExtractor
-from app.flow.calculator import FlowCalculator
-from app.extractor.contour_extractor import ContourDetector
-from app.edge.detector import EdgeDetector
-from app.extractor.skin import SkinExtractor
-from app.haar.detector import HaarDetector
-from app.lbp.extractor import LBPExtractor
+from handcrafted.app.extractor.hog_extractor import HOGExtractor
+from handcrafted.app.flow.calculator import FlowCalculator
+from handcrafted.app.extractor.contour_extractor import ContourDetector
+from handcrafted.app.edge.detector import EdgeDetector
+from handcrafted.app.extractor.skin import SkinExtractor
+from handcrafted.app.haar.detector import HaarDetector
+from handcrafted.app.lbp.extractor import LBPExtractor
 
 class FeaturesContainer:
     def __init__(self, video) -> None:
