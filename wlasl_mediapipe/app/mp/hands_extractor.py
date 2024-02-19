@@ -39,7 +39,6 @@ class MediapipeHandsExtractor:
             frame_rgb = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
             frame_landmarks = self._process_frame(frame_rgb)
             landmarks.append(frame_landmarks)
-            print(frame_landmarks)
             annotated_frame = draw_hand_landmarks_on_image(frame, frame_landmarks)
             annotated_frames.append(annotated_frame)
         return landmarks, annotated_frames
