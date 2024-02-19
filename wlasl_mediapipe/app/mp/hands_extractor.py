@@ -12,7 +12,7 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_drawer import (
 )
 
 
-class MediapipeHandsHelper:
+class MediapipeHandsExtractor:
     """Wrapper for mediapipe Hands class"""
 
     def __init__(

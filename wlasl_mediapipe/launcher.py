@@ -3,13 +3,13 @@ from typing import List
 import pandas as pd
 from handcrafted.app.dataset.dataset import Dataset
 from handcrafted.app.plotter.framesPlotter import FramesPlotter
-from wlasl_mediapipe.app.utils.mp.hands import MediapipeHandsHelper
+from wlasl_mediapipe.app.mp.hands_extractor import MediapipeHandsExtractor
 
 class Launcher:
     def start(self) -> None:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
-        _, frames = MediapipeHandsHelper().process_video(self._load_data().videos[0])
+        landmarks, frames = MediapipeHandsExtractor().process_video(self._load_data().videos[0])
         FramesPlotter(frames, to_rgb=False).plot_grid()
 
     def _load_data(self) -> Dataset:
