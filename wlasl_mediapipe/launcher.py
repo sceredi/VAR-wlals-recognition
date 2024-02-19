@@ -10,7 +10,7 @@ class Launcher:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
         _, frames = MediapipeHandsHelper().process_video(self._load_data().videos[0])
-        FramesPlotter(frames).plot_grid()
+        FramesPlotter(frames, to_rgb=False).plot_grid()
 
     def _load_data(self) -> Dataset:
         return Dataset("data/WLASL_v0.3.json")
