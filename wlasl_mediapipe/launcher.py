@@ -20,4 +20,4 @@ class Launcher:
 
     def analyze(self, videos) -> None:
         for video in videos:
-            MediapipeVideo(video).get_pose()
+            MediapipeVideo(video).get_poses(plot=False)
