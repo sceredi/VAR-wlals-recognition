@@ -1,6 +1,8 @@
 import os
 
+import keras
 import tensorflow as tf
+from keras import layers, losses
 from keras.models import Sequential, Model
 from keras.layers import LSTM, Dense, Flatten
 from keras.callbacks import TensorBoard
@@ -20,15 +22,14 @@ class PreTrainedModel:
             self.summary = self.model.summary()
 
     def load_model(self):
-        # base_model = keras.applications.ResNet152(weights='imagenet', include_top=False, input_shape=self.input_shape)
-        # # for layer in base_model.layers:
-        # #     layer.trainable = False
-        # x = layers.Flatten()(base_model.output)
-        # x = layers.Dense(self.num_classes, activation='relu')(x)
-        # predictions = layers.Dense(10, activation='softmax')(x)
-        # head_model = Model(inputs=base_model.input, outputs=predictions)
-        # head_model.compile(optimizer='adam', loss=losses.sparse_categorical_crossentropy, metrics=['accuracy'])
-        # return head_model
+        base_model = keras.applications.ResNet152(weights='imagenet', include_top=False, input_shape=self.input_shape)
+        # for layer in base_model.layers:
+        #     layer.trainable = False
+        x = layers.Flatten()(base_model.output)
+        x = layers.Dense(self.num_classes, activation='relu')(x)
+        predictions = layers.Dense(10, activation='softmax')(x)
+        head_model = Model(inputs=base_model.input, outputs=predictions)
+        head_model.compile(optimizer='adam', loss=losses.sparse_categorical_crossentropy, metrics=['accuracy'])
 
         # efficientnet_model = Sequential()
         #
@@ -48,33 +49,33 @@ class PreTrainedModel:
         # efficientnet_model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
         # return efficientnet_model
 
-        cnn_model = Sequential()
-        cnn_model.add(Conv2D(64, (3, 3), activation='relu', input_shape=self.input_shape))
-        cnn_model.add(Flatten())
-
-        # Estrai le features
-        X_train_features = cnn_model.predict(self.X_train)
-        X_val_features = cnn_model.predict(self.X_val)
-
-        # Reshape per il layer LSTM
-        X_train_lstm = X_train_features.reshape(self.X_train.shape[0], -1, X_train_features.shape[-1])
-        X_val_lstm = X_val_features.reshape(self.X_val.shape[0], -1, X_val_features.shape[-1])
-
-        model = Sequential()
-        model.add(LSTM(64, activation='relu', return_sequences=True,
-                       input_shape=(X_train_lstm.shape[1], X_train_lstm.shape[2])))
-        model.add(LSTM(128, activation='relu', return_sequences=True))
-        model.add(LSTM(64, activation='relu', return_sequences=False))
-        model.add(Dense(64, activation='relu'))
-        model.add(Dense(32, activation='relu'))
-        model.add(Dense(self.num_classes, activation='softmax'))
-        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-
-        history = model.fit(X_train_lstm, self.y_train,
-                            batch_size=64,
-                            epochs=30,
-                            validation_data=(X_val_lstm, self.y_val))
-        return model, history
+        # cnn_model = Sequential()
+        # cnn_model.add(Conv2D(64, (3, 3), activation='relu', input_shape=self.input_shape))
+        # cnn_model.add(Flatten())
+        #
+        # # Estrai le features
+        # X_train_features = cnn_model.predict(self.X_train)
+        # X_val_features = cnn_model.predict(self.X_val)
+        #
+        # # Reshape per il layer LSTM
+        # X_train_lstm = X_train_features.reshape(self.X_train.shape[0], -1, X_train_features.shape[-1])
+        # X_val_lstm = X_val_features.reshape(self.X_val.shape[0], -1, X_val_features.shape[-1])
+        #
+        # model = Sequential()
+        # model.add(LSTM(64, activation='relu', return_sequences=True,
+        #                input_shape=(X_train_lstm.shape[1], X_train_lstm.shape[2])))
+        # model.add(LSTM(128, activation='relu', return_sequences=True))
+        # model.add(LSTM(64, activation='relu', return_sequences=False))
+        # model.add(Dense(64, activation='relu'))
+        # model.add(Dense(32, activation='relu'))
+        # model.add(Dense(self.num_classes, activation='softmax'))
+        # model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
+        #
+        history = head_model.fit(self.X_train, self.y_train,
+                                 batch_size=128,
+                                 epochs=500,
+                                 validation_data=(self.X_val, self.y_val))
+        return head_model, history
 
     def draw(self):
         pass

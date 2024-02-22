@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="99e25807-fc93-42e0-976a-c8db71a036ae" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pre_trained_model/dataset_utils/dataset_splitter.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pre_trained_model/model/PreTrainedModel.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pre_trained_model_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/wlasl-recognition.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/wlasl-recognition.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pre_trained_model.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +258,7 @@
       <workItem from="1706866867778" duration="23256000" />
       <workItem from="1707821163544" duration="16405000" />
       <workItem from="1708080527121" duration="388000" />
-      <workItem from="1708537551259" duration="9000000" />
+      <workItem from="1708537551259" duration="9914000" />
     </task>
     <servers />
   </component>
