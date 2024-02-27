@@ -34,6 +34,8 @@ class SignModel(object):
             the feature_vectors of the hand for each frame
         """
         embedding = []
+        print(f"hand_list: {hand_list}")
+        print({"hand_list shape": np.array(hand_list).shape})
         for frame_idx in range(len(hand_list)):
             if np.sum(hand_list[frame_idx]) == 0:
                 continue

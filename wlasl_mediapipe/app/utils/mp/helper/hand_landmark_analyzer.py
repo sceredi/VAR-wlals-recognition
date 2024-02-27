@@ -4,17 +4,12 @@ from typing import List, Tuple
 def analyze_landmarks(landmark) -> Tuple[List[List[float]], List[List[float]]]:
     handedness = landmark.handedness
     if len(handedness) == 0:
-        print("No hand detected")
         return [], []
     hand_landmarks = landmark.hand_landmarks
     # hand_world_landmarks = landmark.hand_world_landmarks
-    print(f"handedness: {handedness}")
-    print(f"hand_landmarks: {hand_landmarks}")
     if len(handedness) == 1:
-        print("One hand detected")
         return _get_one_hand(handedness, hand_landmarks)
     if len(handedness) == 2:
-        print("Two hands detected")
         return _get_two_hands(handedness, hand_landmarks)
     # print(f"hand_world_landmarks: {hand_world_landmarks}")
     print(f"A problem occourred, handedness is {len(handedness)}")
