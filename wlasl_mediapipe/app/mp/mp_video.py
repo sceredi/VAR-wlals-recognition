@@ -1,4 +1,3 @@
-from typing import List
 import numpy as np
 
 from handcrafted.app.dataset.video import Video
@@ -12,17 +11,13 @@ class MediapipeVideo:
     def __init__(self, video: Video):
         self.video = video
         self.model = MediapipeHandsExtractor()
-        self.pose = []
+        self.sign_model = self._load_sign_model()
 
     def get_base_video(self):
         return self.video
 
-    def get_poses(self, plot: bool = True) -> List[SignModel]:
-        if self.pose == []:
-            self._load_poses(plot=plot)
-        return self.pose
 
-    def _load_poses(self, plot: bool = True):
+    def _load_sign_model(self, plot: bool = True) -> SignModel:
         results, annotated_frames = self.model.process_video(self.video)
         if plot:
             FramesPlotter(annotated_frames, to_rgb=False).plot_grid()
@@ -36,4 +31,4 @@ class MediapipeVideo:
                 right_hand = np.nan_to_num(np.zeros((21, 3)))
             left_hand_list.append(np.nan_to_num(left_hand).reshape(63).tolist())
             right_hand_list.append(np.nan_to_num(right_hand).reshape(63).tolist())
-        self.pose.append(SignModel(left_hand_list, right_hand_list))
+        return SignModel(left_hand_list, right_hand_list)
