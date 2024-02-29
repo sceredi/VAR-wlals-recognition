@@ -1,5 +1,6 @@
-from typing import List, Tuple
+from typing import List
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
+from handcrafted.app.dataset.video import Video
 
 import numpy as np
 import pandas as pd
@@ -14,9 +15,6 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
     curr = 0
     for other_video in others:
         curr += 1
-        # print(f"Calculating distance for {curr}/{len(others)}")
-        # print(f"Video: {video.video.get_path()}")
-        # print(f"Other Video: {other_video.video.get_path()}")
         if (
             video.sign_model.has_left_hand == other_video.sign_model.has_left_hand
         ) and (
@@ -41,7 +39,6 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
         if other_video.video.gloss not in ret:
             ret[other_video.video.gloss] = []
         ret[other_video.video.gloss].append(distance["left"] + distance["right"])
-        # ret.append((distance["left"] + distance["right"], other_video))
     return _best_choice(ret)
 
 
@@ -51,3 +48,23 @@ def _best_choice(distances):
         distances[gloss] = np.mean(distances[gloss])
     print(f"Distances again: {distances}")
     return min(distances.items(), key=lambda x: x[1])
+
+
+def classify(test_videos: List[MediapipeVideo], train_videos: dict) -> None:
+    real_glosses = [video.video.gloss for video in test_videos]
+    classified_glosses = [(real_glosses[0], np.inf) for _ in test_videos]
+    for gloss in train_videos:
+        print(f"Getting training set for gloss {gloss}")
+        current_train = [
+            MediapipeVideo(train_video, plot=False)
+            for train_video in train_videos[gloss]
+        ]
+        for i, video in enumerate(test_videos):
+            best_choice = calc_dtw_distance(video, current_train)
+            if best_choice[1] < classified_glosses[i][1]:
+                classified_glosses[i] = best_choice
+    print(f"Real glosses: {real_glosses}")
+    print(f"Classified glosses: {classified_glosses}")
+    print(
+        f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
+    )
