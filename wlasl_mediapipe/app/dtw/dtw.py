@@ -32,8 +32,8 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
                 distance["right"] = fastdtw(right_hand, other_right_hand)[0]
         else:
             distance = {
-                "left": 100000.0,
-                "right": 100000.0,
+                "left": np.inf,
+                "right": np.inf,
             }
 
         if other_video.video.gloss not in ret:
@@ -45,7 +45,7 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
 def _best_choice(distances):
     """Given a list of distances, calculates the average the distances for each gloss"""
     for gloss in distances:
-        distances[gloss] = np.mean(distances[gloss])
+        distances[gloss] = np.min(distances[gloss])
     print(f"Distances again: {distances}")
     return min(distances.items(), key=lambda x: x[1])
 
