@@ -1,3 +1,4 @@
+from collections.abc import Callable
 import json
 from typing import List, Tuple
 
@@ -38,6 +39,9 @@ class Dataset:
                     instance = None
         with open(self.filename, "w") as f:
             json.dump(data, f, indent=4)
+
+    def get_videos(self, condition: Callable[[Video], bool]) -> List[Video]:
+        return [video for video in self.videos if condition(video)]
 
 
     def __str__(self) -> str:

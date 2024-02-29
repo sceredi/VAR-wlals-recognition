@@ -8,10 +8,10 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import analyze_l
 
 
 class MediapipeVideo:
-    def __init__(self, video: Video):
+    def __init__(self, video: Video, plot: bool = True):
         self.video = video
         self.model = MediapipeHandsExtractor()
-        self.sign_model = self._load_sign_model()
+        self.sign_model = self._load_sign_model(plot=plot)
 
     def get_base_video(self):
         return self.video

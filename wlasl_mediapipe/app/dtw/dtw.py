@@ -29,4 +29,5 @@ def calc_dtw_distance(
                 distance["right"] = fastdtw(right_hand, other_right_hand)[0]
 
         ret.append((distance, other_video))
+    ret.sort(key=lambda x: x[0]["left"] + x[0]["right"])
     return ret
