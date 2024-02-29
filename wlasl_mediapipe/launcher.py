@@ -33,8 +33,7 @@ class Launcher:
         training_videos = [MediapipeVideo(video, plot=False) for video in training_videos]
         test_videos = [MediapipeVideo(video, plot=False) for video in test_videos]
         for video in test_videos:
-            distances = calc_dtw_distance(video, training_videos)
-            print(f"Video: {video.get_base_video().gloss}")
-            for distance, other_video in distances:
-                print(f"  {other_video.get_base_video().gloss}: {distance}")
+            best_choice = calc_dtw_distance(video, training_videos)
+            print(f"Best choice for {video.video.gloss}: {best_choice}")
+                
 
