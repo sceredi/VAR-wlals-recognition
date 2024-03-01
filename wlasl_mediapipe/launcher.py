@@ -10,7 +10,7 @@ class Launcher:
     def start(self) -> None:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
-        self.analyze(self._load_data(), self._load_glosses())
+        self.analyze(self._load_data(), self._load_glosses()[1:3])
 
     def _load_data(self) -> Dataset:
         return Dataset("data/WLASL_v0.3.json")

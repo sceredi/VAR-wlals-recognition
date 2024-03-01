@@ -68,3 +68,9 @@ def classify(test_videos: List[MediapipeVideo], train_videos: dict) -> None:
     print(
         f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
     )
+    with open("results.log", "w") as file:
+        file.write(f"Real glosses: {real_glosses}\n")
+        file.write(f"Classified glosses: {classified_glosses}\n")
+        file.write(
+            f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
+        )
