@@ -2,7 +2,6 @@ from typing import List
 
 import pandas as pd
 from handcrafted.app.dataset.dataset import Dataset
-from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 from wlasl_mediapipe.app.dtw.dtw import classify
 
 
@@ -10,7 +9,7 @@ class Launcher:
     def start(self) -> None:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
-        self._analyze(self._load_data(), self._load_glosses()[1:3])
+        self._analyze(self._load_data(), self._load_glosses())
 
     def _load_data(self) -> Dataset:
         return Dataset("data/WLASL_v0.3.json")
@@ -22,14 +21,14 @@ class Launcher:
 
     def _analyze(self, dataset: Dataset, glosses: List[str]) -> None:
         test_videos = dataset.get_videos(
-            lambda video: (video.split == "test" or video.split == "val")
-            and video.gloss in glosses
+            lambda video: (video.split == "test") and video.gloss in glosses
         )
-        test_videos = split_array_by_size(test_videos, 1)
+        test_videos = split_array_by_size(test_videos, 100)
         splitted_train_videos = {}
         for gloss in glosses:
             splitted_train_videos[gloss] = dataset.get_videos(
-                lambda video: video.gloss == gloss and video.split == "train"
+                lambda video: video.gloss == gloss
+                and (video.split == "train" or video.split == "val")
             )
         classify(test_videos, splitted_train_videos)
 
