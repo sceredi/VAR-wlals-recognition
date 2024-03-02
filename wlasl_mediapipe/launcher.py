@@ -23,7 +23,7 @@ class Launcher:
         test_videos = dataset.get_videos(
             lambda video: (video.split == "test") and video.gloss in glosses
         )
-        test_videos = split_array_by_size(test_videos, 100)
+        test_videos = split_array_by_size(test_videos, 500)
         splitted_train_videos = {}
         for gloss in glosses:
             splitted_train_videos[gloss] = dataset.get_videos(
