@@ -9,7 +9,7 @@ from fastdtw import fastdtw
 
 
 def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
-    ret = {}
+    ret = {"ThisShouldBeAnError": [np.inf]}
     left_hand = video.sign_model.lh_embedding
     right_hand = video.sign_model.rh_embedding
     curr = 0
@@ -70,11 +70,14 @@ def classify(
     classified_glosses = {}
     acc = 0
     for test_batch in test_videos:
+        acc += 1
         gc.collect()
-        print(f"Now testing batch #{acc}/{len(test_videos)}")
+        print(f"Now testing batch {acc}/{len(test_videos)}")
         test_batch = [MediapipeVideo(video, plot=False) for video in test_batch]
+        train_acc = 0
         for gloss in train_videos:
-            # print(f"Getting training set for gloss {gloss}")
+            train_acc += 1
+            print(f"Now training gloss {train_acc}/{len(train_videos)}")
             current_train = [
                 MediapipeVideo(train_video, plot=False)
                 for train_video in train_videos[gloss]
