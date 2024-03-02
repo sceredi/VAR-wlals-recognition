@@ -34,7 +34,6 @@ class MediapipeHandsExtractor:
         """Process video and return landmarks and annotated frames"""
         landmarks = []
         annotated_frames = []
-        print(video)
         for frame in video.get_frames():
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame_rgb = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
