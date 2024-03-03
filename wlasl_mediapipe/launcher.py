@@ -10,8 +10,13 @@ class Launcher:
     def start(self) -> None:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
-        [MediapipeVideo(video, plot=False) for video in self._load_data().videos]
-        self._analyze(self._load_data(), self._load_glosses()[:50])
+        acc = 0
+        videos = self._load_data().videos
+        for video in videos:
+            acc += 1
+            print(f"\n\n\nCreating video {acc}/{len(videos)}")
+            MediapipeVideo(video, plot=False)
+        # self._analyze(self._load_data(), self._load_glosses()[:50])
 
     def _load_data(self) -> Dataset:
         return Dataset("data/WLASL_v0.3.json")
