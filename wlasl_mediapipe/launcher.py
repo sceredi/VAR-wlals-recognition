@@ -1,3 +1,4 @@
+import gc
 from typing import List
 
 import pandas as pd
@@ -5,17 +6,20 @@ from handcrafted.app.dataset.dataset import Dataset
 from wlasl_mediapipe.app.dtw.dtw import classify
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
-
 class Launcher:
     def start(self) -> None:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
         acc = 0
         videos = self._load_data().videos
-        for video in videos:
+        for i, video in enumerate(videos):
             acc += 1
             print(f"\n\n\nCreating video {acc}/{len(videos)}")
-            MediapipeVideo(video, plot=False)
+            mp_video = MediapipeVideo(video, plot=False)
+            del mp_video
+            del videos[i]
+            del video
+            gc.collect()
         # self._analyze(self._load_data(), self._load_glosses()[:50])
 
     def _load_data(self) -> Dataset:

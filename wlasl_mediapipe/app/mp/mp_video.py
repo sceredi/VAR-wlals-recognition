@@ -11,8 +11,9 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_l
 class MediapipeVideo:
     def __init__(self, video: Video, plot: bool = True):
         self.video = video
-        self.model = MediapipeLandmarksExtractor()
-        self.sign_model = self._load_sign_model(plot=plot)
+        if not os.path.exists(f"data/mp/{self.video.video_id}"):
+            self.model = MediapipeLandmarksExtractor()
+            self.sign_model = self._load_sign_model(plot=plot)
 
     def get_base_video(self):
         return self.video

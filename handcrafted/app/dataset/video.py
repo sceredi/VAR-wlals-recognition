@@ -74,6 +74,7 @@ class Video:
                 break
             frames.append(frame)
             frame_number += 1
+        self.video_capture.release()
         return frames
 
     def get_end(self) -> int:
