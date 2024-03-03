@@ -1,8 +1,10 @@
+import os
 from typing import List
 
 import numpy as np
 
 from wlasl_mediapipe.app.mp.models.hand_model import HandModel
+from wlasl_mediapipe.app.utils.mp.file_utils import load_array
 
 
 class SignModel(object):
@@ -21,6 +23,18 @@ class SignModel(object):
 
         self.lh_embedding = self._get_embedding_from_landmark_list(left_hand_list)
         self.rh_embedding = self._get_embedding_from_landmark_list(right_hand_list)
+
+    @staticmethod
+    def load(video_id: str) -> "SignModel":
+        """
+        Load a SignModel from a file
+        """
+        path = os.path.join("data", "mp", video_id)
+        left_hand_list = load_array(os.path.join(path, f"lh_{video_id}.pickle"))
+        right_hand_list = load_array(os.path.join(path, f"rh_{video_id}.pickle"))
+        return SignModel(left_hand_list, right_hand_list)
+
+
 
     @staticmethod
     def _get_embedding_from_landmark_list(
