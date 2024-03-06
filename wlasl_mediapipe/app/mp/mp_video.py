@@ -20,7 +20,6 @@ class MediapipeVideo:
 
     def _load_sign_model(self, plot: bool = True) -> SignModel:
         if os.path.exists(f"data/mp/{self.video.video_id}"):
-            print(f"Path exists: data/mp/{self.video.video_id}")
             return SignModel.load(self.video.video_id)
         else:
             print(f"Path does not exist: data/mp/{self.video.video_id}")
