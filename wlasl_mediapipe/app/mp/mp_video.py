@@ -13,7 +13,7 @@ class MediapipeVideo:
         self.video = video
         if not os.path.exists(f"data/mp/{self.video.video_id}"):
             self.model = MediapipeLandmarksExtractor()
-            self.sign_model = self._load_sign_model(plot=plot)
+        self.sign_model = self._load_sign_model(plot=plot)
 
     def get_base_video(self):
         return self.video
