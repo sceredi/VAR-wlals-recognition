@@ -63,9 +63,7 @@ def calc_accuracy(real_glosses, classified_glosses) -> float:
     return accuracy
 
 
-def classify(
-    test_videos: List[MediapipeVideo], train_videos: dict
-) -> None:
+def classify(test_videos: List[MediapipeVideo], train_videos: dict) -> None:
     real_glosses = [video.video.gloss for video in test_videos]
     classified_glosses = [(real_glosses[0], np.inf) for _ in test_videos]
     for gloss in train_videos:

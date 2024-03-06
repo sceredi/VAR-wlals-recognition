@@ -34,8 +34,6 @@ class SignModel(object):
         right_hand_list = load_array(os.path.join(path, f"rh_{video_id}.pickle"))
         return SignModel(left_hand_list, right_hand_list)
 
-
-
     @staticmethod
     def _get_embedding_from_landmark_list(
         hand_list: List[List[float]],

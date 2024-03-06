@@ -18,7 +18,6 @@ class MediapipeVideo:
     def get_base_video(self):
         return self.video
 
-
     def _load_sign_model(self, plot: bool = True) -> SignModel:
         if os.path.exists(f"data/mp/{self.video.video_id}"):
             print(f"Path exists: data/mp/{self.video.video_id}")
@@ -37,7 +36,16 @@ class MediapipeVideo:
                 left_hand_list.append(left_hand)
                 right_hand_list.append(right_hand)
             os.mkdir(f"data/mp/{self.video.video_id}")
-            save_array(pose_list, f"data/mp/{self.video.video_id}/pose_{self.video.video_id}.pickle")
-            save_array(left_hand_list, f"data/mp/{self.video.video_id}/lh_{self.video.video_id}.pickle")
-            save_array(right_hand_list, f"data/mp/{self.video.video_id}/rh_{self.video.video_id}.pickle")
+            save_array(
+                pose_list,
+                f"data/mp/{self.video.video_id}/pose_{self.video.video_id}.pickle",
+            )
+            save_array(
+                left_hand_list,
+                f"data/mp/{self.video.video_id}/lh_{self.video.video_id}.pickle",
+            )
+            save_array(
+                right_hand_list,
+                f"data/mp/{self.video.video_id}/rh_{self.video.video_id}.pickle",
+            )
             return SignModel(left_hand_list, right_hand_list)

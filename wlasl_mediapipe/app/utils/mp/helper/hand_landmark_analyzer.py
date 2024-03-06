@@ -1,6 +1,7 @@
 from typing import List
 import numpy as np
 
+
 def landmark_to_array(mp_landmark_list) -> np.ndarray:
     """Return a np array of size (nb_keypoints x 3)"""
     keypoints = []

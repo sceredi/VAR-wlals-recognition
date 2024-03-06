@@ -19,7 +19,6 @@ class HandModel(object):
         self.connections = mp.solutions.holistic.HAND_CONNECTIONS
         # print(np.array(landmarks).shape)
 
-
         # Create feature vector (list of the angles between all the connections)
         landmarks = np.array(landmarks).reshape((21, 3))
         self.feature_vector = self._get_feature_vector(landmarks)
