@@ -22,8 +22,8 @@ def plot_accuracy_loss(history):
     axs[0].set_xlabel('Epochs')
     axs[0].set_ylabel('Loss')
     axs[0].legend(['Train', 'Val'])
-    axs[1].plot(history.history['accuracy'])
-    axs[1].plot(history.history['val_accuracy'])
+    axs[1].plot(history.history['categorical_accuracy'])
+    axs[1].plot(history.history['val_categorical_accuracy'])
     axs[1].title.set_text('Training Accuracy vs Validation Accuracy')
     axs[1].set_xlabel('Epochs')
     axs[1].set_ylabel('Accuracy')
@@ -32,7 +32,7 @@ def plot_accuracy_loss(history):
 
 
 def plot_confusion_matrix(y_test, y_pred, glosses):
-    cfm = confusion_matrix(y_test, y_pred, labels=glosses)
+    cfm = confusion_matrix(y_true=y_test, y_pred=y_pred, labels=glosses)
     df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
     plt.figure(figsize=(10, 7))
     cfm_plot = sn.heatmap(df_cfm, annot=True)
@@ -53,8 +53,8 @@ def plot_labels_distribution(y_train):
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
 
-    num_glosses = 4
-    glosses = dataset.glosses[1:num_glosses]
+    num_glosses = 10
+    glosses = dataset.glosses[5:num_glosses]  # 1:4
 
     splitter = DatasetSplitter(dataset, glosses, shuffle=True, info=True)
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     model, history = PreTrainedModel(splitter.X_train,
                                      splitter.y_train,
                                      splitter.X_val,
-                                     splitter.y_val, input_shape=(224, 224, 3), num_classes=3).load_model()
+                                     splitter.y_val, input_shape=(224, 224, 3), num_classes=5, info=True).load_model()
     # plot_model(model, show_shapes=True, show_layer_names=True)
 
     # history = model.fit(splitter.X_train, splitter.y_train,
@@ -82,10 +82,18 @@ if __name__ == "__main__":
     #                     validation_data=(splitter.X_val, splitter.y_val))
     print(history.history)
     plot_accuracy_loss(history)
-    model.evaluate(splitter.X_test, splitter.y_test)
+
+    print(model.evaluate(splitter.X_test, splitter.y_test))
+
     y_pred_prob = model.predict(splitter.X_test)
     y_pred = np.argmax(y_pred_prob, axis=1)
     y_test = np.argmax(splitter.y_test, axis=1)
-    print(splitter.y_test)
+    print(y_test)
     print(y_pred)
+
+    correct_predictions = np.sum(y_pred == y_test)
+    total_predictions = len(y_test)
+    accuracy = correct_predictions / total_predictions * 100
+    print(f"Accuracy: {accuracy:.2f}%")
+
     plot_confusion_matrix(y_test, y_pred, glosses)
