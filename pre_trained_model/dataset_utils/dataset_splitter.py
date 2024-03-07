@@ -4,6 +4,7 @@ import tensorflow as tf
 
 import numpy as np
 from keras.src.utils import to_categorical
+from matplotlib import pyplot as plt
 
 from handcrafted.app.dataset.dataset import Dataset
 
@@ -34,7 +35,6 @@ class DatasetSplitter:
 
         for video in all_videos:
             if video.gloss in self.glosses:
-                # frames = np.array(video.get_frames())
                 frames = video.get_frames()
                 label = self.glosses.index(video.gloss)
                 for frame in frames:
@@ -48,12 +48,9 @@ class DatasetSplitter:
                         X_test.append(frame)
                         y_test.append(label)
 
-        X_train = np.array(X_train)
-        X_val = np.array(X_val)
-        X_test = np.array(X_test)
-        # y_train = np.asarray(y_train).astype(np.float32)
-        # y_val = np.asarray(y_val).astype(np.float32)
-        # y_test = np.asarray(y_test).astype(np.float32)
+        # X_train = np.array(X_train)
+        # X_val = np.array(X_val)
+        # X_test = np.array(X_test)
 
         num_classes = len(self.glosses)
         y_train = to_categorical(y_train, num_classes=num_classes)
@@ -84,11 +81,11 @@ class DatasetSplitter:
         print(self.X_val, self.y_val)
         print("Test")
         print(self.X_test, self.y_test)
-        print("Train X shape: ", self.X_train.shape)
+        print("Train X len: ", len(self.X_train))
         print("Train y shape: ", self.y_train.shape)
-        print("Val X shape: ", self.X_val.shape)
+        print("Val X len: ", len(self.X_val))
         print("Val y shape: ", self.y_val.shape)
-        print("Test X shape: ", self.X_test.shape)
+        print("Test X len: ", len(self.X_test))
         print("Test y shape: ", self.y_test.shape)
-        print("Total videos: ", len(self.X_train) + len(self.X_val) + len(self.X_test))
+        print("Total frames: ", len(self.X_train) + len(self.X_val) + len(self.X_test))
 

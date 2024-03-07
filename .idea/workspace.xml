@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="99e25807-fc93-42e0-976a-c8db71a036ae" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/augmentation/Augmentation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/augmentation_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/index.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log/train/events.out.tfevents.1708554772.DESKTOP-75ERFJM.9484.0.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pre_trained_model/model/PreTrainedModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/pre_trained_model/model/PreTrainedModel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pre_trained_model_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/pre_trained_model_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pre_trained_model/dataset_utils/dataset_splitter.py" beforeDir="false" afterPath="$PROJECT_DIR$/pre_trained_model/dataset_utils/dataset_splitter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +65,29 @@
       <recent name="C:\Users\HP\Desktop\UNIBO\LaureaMagistrale\2° Anno\Visione Artificiale e Riconoscimento\Progetto\New\VAR-wlals-recognition\data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.pre_trained_model_main (1)">
+  <component name="RunManager" selected="Python.augmentation_main">
+    <configuration name="augmentation_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="wlasl-recognition" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/augmentation_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="wlasl-recognition" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -246,11 +266,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.augmentation_main" />
         <item itemvalue="Python.pre_trained_model_main (1)" />
         <item itemvalue="Python.pre_trained_model_main (1)" />
         <item itemvalue="Python.pre_trained_model_main" />
         <item itemvalue="Python.pre_trained_model_main" />
-        <item itemvalue="Python.main (2)" />
       </list>
     </recent_temporary>
   </component>
@@ -292,7 +312,7 @@
       <workItem from="1708638769986" duration="2197000" />
       <workItem from="1709642948713" duration="4023000" />
       <workItem from="1709652606010" duration="1548000" />
-      <workItem from="1709721045892" duration="17451000" />
+      <workItem from="1709721045892" duration="28877000" />
     </task>
     <servers />
   </component>
@@ -321,5 +341,6 @@
     <SUITE FILE_PATH="coverage/VAR_wlals_recognition$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1708080039540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pretrainedmodel" />
     <SUITE FILE_PATH="coverage/VAR_wlals_recognition$pre_trained_model_main__1_.coverage" NAME="pre_trained_model_main (1) Coverage Results" MODIFIED="1709806662427" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/wlasl_recognition$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1705845571056" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/VAR_wlals_recognition$augmentation_main.coverage" NAME="augmentation_main Coverage Results" MODIFIED="1709832939580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
