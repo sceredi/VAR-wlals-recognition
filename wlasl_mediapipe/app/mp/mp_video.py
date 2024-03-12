@@ -11,7 +11,7 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_l
 class MediapipeVideo:
     def __init__(self, video: Video, plot: bool = True):
         self.video = video
-        if not os.path.exists(f"data/mp/{self.video.video_id}"):
+        if not os.path.exists(f"data/mp/{self.video.video_id}/face_{self.video.video_id}.pickle"):
             self.model = MediapipeLandmarksExtractor()
         self.sign_model = self._load_sign_model(plot=plot)
 
@@ -19,7 +19,7 @@ class MediapipeVideo:
         return self.video
 
     def _load_sign_model(self, plot: bool = True) -> SignModel:
-        if os.path.exists(f"data/mp/{self.video.video_id}"):
+        if os.path.exists(f"data/mp/{self.video.video_id}/face_{self.video.video_id}.pickle"):
             return SignModel.load(self.video.video_id)
         else:
             print(f"Path does not exist: data/mp/{self.video.video_id}")
@@ -27,17 +27,24 @@ class MediapipeVideo:
             if plot:
                 FramesPlotter(annotated_frames, to_rgb=False).plot_grid()
             pose_list = []
+            face_list = []
             left_hand_list = []
             right_hand_list = []
             for result in results:
-                pose, left_hand, right_hand = extract_landmarks(result)
+                pose, face, left_hand, right_hand = extract_landmarks(result)
                 pose_list.append(pose)
+                face_list.append(face)
                 left_hand_list.append(left_hand)
                 right_hand_list.append(right_hand)
-            os.mkdir(f"data/mp/{self.video.video_id}")
+            if not os.path.exists(f"data/mp/{self.video.video_id}"):
+                os.mkdir(f"data/mp/{self.video.video_id}")
             save_array(
                 pose_list,
                 f"data/mp/{self.video.video_id}/pose_{self.video.video_id}.pickle",
+            )
+            save_array(
+                face_list,
+                f"data/mp/{self.video.video_id}/face_{self.video.video_id}.pickle",
             )
             save_array(
                 left_hand_list,

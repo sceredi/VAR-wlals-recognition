@@ -1,4 +1,3 @@
-from typing import List
 import numpy as np
 
 
@@ -17,6 +16,9 @@ def extract_landmarks(results):
     :param results: mediapipe object that contains the 3D position of all keypoints
     :return: Two np arrays of size (1, 21 * 3) = (1, nb_keypoints * nb_coordinates) corresponding to both hands
     """
+    face = np.zeros(1404).tolist()
+    if results.face_landmarks:
+        face = landmark_to_array(results.face_landmarks).reshape(1404).tolist()
     pose = np.zeros(99).tolist()
     if results.pose_landmarks:
         pose = landmark_to_array(results.pose_landmarks).reshape(99).tolist()
@@ -30,4 +32,4 @@ def extract_landmarks(results):
         right_hand = (
             landmark_to_array(results.right_hand_landmarks).reshape(63).tolist()
         )
-    return pose, left_hand, right_hand
+    return pose, face, left_hand, right_hand
