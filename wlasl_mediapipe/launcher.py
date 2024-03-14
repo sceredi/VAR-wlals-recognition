@@ -11,7 +11,8 @@ class Launcher:
     def start(self) -> None:
         print(len(self._load_data().videos))
         print(len(self._load_glosses()))
-        self._analyze_with_dtw(self._load_data(), self._load_glosses()[:500])
+        self._analyze_with_RNN(self._load_data(), self._load_glosses()[:500])
+        # self._analyze_with_dtw(self._load_data(), self._load_glosses()[:500])
 
     def _load_data(self) -> Dataset:
         return Dataset("data/WLASL_v0.3.json")
@@ -33,3 +34,6 @@ class Launcher:
                 and (video.split == "train" or video.split == "val")
             )
         classify(test_videos, splitted_train_videos)
+
+    def _analyze_with_RNN(self, dataset: Dataset, glosses: List[str]) -> None:
+        pass

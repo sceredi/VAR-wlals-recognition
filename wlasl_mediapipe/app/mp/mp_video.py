@@ -1,8 +1,11 @@
 import os
+from typing import Tuple
 
 from handcrafted.app.dataset.video import Video
 from handcrafted.app.plotter.framesPlotter import FramesPlotter
 from wlasl_mediapipe.app.mp.hands_extractor import MediapipeLandmarksExtractor
+from wlasl_mediapipe.app.mp.models.face_model import FaceModel
+from wlasl_mediapipe.app.mp.models.pose_model import PoseModel
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 from wlasl_mediapipe.app.utils.mp.file_utils import save_array
 from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_landmarks
@@ -11,16 +14,18 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_l
 class MediapipeVideo:
     def __init__(self, video: Video, plot: bool = True):
         self.video = video
-        if not os.path.exists(f"data/mp/{self.video.video_id}/face_{self.video.video_id}.pickle"):
+        if not os.path.exists(f"data/mp/{self.video.video_id}"):
             self.model = MediapipeLandmarksExtractor()
-        self.sign_model = self._load_sign_model(plot=plot)
+        self._load_models(plot)
 
     def get_base_video(self):
         return self.video
 
-    def _load_sign_model(self, plot: bool = True) -> SignModel:
-        if os.path.exists(f"data/mp/{self.video.video_id}/face_{self.video.video_id}.pickle"):
-            return SignModel.load(self.video.video_id)
+    def _load_models(self, plot: bool = True):
+        if os.path.exists(f"data/mp/{self.video.video_id}"):
+            self.sign_model = SignModel.load(self.video.video_id)
+            self.pose_model = PoseModel.load(self.video.video_id)
+            self.face_model = FaceModel.load(self.video.video_id)
         else:
             print(f"Path does not exist: data/mp/{self.video.video_id}")
             results, annotated_frames = self.model.process_video(self.video)
@@ -54,4 +59,6 @@ class MediapipeVideo:
                 right_hand_list,
                 f"data/mp/{self.video.video_id}/rh_{self.video.video_id}.pickle",
             )
-            return SignModel(left_hand_list, right_hand_list)
+            self.sign_model = SignModel(left_hand_list, right_hand_list)
+            self.pose_model = PoseModel(pose_list)
+            self.face_model = FaceModel(face_list)
