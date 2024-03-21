@@ -37,6 +37,7 @@ in pkgs.mkShell rec {
     pythonPackages.matplotlib
     pythonPackages.scikit-learn
     pythonPackages.pandas
+    pythonPackages.jupyter
 
     # In this particular example, in order to compile any binary extensions they may
     # require, the Python modules listed in the hypothetical requirements.txt need
