@@ -12,18 +12,20 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_l
 
 
 class MediapipeVideo:
-    def __init__(self, video: Video, plot: bool = True):
+    def __init__(self, video: Video, plot: bool = True, complete_signs: bool = False):
         self.video = video
         if not os.path.exists(f"data/mp/{self.video.video_id}"):
             self.model = MediapipeLandmarksExtractor()
-        self._load_models(plot)
+        self._load_models(plot, complete_signs)
 
     def get_base_video(self):
         return self.video
 
-    def _load_models(self, plot: bool = True):
+    def _load_models(self, plot: bool = True, complete_signs: bool = False):
         if os.path.exists(f"data/mp/{self.video.video_id}"):
-            self.sign_model = SignModel.load(self.video.video_id)
+            self.sign_model = SignModel.load(
+                self.video.video_id, complete_signs=complete_signs
+            )
             self.pose_model = PoseModel.load(self.video.video_id)
             self.face_model = FaceModel.load(self.video.video_id)
         else:

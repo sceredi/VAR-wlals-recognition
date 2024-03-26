@@ -9,7 +9,7 @@ from wlasl_mediapipe.app.utils.mp.file_utils import load_array
 
 class SignModel(object):
     def __init__(
-        self, left_hand_list: List[List[float]], right_hand_list: List[List[float]]
+        self, left_hand_list: List[List[float]], right_hand_list: List[List[float]], complete_signs: bool = False
     ):
         """
         Params
@@ -24,18 +24,19 @@ class SignModel(object):
         self.left_hand_list = left_hand_list
         self.right_hand_list = right_hand_list
 
-        self.lh_embedding = self._get_embedding_from_landmark_list(left_hand_list)
-        self.rh_embedding = self._get_embedding_from_landmark_list(right_hand_list)
+        if complete_signs:
+            self.lh_embedding = self._get_embedding_from_landmark_list(left_hand_list)
+            self.rh_embedding = self._get_embedding_from_landmark_list(right_hand_list)
 
     @staticmethod
-    def load(video_id: str) -> "SignModel":
+    def load(video_id: str, complete_signs: bool) -> "SignModel":
         """
         Load a SignModel from a file
         """
         path = os.path.join("data", "mp", video_id)
         left_hand_list = load_array(os.path.join(path, f"lh_{video_id}.pickle"))
         right_hand_list = load_array(os.path.join(path, f"rh_{video_id}.pickle"))
-        return SignModel(left_hand_list, right_hand_list)
+        return SignModel(left_hand_list, right_hand_list, complete_signs=complete_signs)
 
     @staticmethod
     def _get_embedding_from_landmark_list(
