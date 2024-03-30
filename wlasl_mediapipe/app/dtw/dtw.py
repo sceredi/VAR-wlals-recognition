@@ -1,11 +1,11 @@
+import gc
 from typing import List
-from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
-from handcrafted.app.dataset.video import Video
 
 import numpy as np
-import gc
-
 from fastdtw import fastdtw
+
+from handcrafted.app.dataset.video import Video
+from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
 
 def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
@@ -69,7 +69,7 @@ def classify(test_videos: List[MediapipeVideo], train_videos: dict) -> None:
     for gloss in train_videos:
         print(f"Getting training set for gloss {gloss}")
         current_train = [
-            MediapipeVideo(train_video, plot=False)
+            MediapipeVideo(train_video, plot=False, expand_hands=True)
             for train_video in train_videos[gloss]
         ]
         for i, video in enumerate(test_videos):

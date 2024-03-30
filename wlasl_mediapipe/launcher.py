@@ -26,7 +26,10 @@ class Launcher:
         test_videos = dataset.get_videos(
             lambda video: (video.split == "test") and video.gloss in glosses
         )
-        test_videos = [MediapipeVideo(video, plot=False) for video in test_videos]
+        test_videos = [
+            MediapipeVideo(video, plot=False, expand_hands=True)
+            for video in test_videos
+        ]
         splitted_train_videos = {}
         for gloss in glosses:
             splitted_train_videos[gloss] = dataset.get_videos(
