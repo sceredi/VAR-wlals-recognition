@@ -1,7 +1,7 @@
 from typing import List
 
-import numpy as np
 import mediapipe as mp
+import numpy as np
 
 
 class HandModel(object):

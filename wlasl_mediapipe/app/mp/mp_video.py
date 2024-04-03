@@ -8,25 +8,22 @@ from wlasl_mediapipe.app.mp.models.face_model import FaceModel
 from wlasl_mediapipe.app.mp.models.pose_model import PoseModel
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 from wlasl_mediapipe.app.utils.mp.file_utils import save_array
-from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import \
-    extract_landmarks
+from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_landmarks
 
 
 class MediapipeVideo:
-    def __init__(self, video: Video, plot: bool = True, expand_hands: bool = False):
+    def __init__(self, video: Video, plot: bool = True, expand_keypoints: bool = False):
         self.video = video
         if not os.path.exists(f"data/mp/{self.video.video_id}"):
             self.model = MediapipeLandmarksExtractor()
-        self._load_models(plot, expand_hands)
+        self._load_models(plot, expand_keypoints)
 
     def get_base_video(self):
         return self.video
 
-    def _load_models(self, plot: bool = True, expand_hands: bool = False):
+    def _load_models(self, plot: bool = True, expand_keypoints: bool = False):
         if os.path.exists(f"data/mp/{self.video.video_id}"):
-            self.sign_model = SignModel.load(self.video.video_id, expand_hands)
-            self.pose_model = PoseModel.load(self.video.video_id)
-            self.face_model = FaceModel.load(self.video.video_id)
+            self.sign_model = SignModel.load(self.video.video_id, expand_keypoints)
         else:
             print(f"Path does not exist: data/mp/{self.video.video_id}")
             results, annotated_frames = self.model.process_video(self.video)
@@ -60,6 +57,6 @@ class MediapipeVideo:
                 right_hand_list,
                 f"data/mp/{self.video.video_id}/rh_{self.video.video_id}.pickle",
             )
-            self.sign_model = SignModel(left_hand_list, right_hand_list, expand_hands)
-            self.pose_model = PoseModel(pose_list)
-            self.face_model = FaceModel(face_list)
+            self.sign_model = SignModel(
+                left_hand_list, right_hand_list, pose_list, face_list, expand_keypoints
+            )

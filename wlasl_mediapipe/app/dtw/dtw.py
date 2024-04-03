@@ -69,7 +69,7 @@ def classify(test_videos: List[MediapipeVideo], train_videos: dict) -> None:
     for gloss in train_videos:
         print(f"Getting training set for gloss {gloss}")
         current_train = [
-            MediapipeVideo(train_video, plot=False, expand_hands=True)
+            MediapipeVideo(train_video, plot=False, expand_keypoints=True)
             for train_video in train_videos[gloss]
         ]
         for i, video in enumerate(test_videos):
