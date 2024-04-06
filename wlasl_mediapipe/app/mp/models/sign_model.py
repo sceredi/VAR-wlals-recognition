@@ -17,7 +17,7 @@ class SignModel(object):
         right_hand_list: List[List[float]],
         pose_list: List[List[float]] = [],
         face_list: List[List[float]] = [],
-        expand_features: bool = False,
+        expand_keypoints: bool = False,
     ):
         """
         Params
@@ -36,13 +36,23 @@ class SignModel(object):
         self.pose_list = pose_list
         self.face_list = face_list
 
-        self.lh_embedding = self._get_hand_embedding_from_landmark_list(left_hand_list)
-        self.rh_embedding = self._get_hand_embedding_from_landmark_list(right_hand_list)
-        self.pose_embedding = self._get_pose_embedding_from_landmark_list(pose_list)
-        self.face_embedding = self._get_face_embedding_from_landmark_list(face_list)
+        if expand_keypoints:
+            self.lh_embedding = self._get_hand_embedding_from_landmark_list(
+                left_hand_list
+            )
+            self.rh_embedding = self._get_hand_embedding_from_landmark_list(
+                right_hand_list
+            )
+            self.pose_embedding = self._get_pose_embedding_from_landmark_list(pose_list)
+            self.face_embedding = self._get_face_embedding_from_landmark_list(face_list)
+        else:
+            self.lh_embedding = left_hand_list
+            self.rh_embedding = right_hand_list
+            self.pose_embedding = self._filter_frames_feature_list(pose_list, GlobalFilters().pose_filter)
+            self.face_embedding = self._filter_frames_feature_list(face_list, GlobalFilters().face_filter_big)
 
     @staticmethod
-    def load(video_id: str, expand_features: bool = False) -> "SignModel":
+    def load(video_id: str, expand_keypoints: bool = False) -> "SignModel":
         """
         Load a SignModel from a file
         """
@@ -56,7 +66,7 @@ class SignModel(object):
             right_hand_list,
             pose_list,
             face_list,
-            expand_features=expand_features,
+            expand_keypoints=expand_keypoints,
         )
 
     @staticmethod
@@ -107,3 +117,16 @@ class SignModel(object):
             face = FaceModel(face_list[frame_idx])
             embedding.append(face.feature_vector)
         return embedding
+
+    @staticmethod
+    def _filter_frames_feature_list(
+        frames_feature_list: List[List[float]], filter: List[int]
+    ) -> List[List[float]]:
+        new_frames_feature_list = []
+        for frame_feature in frames_feature_list:
+            reshaped_frame_feature = np.array(frame_feature).reshape(
+                len(frame_feature) // 3, 3
+            )
+            features_to_keep = reshaped_frame_feature[filter]
+            new_frames_feature_list.append(features_to_keep.flatten())
+        return new_frames_feature_list
