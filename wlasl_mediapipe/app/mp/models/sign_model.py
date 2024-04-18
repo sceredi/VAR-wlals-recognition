@@ -46,10 +46,20 @@ class SignModel(object):
             self.pose_embedding = self._get_pose_embedding_from_landmark_list(pose_list)
             self.face_embedding = self._get_face_embedding_from_landmark_list(face_list)
         else:
-            self.lh_embedding = left_hand_list
-            self.rh_embedding = right_hand_list
-            self.pose_embedding = self._filter_frames_feature_list(pose_list, GlobalFilters().pose_filter)
-            self.face_embedding = self._filter_frames_feature_list(face_list, GlobalFilters().face_filter_big)
+            self.lh_embedding = np.reshape(left_hand_list, (-1, 21, 3))
+            self.rh_embedding = np.reshape(right_hand_list, (-1, 21, 3))
+            self.pose_embedding = np.reshape(
+                self._filter_frames_feature_list(
+                    pose_list, GlobalFilters().pose_filter
+                ),
+                (-1, 6, 3),
+            )
+            self.face_embedding = np.reshape(
+                self._filter_frames_feature_list(
+                    face_list, GlobalFilters().face_filter_big
+                ),
+                (-1, 130, 3),
+            )
 
     @staticmethod
     def load(video_id: str, expand_keypoints: bool = False) -> "SignModel":
