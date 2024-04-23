@@ -6,23 +6,35 @@ from handcrafted.app.plotter.framesPlotter import FramesPlotter
 from wlasl_mediapipe.app.mp.hands_extractor import MediapipeLandmarksExtractor
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 from wlasl_mediapipe.app.utils.mp.file_utils import save_array
-from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import \
-    extract_landmarks
+from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import extract_landmarks
 
 
 class MediapipeVideo:
-    def __init__(self, video: Video, plot: bool = True, expand_keypoints: bool = False):
+    def __init__(
+        self,
+        video: Video,
+        plot: bool = True,
+        expand_keypoints: bool = False,
+        all_features: bool = True,
+    ):
         self.video = video
         if not os.path.exists(f"data/mp/{self.video.video_id}"):
             self.model = MediapipeLandmarksExtractor()
-        self._load_models(plot, expand_keypoints)
+        self._load_models(plot, expand_keypoints, all_features)
 
     def get_base_video(self):
         return self.video
 
-    def _load_models(self, plot: bool = True, expand_keypoints: bool = False):
+    def _load_models(
+        self,
+        plot: bool = True,
+        expand_keypoints: bool = False,
+        all_features: bool = True,
+    ):
         if os.path.exists(f"data/mp/{self.video.video_id}"):
-            self.sign_model = SignModel.load(self.video.video_id, expand_keypoints)
+            self.sign_model = SignModel.load(
+                self.video.video_id, expand_keypoints, all_features
+            )
         else:
             print(f"Path does not exist: data/mp/{self.video.video_id}")
             results, annotated_frames = self.model.process_video(self.video)

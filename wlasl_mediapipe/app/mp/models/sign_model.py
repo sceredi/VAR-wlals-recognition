@@ -18,6 +18,7 @@ class SignModel(object):
         pose_list: List[List[float]] = [],
         face_list: List[List[float]] = [],
         expand_keypoints: bool = False,
+        all_features: bool = True,
     ):
         """
         Params
@@ -43,26 +44,34 @@ class SignModel(object):
             self.rh_embedding = self._get_hand_embedding_from_landmark_list(
                 right_hand_list
             )
-            self.pose_embedding = self._get_pose_embedding_from_landmark_list(pose_list)
-            self.face_embedding = self._get_face_embedding_from_landmark_list(face_list)
+            if all_features:
+                self.pose_embedding = self._get_pose_embedding_from_landmark_list(
+                    pose_list
+                )
+                self.face_embedding = self._get_face_embedding_from_landmark_list(
+                    face_list
+                )
         else:
             self.lh_embedding = np.reshape(left_hand_list, (-1, 21, 3))
             self.rh_embedding = np.reshape(right_hand_list, (-1, 21, 3))
-            self.pose_embedding = np.reshape(
-                self._filter_frames_feature_list(
-                    pose_list, GlobalFilters().pose_filter
-                ),
-                (-1, 6, 3),
-            )
-            self.face_embedding = np.reshape(
-                self._filter_frames_feature_list(
-                    face_list, GlobalFilters().face_filter_big
-                ),
-                (-1, 130, 3),
-            )
+            if all_features:
+                self.pose_embedding = np.reshape(
+                    self._filter_frames_feature_list(
+                        pose_list, GlobalFilters().pose_filter
+                    ),
+                    (-1, 6, 3),
+                )
+                self.face_embedding = np.reshape(
+                    self._filter_frames_feature_list(
+                        face_list, GlobalFilters().face_filter_big
+                    ),
+                    (-1, 130, 3),
+                )
 
     @staticmethod
-    def load(video_id: str, expand_keypoints: bool = False) -> "SignModel":
+    def load(
+        video_id: str, expand_keypoints: bool = False, all_features: bool = True
+    ) -> "SignModel":
         """
         Load a SignModel from a file
         """
@@ -77,6 +86,7 @@ class SignModel(object):
             pose_list,
             face_list,
             expand_keypoints=expand_keypoints,
+            all_features=all_features,
         )
 
     @staticmethod
