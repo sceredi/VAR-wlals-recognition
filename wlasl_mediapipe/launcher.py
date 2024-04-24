@@ -11,7 +11,7 @@ from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 class Launcher:
     def start(self) -> None:
         data = self._load_data()
-        glosses = self._load_glosses(filtered=True)[:3]
+        glosses = self._load_glosses(filtered=True)[:100]
         print("\n\nClassification without augmentation:")
         self._analyze_with_dtw(data, glosses, augment=False, output_file="results.log")
         print("\n\nClassification with augmentation:")
