@@ -64,7 +64,10 @@ def calc_accuracy(real_glosses, classified_glosses) -> float:
 
 
 def classify(
-    test_videos: List[MediapipeVideo], train_videos: dict, augment: bool
+    test_videos: List[MediapipeVideo],
+    train_videos: dict,
+    augment: bool,
+    output_file: str = "results.log",
 ) -> None:
     real_glosses = [video.video.gloss for video in test_videos]
     classified_glosses = [(real_glosses[0], np.inf) for _ in test_videos]
@@ -89,7 +92,7 @@ def classify(
     print(
         f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
     )
-    with open("results.log", "w") as file:
+    with open(output_file, "w") as file:
         file.write(f"Real glosses: {real_glosses}\n")
         file.write(f"Classified glosses: {classified_glosses}\n")
         file.write(
