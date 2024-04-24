@@ -38,35 +38,34 @@ class SignModel(object):
         self.face_list = face_list
 
         if expand_keypoints:
-            self.lh_embedding = self._get_hand_embedding_from_landmark_list(
-                left_hand_list
+            self.expand_keypoints(
+                left_hand_list, right_hand_list, pose_list, face_list, all_features
             )
-            self.rh_embedding = self._get_hand_embedding_from_landmark_list(
-                right_hand_list
+
+        self.lh_matrix = np.reshape(left_hand_list, (-1, 21, 3))
+        self.rh_matrix = np.reshape(right_hand_list, (-1, 21, 3))
+        if all_features:
+            self.pose_matrix = np.reshape(
+                self._filter_frames_feature_list(
+                    pose_list, GlobalFilters().pose_filter
+                ),
+                (-1, 6, 3),
             )
-            if all_features:
-                self.pose_embedding = self._get_pose_embedding_from_landmark_list(
-                    pose_list
-                )
-                self.face_embedding = self._get_face_embedding_from_landmark_list(
-                    face_list
-                )
-        else:
-            self.lh_embedding = np.reshape(left_hand_list, (-1, 21, 3))
-            self.rh_embedding = np.reshape(right_hand_list, (-1, 21, 3))
-            if all_features:
-                self.pose_embedding = np.reshape(
-                    self._filter_frames_feature_list(
-                        pose_list, GlobalFilters().pose_filter
-                    ),
-                    (-1, 6, 3),
-                )
-                self.face_embedding = np.reshape(
-                    self._filter_frames_feature_list(
-                        face_list, GlobalFilters().face_filter_big
-                    ),
-                    (-1, 130, 3),
-                )
+            self.face_matrix = np.reshape(
+                self._filter_frames_feature_list(
+                    face_list, GlobalFilters().face_filter_big
+                ),
+                (-1, 130, 3),
+            )
+
+    def expand_keypoints(
+        self, left_hand_list, right_hand_list, pose_list, face_list, all_features: bool
+    ) -> None:
+        self.lh_embedding = self._get_hand_embedding_from_landmark_list(left_hand_list)
+        self.rh_embedding = self._get_hand_embedding_from_landmark_list(right_hand_list)
+        if all_features:
+            self.pose_embedding = self._get_pose_embedding_from_landmark_list(pose_list)
+            self.face_embedding = self._get_face_embedding_from_landmark_list(face_list)
 
     @staticmethod
     def load(

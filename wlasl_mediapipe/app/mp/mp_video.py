@@ -1,8 +1,11 @@
 import os
-from typing import Tuple
+from typing import List
+
+import numpy as np
 
 from handcrafted.app.dataset.video import Video
 from handcrafted.app.plotter.framesPlotter import FramesPlotter
+from wlasl_mediapipe.app.mp.augmentation import augment_video
 from wlasl_mediapipe.app.mp.hands_extractor import MediapipeLandmarksExtractor
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 from wlasl_mediapipe.app.utils.mp.file_utils import save_array
@@ -16,10 +19,14 @@ class MediapipeVideo:
         plot: bool = True,
         expand_keypoints: bool = False,
         all_features: bool = True,
+        sign_model: SignModel | None = None,
     ):
         self.video = video
-        if not os.path.exists(f"data/mp/{self.video.video_id}"):
-            self.model = MediapipeLandmarksExtractor()
+        if sign_model is None:
+            if not os.path.exists(f"data/mp/{self.video.video_id}"):
+                self.model = MediapipeLandmarksExtractor()
+        else:
+            self.sign_model = sign_model
         self._load_models(plot, expand_keypoints, all_features)
 
     def get_base_video(self):
@@ -71,3 +78,16 @@ class MediapipeVideo:
             self.sign_model = SignModel(
                 left_hand_list, right_hand_list, pose_list, face_list, expand_keypoints
             )
+
+    def from_sign_model(self, sign_model: SignModel) -> "MediapipeVideo":
+        return MediapipeVideo(
+            self.video,
+            plot=False,
+            expand_keypoints=True,
+            all_features=False,
+            sign_model=sign_model,
+        )
+
+    def augment(self, n: int = 1) -> List["MediapipeVideo"]:
+        others = augment_video(self, n)
+        return others

@@ -63,15 +63,23 @@ def calc_accuracy(real_glosses, classified_glosses) -> float:
     return accuracy
 
 
-def classify(test_videos: List[MediapipeVideo], train_videos: dict) -> None:
+def classify(
+    test_videos: List[MediapipeVideo], train_videos: dict, augment: bool
+) -> None:
     real_glosses = [video.video.gloss for video in test_videos]
     classified_glosses = [(real_glosses[0], np.inf) for _ in test_videos]
     for gloss in train_videos:
         print(f"Getting training set for gloss {gloss}")
         current_train = [
-            MediapipeVideo(train_video, plot=False, expand_keypoints=True)
+            MediapipeVideo(
+                train_video, plot=False, expand_keypoints=True, all_features=True
+            )
             for train_video in train_videos[gloss]
         ]
+        if augment:
+            augmented_train = [video.augment(3) for video in current_train]
+            for videos in augmented_train:
+                current_train.extend(videos)
         for i, video in enumerate(test_videos):
             best_choice = calc_dtw_distance(video, current_train)
             if best_choice[1] < classified_glosses[i][1]:

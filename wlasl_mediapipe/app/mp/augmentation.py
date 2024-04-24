@@ -1,5 +1,9 @@
+from itertools import count
+
 import numpy as np
 from tqdm import tqdm
+
+from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 
 
 def _rotate(data, rotation_matrix):
@@ -29,6 +33,19 @@ def _rotate_z(data):
     return _rotate(data, rotation_matrix)
 
 
+def _rotate_z_hands(lh, rh):
+    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    theta = np.radians(angle)
+    rotation_matrix = np.array(
+        [
+            [np.cos(theta), -np.sin(theta), 0],
+            [np.sin(theta), np.cos(theta), 0],
+            [0, 0, 1],
+        ]
+    )
+    return _rotate(lh, rotation_matrix), _rotate(rh, rotation_matrix)
+
+
 def _rotate_y(data):
     angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
     theta = np.radians(angle)
@@ -42,6 +59,19 @@ def _rotate_y(data):
     return _rotate(data, rotation_matrix)
 
 
+def _rotate_y_hands(lh, rh):
+    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    theta = np.radians(angle)
+    rotation_matrix = np.array(
+        [
+            [np.cos(theta), 0, np.sin(theta)],
+            [0, 1, 0],
+            [-np.sin(theta), 0, np.cos(theta)],
+        ]
+    )
+    return _rotate(lh, rotation_matrix), _rotate(rh, rotation_matrix)
+
+
 def _rotate_x(data):
     angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
     theta = np.radians(angle)
@@ -53,6 +83,19 @@ def _rotate_x(data):
         ]
     )
     return _rotate(data, rotation_matrix)
+
+
+def _rotate_x_hands(lh, rh):
+    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    theta = np.radians(angle)
+    rotation_matrix = np.array(
+        [
+            [1, 0, 0],
+            [0, np.cos(theta), -np.sin(theta)],
+            [0, np.sin(theta), np.cos(theta)],
+        ]
+    )
+    return _rotate(lh, rotation_matrix), _rotate(rh, rotation_matrix)
 
 
 def _zoom(data):
@@ -79,7 +122,7 @@ def _shift(data):
 
 
 def _mask(data):
-    frames, landmarks, _ = data.shape
+    _, landmarks, _ = data.shape
     num_hands = int(0.3 * 42)
     num_rest = int(0.6 * (landmarks - 42))
 
@@ -128,6 +171,26 @@ def _apply_augmentations(data):
     return data
 
 
+def _apply_lhrh_augmentations(lh, rh):
+    lh = lh.copy()
+    rh = rh.copy()
+    aug_functions = [
+        _rotate_x_hands,
+        _rotate_y_hands,
+        _rotate_z_hands,
+    ]
+    np.random.shuffle(np.array(aug_functions))
+    counter = 0
+    for fun in aug_functions:
+        if np.random.rand() < 0.5:
+            lh, rh = fun(lh, rh)
+            counter += 1
+
+    if counter == 0:
+        lh, rh = _apply_lhrh_augmentations(lh, rh)
+    return lh, rh
+
+
 def augment(X, Y, num=None):
     X_aug = X.copy()
     Y_aug = Y.copy()
@@ -145,3 +208,21 @@ def augment(X, Y, num=None):
                 Y_aug.append(Y[i])
 
     return X_aug, Y_aug
+
+
+def augment_video(video, num=1):
+    aug_videos = []
+    for _ in range(num):
+        lh = video.sign_model.lh_matrix.copy()
+        rh = video.sign_model.rh_matrix.copy()
+        lh, rh = _apply_lhrh_augmentations(lh, rh)
+        newSM = SignModel(
+            lh.reshape(-1, 63).tolist(),
+            rh.reshape(-1, 63).tolist(),
+            expand_keypoints=True,
+            all_features=False,
+        )
+        new_video = video.from_sign_model(newSM)
+        aug_videos.append(new_video)
+
+    return aug_videos
