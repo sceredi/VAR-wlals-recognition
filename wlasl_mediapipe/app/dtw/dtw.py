@@ -1,9 +1,9 @@
-from re import L
 from typing import Dict, List, Tuple
 
 import numpy as np
 from fastdtw import fastdtw
 from tabulate import tabulate
+from tqdm import tqdm
 
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
@@ -71,8 +71,7 @@ def classify(
     topN: int = 1,
 ) -> None:
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = dict()
-    for gloss in train_videos:
-        print(f"Getting training set for gloss {gloss}")
+    for gloss in tqdm(train_videos):
         current_train = [
             MediapipeVideo(
                 train_video, plot=False, expand_keypoints=True, all_features=True
@@ -87,9 +86,6 @@ def classify(
             classified_glosses = _do_classification(
                 video, current_train, classified_glosses, topN
             )
-            # best_choice = calc_dtw_distance(video, current_train)
-            # if best_choice[1] < classified_glosses[i][1]:
-            #     classified_glosses[i] = best_choice
     _print(classified_glosses, output_file)
 
 
