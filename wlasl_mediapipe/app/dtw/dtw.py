@@ -1,4 +1,5 @@
-from typing import List
+from re import L
+from typing import Dict, List, Tuple
 
 import numpy as np
 from fastdtw import fastdtw
@@ -7,7 +8,9 @@ from tabulate import tabulate
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
 
-def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
+def calc_dtw_distance(
+    video: MediapipeVideo, others: List[MediapipeVideo]
+) -> Tuple[str, float]:
     ret = {"ThisShouldBeAnError": [np.inf]}
     left_hand = video.sign_model.lh_embedding
     right_hand = video.sign_model.rh_embedding
@@ -40,11 +43,10 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
     return _best_choice(ret)
 
 
-def _best_choice(distances):
+def _best_choice(distances) -> Tuple[str, float]:
     """Given a list of distances, calculates the minimum the distances for each gloss"""
     for gloss in distances:
         distances[gloss] = np.min(distances[gloss])
-    # print(f"Distances again: {distances}")
     return min(distances.items(), key=lambda x: x[1])
 
 
@@ -66,9 +68,9 @@ def classify(
     train_videos: dict,
     augment: bool,
     output_file: str = "results.log",
+    topN: int = 1,
 ) -> None:
-    real_glosses = [video.video.gloss for video in test_videos]
-    classified_glosses = [(real_glosses[0], np.inf) for _ in test_videos]
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = dict()
     for gloss in train_videos:
         print(f"Getting training set for gloss {gloss}")
         current_train = [
@@ -81,25 +83,60 @@ def classify(
             augmented_train = [video.augment(3) for video in current_train]
             for videos in augmented_train:
                 current_train.extend(videos)
-        for i, video in enumerate(test_videos):
-            best_choice = calc_dtw_distance(video, current_train)
-            if best_choice[1] < classified_glosses[i][1]:
-                classified_glosses[i] = best_choice
-    _print(real_glosses, classified_glosses, output_file)
+        for video in test_videos:
+            classified_glosses = _do_classification(
+                video, current_train, classified_glosses, topN
+            )
+            # best_choice = calc_dtw_distance(video, current_train)
+            # if best_choice[1] < classified_glosses[i][1]:
+            #     classified_glosses[i] = best_choice
+    _print(classified_glosses, output_file)
 
 
-def _print(real_glosses, classified_glosses, output_file):
+def _do_classification(
+    video: MediapipeVideo,
+    current_train,
+    classified: Dict[MediapipeVideo, List[Tuple[str, float]]],
+    topN: int,
+) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
+    closest_word: Tuple[str, float] = calc_dtw_distance(video, current_train)
+    classifications = classified.get(video)
+    if classifications is None:
+        classified[video] = [closest_word]
+    else:
+        for i, cl in enumerate(classifications):
+            if closest_word[1] < cl[1]:
+                classifications.insert(i, closest_word)
+                if len(classifications) > topN:
+                    classifications.pop()
+                break
+            elif len(classifications) < topN:
+                classifications.append(closest_word)
+                break
+    return classified
+
+
+def _calc_acc(
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]]
+) -> float:
+    right = 0
+    tot = len(classified_glosses)
+    for el in classified_glosses.items():
+        cl = [val[0] for val in el[1]]
+        if cl.count(el[0].get_base_video().gloss) == 1:
+            right += 1
+    return right / tot
+
+
+def _print(
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]], output_file: str
+):
     rows = []
-    for i, rg in enumerate(real_glosses):
-        cg = classified_glosses[i]
-        rows.append([rg, cg[0], cg[1]])
+    for el in classified_glosses.items():
+        rows.append([el[0].get_base_video().gloss, el[1]])
 
-    print(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
-    print(
-        f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
-    )
+    print(tabulate(rows, headers=["Real Word", "Classified Words"]))
+    print(f"Accuracy: {_calc_acc(classified_glosses)}")
     with open(output_file, "w") as file:
         file.write(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
-        file.write(
-            f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
-        )
+        file.write(f"Accuracy: {_calc_acc(classified_glosses)}")

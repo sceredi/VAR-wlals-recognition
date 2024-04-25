@@ -11,12 +11,14 @@ from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 class Launcher:
     def start(self) -> None:
         data = self._load_data()
-        glosses = self._load_glosses(filtered=True)[:100]
+        glosses = self._load_glosses(filtered=True)[:10]
         print("\n\nClassification without augmentation:")
-        self._analyze_with_dtw(data, glosses, augment=False, output_file="results.log")
+        self._analyze_with_dtw(
+            data, glosses, augment=False, output_file="results.log", topN=5
+        )
         print("\n\nClassification with augmentation:")
         self._analyze_with_dtw(
-            data, glosses, augment=True, output_file="results_aug.log"
+            data, glosses, augment=True, output_file="results_aug.log", topN=5
         )
 
     def _load_data(self) -> Dataset:
@@ -38,6 +40,7 @@ class Launcher:
         glosses: List[str],
         augment: bool = False,
         output_file: str = "results.log",
+        topN: int = 1,
     ) -> None:
         test_videos = dataset.get_videos(
             lambda video: (video.split == "test") and video.gloss in glosses
@@ -53,5 +56,9 @@ class Launcher:
                 and (video.split == "train" or video.split == "val")
             )
         classify(
-            test_videos, splitted_train_videos, augment=augment, output_file=output_file
+            test_videos,
+            splitted_train_videos,
+            augment=augment,
+            output_file=output_file,
+            topN=topN,
         )
