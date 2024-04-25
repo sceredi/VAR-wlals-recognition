@@ -1,3 +1,4 @@
+import sys
 from typing import List
 
 import pandas as pd
@@ -10,15 +11,23 @@ from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
 class Launcher:
     def start(self) -> None:
+        # Check if there are at least two arguments
+        nwords = 10
+        topN = 5
+        if len(sys.argv) >= 3:
+            nwords = int(sys.argv[1])
+            topN = int(sys.argv[2])
+        print("Number of words:", nwords)
+        print("TopN:", topN)
         data = self._load_data()
-        glosses = self._load_glosses(filtered=True)[:10]
+        glosses = self._load_glosses(filtered=True)[:nwords]
         print("\n\nClassification without augmentation:")
         self._analyze_with_dtw(
-            data, glosses, augment=False, output_file="results.log", topN=5
+            data, glosses, augment=False, output_file="results.log", topN=topN
         )
         print("\n\nClassification with augmentation:")
         self._analyze_with_dtw(
-            data, glosses, augment=True, output_file="results_aug.log", topN=5
+            data, glosses, augment=True, output_file="results_aug.log", topN=topN
         )
 
     def _load_data(self) -> Dataset:
