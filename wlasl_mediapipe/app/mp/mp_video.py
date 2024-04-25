@@ -1,8 +1,6 @@
 import os
 from typing import List
 
-import numpy as np
-
 from handcrafted.app.dataset.video import Video
 from handcrafted.app.plotter.framesPlotter import FramesPlotter
 from wlasl_mediapipe.app.mp.augmentation import augment_video

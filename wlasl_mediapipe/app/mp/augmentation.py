@@ -1,5 +1,3 @@
-from itertools import count
-
 import numpy as np
 from tqdm import tqdm
 
