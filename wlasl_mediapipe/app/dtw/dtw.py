@@ -1,10 +1,9 @@
-import gc
 from typing import List
 
 import numpy as np
 from fastdtw import fastdtw
+from tabulate import tabulate
 
-from handcrafted.app.dataset.video import Video
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
 
@@ -35,7 +34,6 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
                 "left": np.inf,
                 "right": np.inf,
             }
-
         if other_video.video.gloss not in ret:
             ret[other_video.video.gloss] = []
         ret[other_video.video.gloss].append(distance["left"] + distance["right"])
@@ -43,7 +41,7 @@ def calc_dtw_distance(video: MediapipeVideo, others: List[MediapipeVideo]):
 
 
 def _best_choice(distances):
-    """Given a list of distances, calculates the average the distances for each gloss"""
+    """Given a list of distances, calculates the minimum the distances for each gloss"""
     for gloss in distances:
         distances[gloss] = np.min(distances[gloss])
     # print(f"Distances again: {distances}")
@@ -87,14 +85,21 @@ def classify(
             best_choice = calc_dtw_distance(video, current_train)
             if best_choice[1] < classified_glosses[i][1]:
                 classified_glosses[i] = best_choice
-    print(f"Real glosses: {real_glosses}")
-    print(f"Classified glosses: {classified_glosses}")
+    _print(real_glosses, classified_glosses, output_file)
+
+
+def _print(real_glosses, classified_glosses, output_file):
+    rows = []
+    for i, rg in enumerate(real_glosses):
+        cg = classified_glosses[i]
+        rows.append([rg, cg[0], cg[1]])
+
+    print(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
     print(
         f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
     )
     with open(output_file, "w") as file:
-        file.write(f"Real glosses: {real_glosses}\n")
-        file.write(f"Classified glosses: {classified_glosses}\n")
+        file.write(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
         file.write(
             f"Accuracy: {np.mean([real == classified[0] for real, classified in zip(real_glosses, classified_glosses)])}"
         )
