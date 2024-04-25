@@ -162,7 +162,6 @@ def _apply_augmentations(data):
         if np.random.rand() < 0.5:
             data = fun(data)
             counter += 1
-
     if counter == 0:
         data = _apply_augmentations(data)
 
@@ -178,15 +177,13 @@ def _apply_lhrh_augmentations(lh, rh):
         _rotate_z_hands,
     ]
     np.random.shuffle(np.array(aug_functions))
-    counter = 0
-    for fun in aug_functions:
-        if np.random.rand() < 0.5:
-            lh, rh = fun(lh, rh)
-            counter += 1
-
-    if counter == 0:
+    num_aug = np.random.randint(4)  # Random length between 0 and 3
+    for fun in aug_functions[:num_aug]:
+        lh, rh = fun(lh, rh)
+    if num_aug == 0:
         lh, rh = _apply_lhrh_augmentations(lh, rh)
     return lh, rh
+
 
 
 def augment(X, Y, num=None):
