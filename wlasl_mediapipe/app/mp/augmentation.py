@@ -4,14 +4,32 @@ from tqdm import tqdm
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 
 
-def _rotate(data, rotation_matrix):
+def  _rotate_hand(data, rotation_matrix):
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
     non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
     data = data.reshape(-1, 3)
-    data[non_zero] -= center
-    data[non_zero] = np.dot(data[non_zero], rotation_matrix.T)
-    data[non_zero] += center
+    data -= center
+    data = np.dot(data, rotation_matrix.T)
+    data += center
+    data = data.reshape(frames, landmarks, 3)
+    out_of_range = np.any((data[:, :, :2] < 0) | (data[:, :, :2] > 1), axis=2)
+    data[out_of_range] = 0
+    return data
+
+
+def _rotate(data, rotation_matrix):
+    # TODO: may be wrong check non_zero
+    frames, landmarks, _ = data.shape
+    center = np.array([0.5, 0.5, 0])
+    non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
+    data = data.reshape(-1, 3)
+    # data[non_zero] -= center
+    # data[non_zero] = np.dot(data[non_zero], rotation_matrix.T)
+    # data[non_zero] += center
+    data -= center
+    data = np.dot(data, rotation_matrix.T)
+    data += center
     data = data.reshape(frames, landmarks, 3)
     out_of_range = np.any((data[:, :, :2] < 0) | (data[:, :, :2] > 1), axis=2)
     data[out_of_range] = 0
@@ -41,7 +59,7 @@ def _rotate_z_hands(lh, rh):
             [0, 0, 1],
         ]
     )
-    return _rotate(lh, rotation_matrix), _rotate(rh, rotation_matrix)
+    return _rotate_hand(lh, rotation_matrix), _rotate_hand(rh, rotation_matrix)
 
 
 def _rotate_y(data):
@@ -67,7 +85,7 @@ def _rotate_y_hands(lh, rh):
             [-np.sin(theta), 0, np.cos(theta)],
         ]
     )
-    return _rotate(lh, rotation_matrix), _rotate(rh, rotation_matrix)
+    return _rotate_hand(lh, rotation_matrix), _rotate_hand(rh, rotation_matrix)
 
 
 def _rotate_x(data):
@@ -93,7 +111,7 @@ def _rotate_x_hands(lh, rh):
             [0, np.sin(theta), np.cos(theta)],
         ]
     )
-    return _rotate(lh, rotation_matrix), _rotate(rh, rotation_matrix)
+    return _rotate_hand(lh, rotation_matrix), _rotate_hand(rh, rotation_matrix)
 
 
 def _zoom(data):
@@ -164,24 +182,19 @@ def _apply_augmentations(data):
             counter += 1
     if counter == 0:
         data = _apply_augmentations(data)
-
     return data
 
 
 def _apply_lhrh_augmentations(lh, rh):
-    lh = lh.copy()
-    rh = rh.copy()
     aug_functions = [
         _rotate_x_hands,
         _rotate_y_hands,
         _rotate_z_hands,
     ]
     np.random.shuffle(np.array(aug_functions))
-    num_aug = np.random.randint(4)  # Random length between 0 and 3
+    num_aug = np.random.randint(3) + 1  # Random length between 0 and 3
     for fun in aug_functions[:num_aug]:
         lh, rh = fun(lh, rh)
-    if num_aug == 0:
-        lh, rh = _apply_lhrh_augmentations(lh, rh)
     return lh, rh
 
 
