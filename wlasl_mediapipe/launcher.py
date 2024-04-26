@@ -14,20 +14,24 @@ class Launcher:
         # Check if there are at least two arguments
         nwords = 10
         topN = 5
+        augment = 3
         if len(sys.argv) >= 3:
             nwords = int(sys.argv[1])
             topN = int(sys.argv[2])
-        print("Number of words:", nwords)
-        print("TopN:", topN)
+        if len(sys.argv) >= 4:
+            augment = int(sys.argv[3])
+        print(f"Number of words: {nwords}")
+        print(f"TopN: {topN}")
+        print(f"Will augment each video by: {augment}")
         data = self._load_data()
         glosses = self._load_glosses(filtered=True)[:nwords]
         print("\n\nClassification without augmentation:")
         self._analyze_with_dtw(
-            data, glosses, augment=False, output_file="results.log", topN=topN
+            data, glosses, augment=0, output_file="results.log", topN=topN
         )
         print("\n\nClassification with augmentation:")
         self._analyze_with_dtw(
-            data, glosses, augment=True, output_file="results_aug.log", topN=topN
+            data, glosses, augment=augment, output_file="results_aug.log", topN=topN
         )
 
     def _load_data(self) -> Dataset:
@@ -47,7 +51,7 @@ class Launcher:
         self,
         dataset: Dataset,
         glosses: List[str],
-        augment: bool = False,
+        augment: int = 0,
         output_file: str = "results.log",
         topN: int = 1,
     ) -> None:

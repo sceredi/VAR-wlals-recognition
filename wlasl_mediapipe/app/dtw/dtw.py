@@ -66,7 +66,7 @@ def calc_accuracy(real_glosses, classified_glosses) -> float:
 def classify(
     test_videos: List[MediapipeVideo],
     train_videos: dict,
-    augment: bool,
+    augment: int,
     output_file: str = "results.log",
     topN: int = 1,
 ) -> None:
@@ -78,8 +78,8 @@ def classify(
             )
             for train_video in train_videos[gloss]
         ]
-        if augment:
-            augmented_train = [video.augment(3) for video in current_train]
+        if augment != 0:
+            augmented_train = [video.augment(augment) for video in current_train]
             for videos in augmented_train:
                 current_train.extend(videos)
         for video in test_videos:
@@ -132,7 +132,7 @@ def _print(
         rows.append([el[0].get_base_video().gloss, el[1]])
 
     print(tabulate(rows, headers=["Real Word", "Classified Words"]))
-    print(f"Accuracy: {_calc_acc(classified_glosses)}")
+    print(f"\nAccuracy: {_calc_acc(classified_glosses)}")
     with open(output_file, "w") as file:
         file.write(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
-        file.write(f"Accuracy: {_calc_acc(classified_glosses)}")
+        file.write(f"\nAccuracy: {_calc_acc(classified_glosses)}")
