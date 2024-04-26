@@ -1,10 +1,10 @@
 from typing import List, Tuple
-from handcrafted.app.dataset.video import Video
-import mediapipe as mp
 
-import numpy as np
 import cv2
+import mediapipe as mp
+import numpy as np
 
+from handcrafted.app.dataset.video import Video
 from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_drawer import (
     draw_landmarks_on_image,
 )
@@ -21,6 +21,7 @@ class MediapipeLandmarksExtractor:
             model_complexity=2,
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5,
+            refine_face_landmarks=True,
         )
 
     def _process_frame(self, frame: "np.ndarray") -> List["np.ndarray"] | None:
