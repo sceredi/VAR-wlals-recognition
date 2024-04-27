@@ -1,9 +1,10 @@
-from typing import List, Tuple
 import os
-from typing_extensions import deprecated
+from typing import List, Tuple
+
 import cv2
 import numpy as np
 from scipy.interpolate import interp1d
+from typing_extensions import deprecated
 
 from handcrafted.app.features.features_container import FeaturesContainer
 
@@ -50,6 +51,9 @@ class Video:
     def is_missing(self) -> bool:
         return os.path.isfile(self.get_path()) == False
 
+    def has_keypoints(self) -> bool:
+        return os.path.exists(f"data/mp/{self.video_id}")
+
     def get_path(self) -> str:
         return f"data/videos/{self.video_id}.mp4"
 
@@ -63,7 +67,7 @@ class Video:
         ret, frame = self.get_video_capture().read()
         return ret, frame
 
-    def get_frames(self, last_frame = None) -> List["np.ndarray"]:
+    def get_frames(self, last_frame=None) -> List["np.ndarray"]:
         if last_frame is None:
             last_frame = self.frame_end
         frames = []

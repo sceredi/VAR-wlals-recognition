@@ -4,7 +4,7 @@ from tqdm import tqdm
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 
 
-def  _rotate_hand(data, rotation_matrix):
+def _rotate_hand(data, rotation_matrix):
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
     non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
@@ -192,11 +192,14 @@ def _apply_lhrh_augmentations(lh, rh):
         _rotate_z_hands,
     ]
     np.random.shuffle(np.array(aug_functions))
-    num_aug = np.random.randint(3) + 1  # Random length between 0 and 3
-    for fun in aug_functions[:num_aug]:
-        lh, rh = fun(lh, rh)
+    counter = 0
+    for fun in aug_functions:
+        if np.random.rand() < 0.5:
+            lh, rh = fun(lh, rh)
+            counter += 1
+    if counter == 0:
+        lh, rh = _apply_lhrh_augmentations(lh, rh)
     return lh, rh
-
 
 
 def augment(X, Y, num=None):

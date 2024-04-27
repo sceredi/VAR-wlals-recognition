@@ -24,6 +24,7 @@ class Launcher:
         print(f"TopN: {topN}")
         print(f"Will augment each video by: {augment}")
         data = self._load_data()
+        print(len(data.videos))
         glosses = self._load_glosses(filtered=True)[:nwords]
         print("\n\nClassification without augmentation:")
         self._analyze_with_dtw(
@@ -35,7 +36,7 @@ class Launcher:
         )
 
     def _load_data(self) -> Dataset:
-        return Dataset("data/WLASL_v0.3.json")
+        return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
 
     def _load_glosses(self, filtered: bool = False) -> List[str]:
         glosses = []

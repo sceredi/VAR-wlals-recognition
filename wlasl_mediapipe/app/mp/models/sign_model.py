@@ -3,10 +3,8 @@ from typing import List
 
 import numpy as np
 
-from wlasl_mediapipe.app.mp.models.face_model import FaceModel
 from wlasl_mediapipe.app.mp.models.globals import GlobalFilters
 from wlasl_mediapipe.app.mp.models.hand_model import HandModel
-from wlasl_mediapipe.app.mp.models.pose_model import PoseModel
 from wlasl_mediapipe.app.utils.mp.file_utils import load_array
 
 
@@ -38,9 +36,7 @@ class SignModel(object):
         self.face_list = face_list
 
         if expand_keypoints:
-            self.expand_keypoints(
-                left_hand_list, right_hand_list, pose_list, face_list, all_features
-            )
+            self.expand_keypoints(left_hand_list, right_hand_list)
 
         self.lh_matrix = np.reshape(left_hand_list, (-1, 21, 3))
         self.rh_matrix = np.reshape(right_hand_list, (-1, 21, 3))
@@ -55,17 +51,12 @@ class SignModel(object):
                 self._filter_frames_feature_list(
                     face_list, GlobalFilters().face_filter_big
                 ),
-                (-1, 130, 3),
+                (-1, 132, 3),
             )
 
-    def expand_keypoints(
-        self, left_hand_list, right_hand_list, pose_list, face_list, all_features: bool
-    ) -> None:
+    def expand_keypoints(self, left_hand_list, right_hand_list) -> None:
         self.lh_embedding = self._get_hand_embedding_from_landmark_list(left_hand_list)
         self.rh_embedding = self._get_hand_embedding_from_landmark_list(right_hand_list)
-        if all_features:
-            self.pose_embedding = self._get_pose_embedding_from_landmark_list(pose_list)
-            self.face_embedding = self._get_face_embedding_from_landmark_list(face_list)
 
     @staticmethod
     def load(
@@ -80,10 +71,10 @@ class SignModel(object):
         pose_list = load_array(os.path.join(path, f"pose_{video_id}.pickle"))
         face_list = load_array(os.path.join(path, f"face_{video_id}.pickle"))
         return SignModel(
-            left_hand_list,
-            right_hand_list,
-            pose_list,
-            face_list,
+            left_hand_list.tolist(),
+            right_hand_list.tolist(),
+            pose_list.tolist(),
+            face_list.tolist(),
             expand_keypoints=expand_keypoints,
             all_features=all_features,
         )
@@ -100,8 +91,6 @@ class SignModel(object):
             the feature_vectors of the hand for each frame
         """
         embedding = []
-        # print(f"hand_list: {hand_list}")
-        # print({"hand_list shape": np.array(hand_list).shape})
         for frame_idx in range(len(hand_list)):
             if np.sum(hand_list[frame_idx]) == 0:
                 embedding.append(np.zeros(21 * 21))
@@ -109,32 +98,6 @@ class SignModel(object):
 
             hand_gesture = HandModel(hand_list[frame_idx])
             embedding.append(hand_gesture.feature_vector)
-        return embedding
-
-    @staticmethod
-    def _get_pose_embedding_from_landmark_list(
-        pose_list: List[List[float]],
-    ) -> List[List[float]]:
-        embedding = []
-        for frame_idx in range(len(pose_list)):
-            if np.sum(pose_list[frame_idx]) == 0:
-                embedding.append(np.zeros(25))
-                continue
-            pose = PoseModel(pose_list[frame_idx])
-            embedding.append(pose.feature_vector)
-        return embedding
-
-    @staticmethod
-    def _get_face_embedding_from_landmark_list(
-        face_list: List[List[float]],
-    ) -> List[List[float]]:
-        embedding = []
-        for frame_idx in range(len(face_list)):
-            if np.sum(face_list[frame_idx]) == 0:
-                embedding.append(np.zeros(64))
-                continue
-            face = FaceModel(face_list[frame_idx])
-            embedding.append(face.feature_vector)
         return embedding
 
     @staticmethod
