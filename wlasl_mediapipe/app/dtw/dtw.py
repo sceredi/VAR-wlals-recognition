@@ -86,7 +86,8 @@ def classify(
             classified_glosses = _do_classification(
                 video, current_train, classified_glosses, topN
             )
-    _print(classified_glosses, output_file)
+    _print(classified_glosses, output_file, 1)
+    _print(classified_glosses, output_file, topN)
 
 
 def _do_classification(
@@ -113,26 +114,32 @@ def _do_classification(
 
 
 def _calc_acc(
-    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]]
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]], topN: int
 ) -> float:
     right = 0
     tot = len(classified_glosses)
     for el in classified_glosses.items():
-        cl = [val[0] for val in el[1]]
+        cl = [val[0] for val in el[1][:topN]]
         if cl.count(el[0].get_base_video().gloss) == 1:
             right += 1
     return right / tot
 
 
 def _print(
-    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]], output_file: str
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]],
+    output_file: str,
+    topN: int,
 ):
+    output_file = f"top{topN}-{output_file}"
     rows = []
     for el in classified_glosses.items():
-        rows.append([el[0].get_base_video().gloss, el[1]])
+        rows.append([el[0].get_base_video().gloss, el[1][:topN]])
 
+    print(f"Top{topN} score:")
     print(tabulate(rows, headers=["Real Word", "Classified Words"]))
-    print(f"\nAccuracy: {_calc_acc(classified_glosses)}")
+    acc = _calc_acc(classified_glosses, topN)
+    print(f"\nAccuracy: {acc}")
     with open(output_file, "w") as file:
+        file.write(f"Top{topN} score:")
         file.write(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
-        file.write(f"\nAccuracy: {_calc_acc(classified_glosses)}")
+        file.write(f"\nAccuracy: {acc}")
