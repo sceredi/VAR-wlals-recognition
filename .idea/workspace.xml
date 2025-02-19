@@ -5,16 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d1bf8091-e73c-454f-8058-4947e1b47185" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/wlasl-recognition.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/wlasl-recognition.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/app/dataset/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/dataset/dataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handcrafted/app/dataset/video.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/dataset/video.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/app/extractor/feature_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/extractor/feature_extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/app/features/features_container.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/features/features_container.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/app/haar/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/haar/detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/app/utilities/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/utilities/preprocess.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/wlasl_mediapipe/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/wlasl_mediapipe/launcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,16 +42,17 @@
     "Python.main (1).executor": "Run",
     "Python.main (2).executor": "Run",
     "Python.main.executor": "Run",
+    "Python.wlasl_mediapipe_main.executor": "Profiler",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "feature/mediapipe",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Color Scheme Font",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -67,7 +61,7 @@
       <recent name="C:\Users\HP\Desktop\UNIBO\LaureaMagistrale\2° Anno\Visione Artificiale e Riconoscimento\Progetto\New\VAR-wlals-recognition\data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.wlasl_mediapipe_main">
     <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="wlasl-recognition" />
       <option name="ENV_FILES" value="" />
@@ -137,8 +131,38 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="wlasl_mediapipe_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="wlasl-recognition" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/wlasl_mediapipe_main.py" />
+      <option name="PARAMETERS" value="python -m memory_profiler" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.main (1)" />
+      <item itemvalue="Python.main (2)" />
+      <item itemvalue="Python.wlasl_mediapipe_main" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.wlasl_mediapipe_main" />
         <item itemvalue="Python.main (2)" />
         <item itemvalue="Python.main (1)" />
       </list>
@@ -147,7 +171,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-50da183f06c8-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13135.95" />
+        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
       </set>
     </attachedChunks>
   </component>
@@ -176,6 +200,13 @@
       <workItem from="1706866867778" duration="23256000" />
       <workItem from="1707821163544" duration="16405000" />
       <workItem from="1708080527121" duration="388000" />
+      <workItem from="1708449837926" duration="518000" />
+      <workItem from="1708450362604" duration="5000" />
+      <workItem from="1708450512548" duration="75000" />
+      <workItem from="1708450598499" duration="155000" />
+      <workItem from="1708451018932" duration="112000" />
+      <workItem from="1708451137876" duration="33000" />
+      <workItem from="1709462842841" duration="510000" />
     </task>
     <servers />
   </component>

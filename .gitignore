@@ -2,6 +2,8 @@
 data/
 data-bk/
 wlasl-processed.zip
+wlasl.zip
+results.log
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files
@@ -187,3 +189,9 @@ fabric.properties
 
 # idea folder, uncomment if you don't need it
 .idea
+
+.direnv/
+.envrc
+wlasl_transformer.weights.h5
+
+tests.ipynb
