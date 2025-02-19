@@ -29,6 +29,7 @@ class Video:
         self.frame_start = frame_start
         self.frame_end = frame_end
         self.features_container = FeaturesContainer(self)
+        self.frames = None
 
     @classmethod
     def from_instance(cls, gloss: str, instance: dict) -> "Video":
@@ -68,6 +69,8 @@ class Video:
         return ret, frame
 
     def get_frames(self, last_frame=None) -> List["np.ndarray"]:
+        if not self.frames is None:
+            return self.frames
         if last_frame is None:
             last_frame = self.frame_end
         frames = []
@@ -79,6 +82,7 @@ class Video:
             frames.append(frame)
             frame_number += 1
         self.video_capture.release()
+        self.frames = frames
         return frames
 
     def get_end(self) -> int:
