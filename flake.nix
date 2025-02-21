@@ -55,14 +55,9 @@
             pkgs.libxslt
             pkgs.libzip
             pkgs.zlib
-            pkgs.glibc
             pkgs.glib
-            pkgs.zlib
             pkgs.libGL
             pkgs.libuuid
-            pkgs.stdenv.cc.cc.lib
-            pkgs.gcc-unwrapped
-            pkgs.gcc-unwrapped.lib
             pkgs.libgccjit.out
           ];
 

@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="d1bf8091-e73c-454f-8058-4947e1b47185" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handcrafted/app/dataset/video.py" beforeDir="false" afterPath="$PROJECT_DIR$/handcrafted/app/dataset/video.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wlasl_mediapipe/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/wlasl_mediapipe/launcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flake.nix" beforeDir="false" afterPath="$PROJECT_DIR$/flake.nix" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handcrafted/app/plotter/framesPlotter.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wlasl_mediapipe/app/mp/mp_video.py" beforeDir="false" afterPath="$PROJECT_DIR$/wlasl_mediapipe/app/mp/mp_video.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,14 +47,16 @@
     "Python.wlasl_mediapipe_main.executor": "Profiler",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feature/mediapipe",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/simone/uni-lab/VAR/wlasl-recognition",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Color Scheme Font",
+    "settings.editor.selected.configurable": "com.intellij.jupyter.core.jupyter.connections.configuration.JupyterServerConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -171,7 +175,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-PY-243.23654.177" />
+        <option value="bundled-python-sdk-91d3a02ef49d-43b77aa2d136-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.23654.177" />
       </set>
     </attachedChunks>
   </component>
@@ -207,6 +212,7 @@
       <workItem from="1708451018932" duration="112000" />
       <workItem from="1708451137876" duration="33000" />
       <workItem from="1709462842841" duration="510000" />
+      <workItem from="1740153273546" duration="2239000" />
     </task>
     <servers />
   </component>

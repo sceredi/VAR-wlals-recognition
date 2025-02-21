@@ -34,7 +34,7 @@ from handcrafted.app.extractor.skin import SkinExtractor
 from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
 from handcrafted.app.pca.compute import custom_pca
-from handcrafted.app.plotter.framesPlotter import FramesPlotter
+from handcrafted.app.plotter.frames_plotter import FramesPlotter
 from handcrafted.app.roi.extractor import RoiExtractor
 from handcrafted.app.utilities.file_zipper import FileZipper
 
