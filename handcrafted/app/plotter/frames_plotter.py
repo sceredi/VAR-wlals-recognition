@@ -22,10 +22,9 @@ class FramesPlotter:
 
     def plot_grid(self):
         num_frames = len(self.frames)
-        print(num_frames)
-        side_length = int(math.ceil(math.sqrt(num_frames)))
-        print(side_length)
-        _, axes = plt.subplots(side_length, side_length)
+        cols = int(math.ceil(math.sqrt(num_frames)))
+        rows = int(math.ceil(num_frames / cols))
+        _, axes = plt.subplots(rows, cols)
         axes = axes.flatten()
         for i, (frame, ax) in enumerate(zip(self.frames, axes)):
             self._update(ax, frame, f"Frame {i+1}")
@@ -85,19 +84,22 @@ def plot_contour(frames: List[np.ndarray]) -> None:
     plot_frames(contour_frames)
 
 
-def plot_haar_frames(frames: List["np.ndarray"]):
+def plot_haar_frames(frames: List["np.ndarray"], plot: bool = True):
     classifier = cv2.CascadeClassifier()
-    if not classifier.load(cv2.samples.findFile("app/haar/haarcascades/face.xml")):
+    if not classifier.load(
+        cv2.samples.findFile("handcrafted/app/haar/haarcascades/face.xml")
+    ):
         print("Error loading face cascade")
         exit(1)
     haar_detector = HaarDetector(frames, classifier, detections_to_keep=3)
     face_frames, rects = haar_detector.detect()
-    plot_frames(face_frames)
+    if plot:
+        plot_frames(face_frames)
     return rects
 
 
 def plot_skin_frames(frames: List["np.ndarray"]) -> None:
-    face_rects = plot_haar_frames(frames)
+    face_rects = plot_haar_frames(frames, False)
     skin_extractor = SkinExtractor(frames, face_rects)
     skin_frames = skin_extractor.extract()
     plot_frames(skin_frames)
