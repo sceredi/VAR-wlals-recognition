@@ -1,6 +1,7 @@
-import cv2
-import uuid
 import os
+import uuid
+
+import cv2
 import numpy as np
 
 

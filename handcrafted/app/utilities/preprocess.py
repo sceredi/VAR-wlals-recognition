@@ -1,4 +1,5 @@
 import cv2
+
 from handcrafted.app.utilities.utils import video_to_img
 
 

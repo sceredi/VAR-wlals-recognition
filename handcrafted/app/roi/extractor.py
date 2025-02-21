@@ -1,9 +1,10 @@
 # Purpose: Extracts a region of interest from a list of frames
-from typing_extensions import deprecated
-import numpy as np
 from typing import List, Tuple
-from rembg import remove
+
 import cv2
+import numpy as np
+from rembg import remove
+from typing_extensions import deprecated
 
 
 @deprecated("Roi is already extracted in the dataset, this class is now obsolete")

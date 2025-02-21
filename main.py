@@ -1,15 +1,27 @@
 import gc
 import json
 import os
+import time
 from typing import List, Tuple
-import numpy as np
-import cv2
-from fastdtw import fastdtw
 
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sn
 # from dtaidistance import dtw
 from dtw import *
+from fastdtw import fastdtw
+from scipy.spatial.distance import cdist, euclidean
+from sklearn.metrics import confusion_matrix
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
+from sklearn.svm import SVC, LinearSVC
+from tslearn.clustering import TimeSeriesKMeans
 from tslearn.datasets import CachedDatasets
 from tslearn.metrics import cdist_dtw
+from tslearn.neighbors import KNeighborsTimeSeriesClassifier
+from tslearn.preprocessing import TimeSeriesResampler, TimeSeriesScalerMinMax
 from tslearn.svm import TimeSeriesSVC
 
 from handcrafted.app.dataset.dataset import Dataset
@@ -19,25 +31,11 @@ from handcrafted.app.extractor.contour_extractor import ContourDetector
 from handcrafted.app.extractor.feature_extractor import FeatureExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
+from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
 from handcrafted.app.pca.compute import custom_pca
 from handcrafted.app.plotter.framesPlotter import FramesPlotter
 from handcrafted.app.roi.extractor import RoiExtractor
-from handcrafted.app.flow.calculator import FlowCalculator
-import time
-from scipy.spatial.distance import euclidean, cdist
-from sklearn.svm import SVC, LinearSVC
-from sklearn.neighbors import KNeighborsClassifier
-from tslearn.neighbors import KNeighborsTimeSeriesClassifier
-from sklearn.metrics import confusion_matrix
-import seaborn as sn
-import pandas as pd
-import matplotlib.pyplot as plt
-from tslearn.clustering import TimeSeriesKMeans
-from tslearn.preprocessing import TimeSeriesScalerMinMax, TimeSeriesResampler
-from sklearn.preprocessing import MinMaxScaler, RobustScaler
-from sklearn.preprocessing import StandardScaler
-
 from handcrafted.app.utilities.file_zipper import FileZipper
 
 
@@ -392,6 +390,7 @@ def process_video_pair(video_i: Video, video_j: Video):
 
     frames_i = video_i.get_frames()
     frames_j = video_j.get_frames()
+    print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
     hog_features_i, _ = video_i.features_container.get_hog_features(frames_i)
     hog_features_j, _ = video_j.features_container.get_hog_features(frames_j)
     lbp_features_i = video_i.features_container.get_lbp_features(frames_i)
@@ -454,6 +453,7 @@ def process_video_pair(video_i: Video, video_j: Video):
 
 def standardize_features(features):
     scaler = StandardScaler()
+    # print(features)
     standardized_features = scaler.fit_transform(features)
     return standardized_features
 

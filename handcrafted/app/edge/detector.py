@@ -1,6 +1,7 @@
 # Description: This file contains the EdgeDetector class which is used to detect edges in a video.
 
 from typing import List
+
 import cv2
 import numpy as np
 

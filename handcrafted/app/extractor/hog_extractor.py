@@ -1,8 +1,9 @@
+from typing import List, Tuple
+
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 from skimage.feature import hog
-import matplotlib.pyplot as plt
-from typing import List, Tuple
 
 
 class HOGExtractor:

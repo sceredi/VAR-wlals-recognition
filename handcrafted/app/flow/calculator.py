@@ -1,9 +1,10 @@
 # Description: This file contains the class for calculating the optical flow using Gunnar Farneback's algorithm.
 
 from typing import List
+
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class FlowCalculator:

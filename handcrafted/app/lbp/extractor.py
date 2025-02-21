@@ -1,7 +1,7 @@
 from typing import List
 
-import numpy as np
 import cv2
+import numpy as np
 from skimage.feature import local_binary_pattern
 
 

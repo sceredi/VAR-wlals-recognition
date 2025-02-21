@@ -1,9 +1,10 @@
 # Purpose: Extracts skin from a video given a list of frames and the position of the face in each frame
 
 from typing import List
-import numpy as np
+
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class SkinExtractor:

@@ -1,17 +1,18 @@
 from typing import List, Tuple
+
 import cv2
+import numpy as np
 from matplotlib.cbook import flatten
 
-import numpy as np
 from handcrafted.app.color_histogram.extractor import ColorHistogram
-
-from handcrafted.app.extractor.hog_extractor import HOGExtractor
-from handcrafted.app.flow.calculator import FlowCalculator
-from handcrafted.app.extractor.contour_extractor import ContourDetector
 from handcrafted.app.edge.detector import EdgeDetector
+from handcrafted.app.extractor.contour_extractor import ContourDetector
+from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
+from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
 from handcrafted.app.lbp.extractor import LBPExtractor
+
 
 class FeaturesContainer:
     def __init__(self, video) -> None:

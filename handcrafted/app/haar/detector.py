@@ -1,6 +1,7 @@
 # Purpose: Detects hands in a video stream
 
 from typing import List
+
 import cv2
 import numpy as np
 
