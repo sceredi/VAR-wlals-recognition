@@ -5,6 +5,7 @@ from fastdtw import fastdtw
 from tabulate import tabulate
 from tqdm import tqdm
 
+from handcrafted.app.dataset.video import Video
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
 
@@ -63,13 +64,14 @@ def calc_accuracy(real_glosses, classified_glosses) -> float:
     return accuracy
 
 
+# TODO: when transforming this into notebook simplify the information passed as print will be called separately
+# also return classified_glosses
 def classify(
     test_videos: List[MediapipeVideo],
-    train_videos: dict,
+    train_videos: Dict[str, List[Video]],
     augment: int,
-    output_file: str = "results.log",
     topN: int = 1,
-) -> None:
+) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = dict()
     for gloss in tqdm(train_videos):
         current_train = [
@@ -86,8 +88,7 @@ def classify(
             classified_glosses = _do_classification(
                 video, current_train, classified_glosses, topN
             )
-    _print(classified_glosses, output_file, 1)
-    _print(classified_glosses, output_file, topN)
+    return classified_glosses
 
 
 def _do_classification(
@@ -125,7 +126,8 @@ def _calc_acc(
     return right / tot
 
 
-def _print(
+# TODO: when creating the notebook this will become public and get called after classify
+def pretty_print(
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]],
     output_file: str,
     topN: int,

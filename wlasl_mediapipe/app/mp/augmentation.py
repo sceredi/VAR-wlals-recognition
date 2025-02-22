@@ -7,7 +7,6 @@ from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 def _rotate_hand(data, rotation_matrix):
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
-    non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
     data = data.reshape(-1, 3)
     data -= center
     data = np.dot(data, rotation_matrix.T)
@@ -19,14 +18,9 @@ def _rotate_hand(data, rotation_matrix):
 
 
 def _rotate(data, rotation_matrix):
-    # TODO: may be wrong check non_zero
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
-    non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
     data = data.reshape(-1, 3)
-    # data[non_zero] -= center
-    # data[non_zero] = np.dot(data[non_zero], rotation_matrix.T)
-    # data[non_zero] += center
     data -= center
     data = np.dot(data, rotation_matrix.T)
     data += center

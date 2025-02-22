@@ -1,10 +1,11 @@
 import sys
-from typing import List
+from typing import Dict, List
 
 import pandas as pd
 
 from handcrafted.app.dataset.dataset import Dataset
-from wlasl_mediapipe.app.dtw.dtw import classify
+from handcrafted.app.dataset.video import Video
+from wlasl_mediapipe.app.dtw.dtw import classify, pretty_print
 from wlasl_mediapipe.app.mp.models.globals import FilteredLabels
 from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
@@ -23,9 +24,9 @@ class Launcher:
         print(f"Number of words: {nwords}")
         print(f"TopN: {topN}")
         print(f"Will augment each video by: {augment}")
-        data = self._load_data()
+        data = self.load_data()
         print(len(data.videos))
-        glosses = self._load_glosses(filtered=True)[:nwords]
+        glosses = self.load_glosses(filtered=False)[:nwords]
         print("\n\nClassification without augmentation:")
         self._analyze_with_dtw(
             data, glosses, augment=0, output_file="results.log", topN=topN
@@ -35,10 +36,10 @@ class Launcher:
             data, glosses, augment=augment, output_file="results_aug.log", topN=topN
         )
 
-    def _load_data(self) -> Dataset:
+    def load_data(self) -> Dataset:
         return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
 
-    def _load_glosses(self, filtered: bool = False) -> List[str]:
+    def load_glosses(self, filtered: bool = False) -> List[str]:
         glosses = []
         if not filtered:
             glosses = pd.read_csv("data/wlasl_class_list.txt", sep="\t", header=None)[
@@ -48,6 +49,30 @@ class Launcher:
             glosses = FilteredLabels.get_labels()
         return glosses
 
+    def get_test_videos(
+        self, dataset: Dataset, glosses: List[str]
+    ) -> List[MediapipeVideo]:
+        test_videos = dataset.get_videos(
+            lambda video: (video.split == "test") and video.gloss in glosses
+        )
+        mp_test_videos = [
+            MediapipeVideo(video, plot=False, expand_keypoints=True, all_features=False)
+            for video in test_videos
+        ]
+        return mp_test_videos
+
+    def get_train_videos(
+        self, dataset: Dataset, glosses: List[str]
+    ) -> Dict[str, List[Video]]:
+        splitted_train_videos = {}
+        for gloss in glosses:
+            splitted_train_videos[gloss] = dataset.get_videos(
+                lambda video: video.gloss == gloss
+                and (video.split == "train" or video.split == "val")
+            )
+        return splitted_train_videos
+
+    # TODO: classify will be called from the notebook
     def _analyze_with_dtw(
         self,
         dataset: Dataset,
@@ -56,23 +81,13 @@ class Launcher:
         output_file: str = "results.log",
         topN: int = 1,
     ) -> None:
-        test_videos = dataset.get_videos(
-            lambda video: (video.split == "test") and video.gloss in glosses
-        )
-        test_videos = [
-            MediapipeVideo(video, plot=False, expand_keypoints=True, all_features=False)
-            for video in test_videos
-        ]
-        splitted_train_videos = {}
-        for gloss in glosses:
-            splitted_train_videos[gloss] = dataset.get_videos(
-                lambda video: video.gloss == gloss
-                and (video.split == "train" or video.split == "val")
-            )
-        classify(
+        test_videos = self.get_test_videos(dataset, glosses)
+        splitted_train_videos = self.get_train_videos(dataset, glosses)
+        classified_glosses = classify(
             test_videos,
             splitted_train_videos,
             augment=augment,
-            output_file=output_file,
             topN=topN,
         )
+        pretty_print(classified_glosses, output_file, 1)
+        pretty_print(classified_glosses, output_file, topN)
