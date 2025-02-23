@@ -2,16 +2,15 @@ from typing import List, Tuple
 
 import cv2
 import numpy as np
-from matplotlib.cbook import flatten
 
-from handcrafted.app.color_histogram.extractor import ColorHistogram
-from handcrafted.app.edge.detector import EdgeDetector
-from handcrafted.app.extractor.contour_extractor import ContourDetector
+from app.extractor.color_histogram_extractor import ColorHistogram
+from app.extractor.edge_extractor import EdgeExtractor
+from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
 from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
-from handcrafted.app.lbp.extractor import LBPExtractor
+from app.extractor.lbp_extractor import LBPExtractor
 
 
 class FeaturesContainer:
@@ -31,7 +30,7 @@ class FeaturesContainer:
         _, face_rects = self._get_haar_features(frames)
         skin_features = self.get_skin_features(frames, face_rects, flatten = False)
         print(f"skin_features shape: {np.array(skin_features).shape}")
-        lbp_frames = self.get_lbp_features(skin_features)
+        lbp_frames = self.get_lbp_features(skin_features) # TODO
         print(f"lbp_frames shape: {np.array(lbp_frames).shape}")
         # color_histogram = self.get_color_histogram(frames, flatten=True)
         # print(f"color_histogram shape: {np.array(color_histogram).shape}")
@@ -54,13 +53,13 @@ class FeaturesContainer:
         return features
 
     def get_contour_features(self, frames, flatten: bool = True) -> "np.ndarray":
-        features = np.array(ContourDetector(frames).detect())
+        features = np.array(ContourExtractor(frames).process_frames())
         if flatten:
             features = features.reshape(features.shape[0], -1)
         return features
 
     def get_edge_features(self, frames: List["np.ndarray"], flatten: bool = True) -> "np.ndarray":
-        features = np.array(EdgeDetector(frames).detect())
+        features = np.array(EdgeExtractor(frames).process_frames())
         if flatten:
             features = features.reshape(features.shape[0], -1)
         return features
@@ -83,10 +82,10 @@ class FeaturesContainer:
         return features
 
     def get_lbp_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
-        return LBPExtractor(frames).extract()
+        return LBPExtractor(frames).process_frames() # TODO
 
     def get_color_histogram(self, frames, to_color = cv2.COLOR_BGR2HSV, flatten: bool = True):
-        features = ColorHistogram(frames).extract(to_color)
+        features = ColorHistogram(frames).process_frames(to_color)
         if flatten:
             features = features.reshape(features.shape[0], -1)
         return features

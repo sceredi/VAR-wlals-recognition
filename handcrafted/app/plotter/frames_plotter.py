@@ -1,18 +1,18 @@
 import math
-from typing import List, Tuple
+from typing import List
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
 from handcrafted.app.dataset.video import Video
-from handcrafted.app.edge.detector import EdgeDetector
-from handcrafted.app.extractor.contour_extractor import ContourDetector
+from app.extractor.edge_extractor import EdgeExtractor
+from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
 from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
-from handcrafted.app.roi.extractor import RoiExtractor
+from handcrafted.app.roi.roi_extractor import RoiExtractor
 
 
 class FramesPlotter:
@@ -59,8 +59,8 @@ def plot_roi_frames(video: Video, remove_background=False) -> None:
 
 
 def plot_edge_frames(frames: List["np.ndarray"]) -> None:
-    edge_detector = EdgeDetector(frames)
-    edge_frames = edge_detector.detect()
+    edge_detector = EdgeExtractor(frames)
+    edge_frames = edge_detector.process_frames()
     plot_frames(edge_frames)
 
 
@@ -79,8 +79,8 @@ def plot_hog_frames(frames: List["np.ndarray"]) -> None:
 
 
 def plot_contour(frames: List[np.ndarray]) -> None:
-    contour_detector = ContourDetector(frames)
-    contour_frames = contour_detector.detect()
+    contour_detector = ContourExtractor(frames)
+    contour_frames = contour_detector.process_frames()
     plot_frames(contour_frames)
 
 

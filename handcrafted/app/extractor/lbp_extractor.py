@@ -9,7 +9,13 @@ class LBPExtractor:
     def __init__(self, frames: List["np.ndarray"]) -> None:
         self.frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) for frame in frames]
 
-    def extract_single(
+    def process_frames(self) -> List["np.ndarray"]:
+        ret = []
+        for frame in self.frames:
+            ret.append(self._extract(frame))
+        return ret
+
+    def _extract(
         self, frame: "np.ndarray", radius: int = 1, n_points: int = 25
     ) -> "np.ndarray":
         lbp = local_binary_pattern(frame, n_points, radius, method="uniform")
@@ -22,9 +28,3 @@ class LBPExtractor:
         hist /= hist.sum() + 1e-7
 
         return hist
-
-    def extract(self) -> List["np.ndarray"]:
-        ret = []
-        for frame in self.frames:
-            ret.append(self.extract_single(frame))
-        return ret

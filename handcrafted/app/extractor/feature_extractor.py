@@ -3,9 +3,9 @@ import os
 import joblib
 
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
-from handcrafted.app.roi.extractor import RoiExtractor
+from handcrafted.app.roi.roi_extractor import RoiExtractor
 
-
+# TODO
 class FeatureExtractor:
     def __init__(self, dataset, glosses):
         self.dataset = dataset
