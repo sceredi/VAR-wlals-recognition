@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from skimage.feature import hog
 
+
 class HOGExtractor:
     """
     HOGExtractor class which is used to extract HOG features in a video.

@@ -21,23 +21,17 @@ class DTWClassifier:
         self.train_videos = []
         self.test_videos = []
 
-    def train_test_set_videos(self, max_train_per_gloss: int = 3, min_train_per_gloss: int = 2):
+    def train_test_videos(self, num_glosses = 10):
         """Create training and testing video sets."""
-        train_videos_per_gloss_count = {}
-        test_videos_per_gloss_count = {}
         selected_videos_train = []
         selected_videos_test = []
 
         for video in self.dataset.videos:
-            if video.gloss in self.glosses:
-                video_count = train_videos_per_gloss_count if video.split == "train" else test_videos_per_gloss_count
-                max_count = max_train_per_gloss if video.split == "train" else min_train_per_gloss
-                selected_videos = selected_videos_train if video.split == "train" else selected_videos_test
-                count_key = video.gloss
-
-                if video_count.get(count_key, 0) < max_count:
-                    video_count[count_key] = video_count.get(count_key, 0) + 1
-                    selected_videos.append(video)
+            if video.gloss in self.glosses[1:num_glosses]:
+                if video.split == "train":
+                    selected_videos_train.append(video)
+                else:
+                    selected_videos_test.append(video)
 
         print(f"Train videos: {len(selected_videos_train)}, Test videos: {len(selected_videos_test)}")
         self.train_videos = selected_videos_train
@@ -105,17 +99,19 @@ class DTWClassifier:
                 similarity = self.process_video_pair(self.test_videos[i], self.train_videos[j])
                 X_test[i, j] = similarity
 
+        print(X_test)
         return X_test
 
     def compute_dtw_similarity_matrix(self) -> tuple:
         """Compute the final DTW similarity matrices for training and testing."""
-        X_train = self.similarity_matrix_training(self.train_videos)
-        X_test = self.similarity_matrix_test(len(X_train))
+        # X_train = self.similarity_matrix_training(self.train_videos)
+        X_test = self.similarity_matrix_test(len(self.train_videos)) #(len(X_train))
 
         y_train = [self.glosses.index(video.gloss) for video in self.train_videos]
         y_test = [self.glosses.index(video.gloss) for video in self.test_videos]
 
-        return X_train.reshape((X_train.shape[0], -1)), X_test.reshape((X_test.shape[0], -1)), y_train, y_test
+        #return X_train.reshape((X_train.shape[0], -1)), X_test.reshape((X_test.shape[0], -1)), y_train, y_test
+        return X_test.reshape((X_test.shape[0], -1)), y_train, y_test
 
     @staticmethod
     def dtw_predict(X_test: np.ndarray, y_train: List[int]) -> List[int]:

@@ -3,6 +3,7 @@ from typing import List
 import cv2
 import numpy as np
 
+
 class EdgeExtractor:
     """
     EdgeExtractor class which is used to detect edges in a video.

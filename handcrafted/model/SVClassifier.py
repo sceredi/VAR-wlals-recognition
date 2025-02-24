@@ -1,11 +1,11 @@
 from typing import List
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import pandas as pd
-from sklearn.svm import SVC
+import seaborn as sns
 from sklearn.metrics import confusion_matrix
+from sklearn.svm import SVC
 
 
 class SVClassifier:

@@ -17,6 +17,7 @@ class FeaturesContainer:
     def __init__(self, video) -> None:
         self.video = video
         self._hog_features = None
+        self._hog_frames = None
         self._flow_features = None
         self._flow_features_flattened = None
         self._contour_features = None
@@ -31,31 +32,31 @@ class FeaturesContainer:
         self._color_hist_features_flattened = None
 
     def get_all_features(self, until_frame_number: None | int = None) -> "np.ndarray":
-        frames = self.video.get_frames(last_frame=until_frame_number)
-        # hog_features, _ = self.get_hog_features(frames)
-        # print(f"hog_features shape: {np.array(hog_features).shape}")
-        # flow_frames = self.get_flow_features(frames)
-        # print(f"flow_frames shape: {np.array(flow_frames).shape}")
-        # contour_features = self.get_contour_features(frames)
-        # print(f"contour_features shape: {np.array(contour_features).shape}")
-        # edge_features = self.get_edge_features(frames)
-        # print(f"edge_features shape: {np.array(edge_features).shape}")
+        frames = self.video.get_frames(last_frame = until_frame_number)
+        hog_features, _ = self.get_hog_features(frames)
+        print(f"hog_features shape: {np.array(hog_features).shape}")
+        flow_frames = self.get_flow_features(frames)
+        print(f"flow_frames shape: {np.array(flow_frames).shape}")
+        contour_features = self.get_contour_features(frames)
+        print(f"contour_features shape: {np.array(contour_features).shape}")
+        edge_features = self.get_edge_features(frames)
+        print(f"edge_features shape: {np.array(edge_features).shape}")
         _, face_rects = self._get_haar_features(frames)
         skin_features = self.get_skin_features(frames, face_rects, flatten = False)
         print(f"skin_features shape: {np.array(skin_features).shape}")
-        lbp_frames = self.get_lbp_features(skin_features)
-        print(f"lbp_frames shape: {np.array(lbp_frames).shape}")
-        # color_histogram = self.get_color_histogram(frames, flatten=True)
-        # print(f"color_histogram shape: {np.array(color_histogram).shape}")
+        lbp_features = self.get_lbp_features(skin_features)
+        print(f"lbp_features shape: {np.array(lbp_features).shape}")
+        color_histogram = self.get_color_histogram(frames, flatten = True)
+        print(f"color_histogram shape: {np.array(color_histogram).shape}")
         return np.concatenate(
-            lbp_frames,
+            (hog_features, flow_frames, contour_features, edge_features, skin_features, lbp_features, color_histogram),
             axis=1,
         )
 
     def get_hog_features(self, frames) -> Tuple[List["np.ndarray"], List["np.ndarray"]]:
         if self._hog_features is None:
-            self._hog_features = HOGExtractor(frames).process_frames()
-        return self._hog_features
+            self._hog_features, self._hog_frames = HOGExtractor(frames).process_frames()
+        return self._hog_features, self._hog_frames
 
     def get_flow_features(
         self, frames: List["np.ndarray"], last_frame_index: int = -1, flatten: bool = True
@@ -85,7 +86,7 @@ class FeaturesContainer:
         if flatten:
             if self._edge_features_flattened is None:
                 self._edge_features_flattened = self._edge_features.copy().reshape(self._edge_features.shape[0], -1)
-            self._edge_features_flattened
+            return self._edge_features_flattened
         return self._edge_features
 
     def _get_haar_features(
@@ -110,7 +111,7 @@ class FeaturesContainer:
             return self._skin_features_flattened
         return self._skin_features
 
-    def get_lbp_features(self, frames: List["np.ndarray"]) -> List["np.ndarray"]:
+    def get_lbp_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
         if self._lpb_features is None:
             self._lpb_features =  LBPExtractor(frames).process_frames()
         return self._lpb_features
