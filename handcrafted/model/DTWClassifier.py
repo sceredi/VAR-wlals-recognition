@@ -1,9 +1,11 @@
+from typing import List
+
 import numpy as np
 from fastdtw import fastdtw
 from sklearn.preprocessing import StandardScaler
-from app.dataset.dataset import Dataset
-from app.dataset.video import Video
-from typing import List
+
+from handcrafted.app.dataset.dataset import Dataset
+from handcrafted.app.dataset.video import Video
 
 
 def standardize_features(features: np.ndarray) -> np.ndarray:

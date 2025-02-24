@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from handcrafted.app.dataset.video import Video
-from app.extractor.edge_extractor import EdgeExtractor
 from handcrafted.app.extractor.contour_extractor import ContourExtractor
+from handcrafted.app.extractor.edge_extractor import EdgeExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
 from handcrafted.app.flow.calculator import FlowCalculator

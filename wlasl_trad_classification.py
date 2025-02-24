@@ -1,8 +1,8 @@
 from sklearn.metrics import accuracy_score
 
-from app.dataset.dataset import Dataset
-from model.DTWClassifier import DTWClassifier
-from model.SVClassifier import SVClassifier
+from handcrafted.app.dataset.dataset import Dataset
+from handcrafted.model.DTWClassifier import DTWClassifier
+from handcrafted.model.SVClassifier import SVClassifier
 
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
