@@ -1,5 +1,4 @@
 import gc
-import json
 import os
 import time
 from typing import List, Tuple
@@ -10,33 +9,22 @@ import numpy as np
 import pandas as pd
 import seaborn as sn
 # from dtaidistance import dtw
-from dtw import *
 from fastdtw import fastdtw
-from scipy.spatial.distance import cdist, euclidean
+from scipy.spatial.distance import euclidean
 from sklearn.metrics import confusion_matrix
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
-from sklearn.svm import SVC, LinearSVC
-from tslearn.clustering import TimeSeriesKMeans
-from tslearn.datasets import CachedDatasets
-from tslearn.metrics import cdist_dtw
-from tslearn.neighbors import KNeighborsTimeSeriesClassifier
-from tslearn.preprocessing import TimeSeriesResampler, TimeSeriesScalerMinMax
-from tslearn.svm import TimeSeriesSVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
 
 from handcrafted.app.dataset.dataset import Dataset
 from handcrafted.app.dataset.video import Video
-from handcrafted.app.edge.detector import EdgeDetector
-from handcrafted.app.extractor.contour_extractor import ContourDetector
-from handcrafted.app.extractor.feature_extractor import FeatureExtractor
+from app.extractor.edge_extractor import EdgeExtractor
+from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
 from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
-from handcrafted.app.pca.compute import custom_pca
 from handcrafted.app.plotter.frames_plotter import FramesPlotter
-from handcrafted.app.roi.extractor import RoiExtractor
-from handcrafted.app.utilities.file_zipper import FileZipper
+from handcrafted.app.roi.roi_extractor import RoiExtractor
 
 
 def plot_frames(frames: List["np.ndarray"], is_gray_scale=False) -> None:
@@ -55,8 +43,8 @@ def get_roi_frames(
 
 
 def get_edge_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
-    edge_detector = EdgeDetector(frames)
-    edge_frames = edge_detector.detect()
+    edge_detector = EdgeExtractor(frames)
+    edge_frames = edge_detector.process_frames()
     if plot:
         plot_frames(edge_frames)
     return edge_frames
@@ -85,8 +73,8 @@ def get_hog_frames(
 
 
 def detect_contour(frames: List[np.ndarray], plot=False) -> List[np.ndarray]:
-    contour_detector = ContourDetector(frames)
-    contour_frames = contour_detector.detect()
+    contour_detector = ContourExtractor(frames)
+    contour_frames = contour_detector.process_frames()
     if plot:
         plot_frames(contour_frames)
     return contour_frames
@@ -254,7 +242,7 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
     plt.figure(figsize=(10, 7))
     cfm_plot = sn.heatmap(df_cfm, annot=True)
-    cfm_plot.figure.savefig("cfm/cfm4.png")
+    cfm_plot.figure.savefig("../cfm/cfm5.png")
 
 
 def svm_test_similarity(dataset: Dataset, glosses: List[str]):
@@ -355,7 +343,7 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
     plt.figure(figsize=(10, 7))
     cfm_plot = sn.heatmap(df_cfm, annot=True)
-    cfm_plot.figure.savefig("cfm/cfm.png")
+    cfm_plot.figure.savefig("../cfm/cfm6.png")
 
     plt.figure(figsize=(10, 7))
     plt.scatter(X_test[:, 0], Y_test, c=Y_pred, cmap="viridis", edgecolors="k")
