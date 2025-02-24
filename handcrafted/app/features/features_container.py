@@ -16,6 +16,19 @@ from handcrafted.app.haar.detector import HaarDetector
 class FeaturesContainer:
     def __init__(self, video) -> None:
         self.video = video
+        self._hog_features = None
+        self._flow_features = None
+        self._flow_features_flattened = None
+        self._contour_features = None
+        self._contour_features_flattened = None
+        self._edge_features = None
+        self._edge_features_flattened = None
+        self._haar_features = None
+        self._skin_features = None
+        self._skin_features_flattened = None
+        self._lpb_features = None
+        self._color_hist_features = None
+        self._color_hist_features_flattened = None
 
     def get_all_features(self, until_frame_number: None | int = None) -> "np.ndarray":
         frames = self.video.get_frames(last_frame=until_frame_number)
@@ -40,29 +53,40 @@ class FeaturesContainer:
         )
 
     def get_hog_features(self, frames) -> Tuple[List["np.ndarray"], List["np.ndarray"]]:
-        return HOGExtractor(frames).process_frames()
+        if self._hog_features is None:
+            self._hog_features = HOGExtractor(frames).process_frames()
+        return self._hog_features
 
     def get_flow_features(
         self, frames: List["np.ndarray"], last_frame_index: int = -1, flatten: bool = True
     ) -> List["np.ndarray"]:
         if last_frame_index == -1:
             last_frame_index = len(frames) - 1
-        features = FlowCalculator(frames, last_frame_index).calculate(plot_each_frame=False)
+        if self._flow_features is None:
+            self._flow_features = FlowCalculator(frames, last_frame_index).calculate(plot_each_frame=False)
         if flatten:
-            features = [feature.flatten() for feature in features]
-        return features
+            if self._flow_features_flattened is None:
+                self._flow_features_flattened = [feature.flatten() for feature in self._flow_features]
+            return self._flow_features_flattened
+        return self._flow_features
 
     def get_contour_features(self, frames, flatten: bool = True) -> "np.ndarray":
-        features = np.array(ContourExtractor(frames).process_frames())
+        if self._contour_features is None:
+            self._contour_features = np.array(ContourExtractor(frames).process_frames())
         if flatten:
-            features = features.reshape(features.shape[0], -1)
-        return features
+            if self._contour_features_flattened is None:
+                self._contour_features_flattened = self._contour_features.copy().reshape(self._contour_features.shape[0], -1)
+            return self._contour_features_flattened
+        return self._contour_features
 
     def get_edge_features(self, frames: List["np.ndarray"], flatten: bool = True) -> "np.ndarray":
-        features = np.array(EdgeExtractor(frames).process_frames())
+        if self._edge_features is None:
+            self._edge_features = np.array(EdgeExtractor(frames).process_frames())
         if flatten:
-            features = features.reshape(features.shape[0], -1)
-        return features
+            if self._edge_features_flattened is None:
+                self._edge_features_flattened = self._edge_features.copy().reshape(self._edge_features.shape[0], -1)
+            self._edge_features_flattened
+        return self._edge_features
 
     def _get_haar_features(
         self, frames: List["np.ndarray"]
@@ -71,21 +95,30 @@ class FeaturesContainer:
         if not classifier.load(cv2.samples.findFile("app/haar/haarcascades/face.xml")):
             print("Error loading face cascade")
             exit(1)
-        return HaarDetector(frames, classifier, detections_to_keep=3).detect()
+        if self._haar_features is None:
+            self._haar_features = HaarDetector(frames, classifier, detections_to_keep=3).detect()
+        return self._haar_features
 
     def get_skin_features(
         self, frames: List["np.ndarray"], face_rects, flatten: bool = True
     ) -> List["np.ndarray"]:
-        features = SkinExtractor(frames, face_rects).extract()
+        if self._skin_features is None:
+            self._skin_features = SkinExtractor(frames, face_rects).extract()
         if flatten:
-            features = features.reshape(features.shape[0], -1)
-        return features
+            if self._skin_features_flattened is None:
+                self._skin_features_flattened = self._skin_features.copy().reshape(self._skin_features.shape[0], -1)
+            return self._skin_features_flattened
+        return self._skin_features
 
     def get_lbp_features(self, frames: List["np.ndarray"]) -> List["np.ndarray"]:
-        return LBPExtractor(frames).process_frames()
+        if self._lpb_features is None:
+            self._lpb_features =  LBPExtractor(frames).process_frames()
+        return self._lpb_features
 
     def get_color_histogram(self, frames, to_color = cv2.COLOR_BGR2HSV, flatten: bool = True):
-        features = ColorHistogram(frames).process_frames(to_color)
+        if self._color_hist_features is None:
+            self._color_hist_features = ColorHistogram(frames).process_frames(to_color)
         if flatten:
-            features = features.reshape(features.shape[0], -1)
-        return features
+            if self._color_hist_features_flattened is None:
+                self._color_hist_features_flattened= self._color_hist_features.copy().reshape(self._color_hist_features.shape[0], -1)
+        return self._color_hist_features
