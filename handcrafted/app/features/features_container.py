@@ -30,12 +30,12 @@ class FeaturesContainer:
         _, face_rects = self._get_haar_features(frames)
         skin_features = self.get_skin_features(frames, face_rects, flatten = False)
         print(f"skin_features shape: {np.array(skin_features).shape}")
-        lbp_frames = self.get_lbp_features(skin_features) # TODO
+        lbp_frames = self.get_lbp_features(skin_features)
         print(f"lbp_frames shape: {np.array(lbp_frames).shape}")
         # color_histogram = self.get_color_histogram(frames, flatten=True)
         # print(f"color_histogram shape: {np.array(color_histogram).shape}")
         return np.concatenate(
-            [lbp_frames],
+            lbp_frames,
             axis=1,
         )
 
@@ -75,14 +75,14 @@ class FeaturesContainer:
 
     def get_skin_features(
         self, frames: List["np.ndarray"], face_rects, flatten: bool = True
-    ) -> "np.ndarray":
-        features = np.array(SkinExtractor(frames, face_rects).extract())
+    ) -> List["np.ndarray"]:
+        features = SkinExtractor(frames, face_rects).extract()
         if flatten:
             features = features.reshape(features.shape[0], -1)
         return features
 
-    def get_lbp_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
-        return LBPExtractor(frames).process_frames() # TODO
+    def get_lbp_features(self, frames: List["np.ndarray"]) -> List["np.ndarray"]:
+        return LBPExtractor(frames).process_frames()
 
     def get_color_histogram(self, frames, to_color = cv2.COLOR_BGR2HSV, flatten: bool = True):
         features = ColorHistogram(frames).process_frames(to_color)
