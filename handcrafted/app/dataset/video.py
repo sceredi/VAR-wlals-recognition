@@ -28,7 +28,7 @@ class Video:
         self.bbox = bbox
         self.frame_start = frame_start
         self.frame_end = frame_end
-        self.features_container = FeaturesContainer(self)
+        self.features_container = FeaturesContainer(self, save=True)
         self._frames = None
 
     @classmethod

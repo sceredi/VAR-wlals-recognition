@@ -51,18 +51,9 @@ class DTWClassifier:
         print(f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}")
         frames_i, frames_j = video_i.get_frames(), video_j.get_frames()
         print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
-        hog_features_i, _ = video_i.features_container.get_hog_features(frames_i)
-        hog_features_j, _ = video_j.features_container.get_hog_features(frames_j)
-        lbp_features_i = video_i.features_container.get_lbp_features(frames_i)
-        lbp_features_j = video_j.features_container.get_lbp_features(frames_j)
 
-        hog_sequence1 = standardize_features(hog_features_i)
-        hog_sequence2 = standardize_features(hog_features_j)
-        lbp_sequence1 = standardize_features(lbp_features_i)
-        lbp_sequence2 = standardize_features(lbp_features_j)
-
-        sequence1 = np.concatenate((hog_sequence1, lbp_sequence1), axis=1)
-        sequence2 = np.concatenate((hog_sequence2, lbp_sequence2), axis=1)
+        sequence1 = video_i.features_container.get_all_features()
+        sequence2 = video_j.features_container.get_all_features()
 
         return self.dtw_kernel(sequence1, sequence2)
 
