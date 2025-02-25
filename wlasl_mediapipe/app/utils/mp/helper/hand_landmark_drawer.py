@@ -24,5 +24,19 @@ def draw_landmarks_on_image(image, results):
             mp_holistic.POSE_CONNECTIONS,
             landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style(),
         )
+        mp_drawing.draw_landmarks(
+            annotated_image,
+            results.left_hand_landmarks,
+            mp_holistic.HAND_CONNECTIONS,
+            landmark_drawing_spec=mp_drawing_styles.get_default_hand_landmarks_style(),
+            connection_drawing_spec=mp_drawing_styles.get_default_hand_connections_style(),
+        )
+        mp_drawing.draw_landmarks(
+            annotated_image,
+            results.right_hand_landmarks,
+            mp_holistic.HAND_CONNECTIONS,
+            landmark_drawing_spec=mp_drawing_styles.get_default_hand_landmarks_style(),
+            connection_drawing_spec=mp_drawing_styles.get_default_hand_connections_style(),
+        )
 
     return annotated_image

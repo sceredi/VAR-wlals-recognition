@@ -3,11 +3,11 @@ from typing import List, Tuple
 
 import cv2
 import numpy as np
-from app.extractor.features_storage import FeaturesStorage
 
 from handcrafted.app.extractor.color_histogram_extractor import ColorHistogram
 from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.edge_extractor import EdgeExtractor
+from handcrafted.app.extractor.features_storage import FeaturesStorage
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.extractor.lbp_extractor import LBPExtractor
 from handcrafted.app.extractor.skin import SkinExtractor

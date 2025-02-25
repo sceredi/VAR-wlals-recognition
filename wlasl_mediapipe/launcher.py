@@ -40,6 +40,11 @@ class Launcher:
         return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
 
     def load_glosses(self, filtered: bool = False) -> List[str]:
+        """
+        Loads the wlasl class list
+        :param bool filtered: If True, returns the filtered labels, filtered by cosine similarity, otherwise by the order they appear in the file
+        :return: List of glosses
+        """ 
         glosses = []
         if not filtered:
             glosses = pd.read_csv("data/wlasl_class_list.txt", sep="\t", header=None)[
