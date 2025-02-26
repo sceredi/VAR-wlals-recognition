@@ -41,5 +41,4 @@ class ModelStatistics:
     def print_accuracy(y_test, y_pred):
         """Print accuracy of the model."""
         acc = accuracy_score(y_test, y_pred)
-        print(f"Model Accuracy: {acc:.4f}")
-        return acc
+        print(f"Accuracy: {acc * 100:.2f}%")
