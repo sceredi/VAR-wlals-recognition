@@ -8,9 +8,10 @@ from sklearn.metrics import (accuracy_score, classification_report,
 
 
 class ModelStatistics:
-    def __init__(self, save_dir="plots"):
+    def __init__(self, save_name: str, save_dir="plots"):
         os.makedirs(save_dir, exist_ok=True)
-        self.save_dir = save_dir
+        self._save_dir = save_dir
+        self._save_name = save_name
 
     def plot_confusion_matrix(self, y_test, y_pred, save : bool = True):
         """Plot confusion matrix."""
@@ -25,7 +26,7 @@ class ModelStatistics:
         plt.title("Confusion Matrix")
 
         if save:
-            path = os.path.join(self.save_dir, "confusion_matrix.png")
+            path = os.path.join(self._save_dir, f"{self._save_name}.png")
             plt.savefig(path)
             print(f"Confusion matrix saved at {path}")
 
