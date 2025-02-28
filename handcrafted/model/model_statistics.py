@@ -35,7 +35,7 @@ class ModelStatistics:
     @staticmethod
     def print_classification_report(y_test, y_pred):
         """Print classification report."""
-        report = classification_report(y_test, y_pred)
+        report = classification_report(y_test, y_pred, zero_division=1)
         print("Classification Report:\n", report)
 
     @staticmethod
