@@ -64,8 +64,6 @@ def calc_accuracy(real_glosses, classified_glosses) -> float:
     return accuracy
 
 
-# TODO: when transforming this into notebook simplify the information passed as print will be called separately
-# also return classified_glosses
 def classify(
     test_videos: List[MediapipeVideo],
     train_videos: Dict[str, List[Video]],
@@ -126,7 +124,6 @@ def _calc_acc(
     return right / tot
 
 
-# TODO: when creating the notebook this will become public and get called after classify
 def pretty_print(
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]],
     output_file: str,
