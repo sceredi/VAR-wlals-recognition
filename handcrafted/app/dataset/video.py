@@ -19,6 +19,7 @@ class Video:
         frame_end: int,
         fps: int,
         bbox: List[int],
+        sample: bool = False,
     ) -> None:
         self.video_capture = None
         self.gloss = gloss
@@ -30,9 +31,10 @@ class Video:
         self.frame_end = frame_end
         self.features_container = FeaturesContainer(self, save=True)
         self._frames = None
+        self._sample = sample
 
     @classmethod
-    def from_instance(cls, gloss: str, instance: dict) -> "Video":
+    def from_instance(cls, gloss: str, instance: dict, is_sample: bool = False) -> "Video":
         return cls(
             gloss,
             instance["video_id"],
@@ -41,6 +43,7 @@ class Video:
             instance["frame_end"],
             instance["fps"],
             instance["bbox"],
+            sample = is_sample,
         )
 
     def __str__(self) -> str:
@@ -56,6 +59,8 @@ class Video:
         return os.path.exists(f"data/mp/{self.video_id}")
 
     def get_path(self) -> str:
+        if self._sample:
+            return f"data/original_videos_sample/{self.video_id}.mp4"
         return f"data/videos/{self.video_id}.mp4"
 
     def get_video_capture(self) -> "cv2.VideoCapture":

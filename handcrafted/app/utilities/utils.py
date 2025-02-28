@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 
-def create_mp4_video_from_frames(frames, fps):
+def create_mp4_video_from_frames(frames, fps, video_path):
     temp_video_path = "tempfile.mp4"
     compressed_path = "{}.mp4".format(str(uuid.uuid4()))
 
@@ -19,6 +19,8 @@ def create_mp4_video_from_frames(frames, fps):
     os.system(f"ffmpeg -i {temp_video_path} -vcodec libx264 {compressed_path}")
 
     os.remove(temp_video_path)
+
+    os.replace(compressed_path, video_path)
 
     return compressed_path
 

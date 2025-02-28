@@ -6,8 +6,9 @@ from handcrafted.app.dataset.video import Video
 
 
 class Dataset:
-    def __init__(self, filename: str, only_keypoints=False) -> None:
+    def __init__(self, filename: str, only_keypoints=False, only_samples=False) -> None:
         self.filename = filename
+        self._only_samples = only_samples
         if not only_keypoints:
             self.videos, self.glosses = self.load_videos()
         else:
@@ -23,7 +24,7 @@ class Dataset:
             glosses.append(gloss)
             instances = word_data["instances"]
             for instance in instances:
-                video = Video.from_instance(gloss, instance)
+                video = Video.from_instance(gloss, instance, self._only_samples)
                 if not video.is_missing():
                     ret.append(video)
         return ret, glosses
@@ -50,7 +51,7 @@ class Dataset:
             gloss = word_data["gloss"]
             instances = word_data["instances"]
             for instance in instances:
-                video = Video.from_instance(gloss, instance)
+                video = Video.from_instance(gloss, instance, self._only_samples)
                 if video.is_missing() == False:
                     instance["frame_end"] = video.get_end()
                 else:
