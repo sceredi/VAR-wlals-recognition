@@ -1,13 +1,11 @@
 # Purpose: Extracts a region of interest from a list of frames
-from typing import List, Tuple
+from typing import List
 
 import cv2
 import numpy as np
 from rembg import remove
-from typing_extensions import deprecated
 
 
-@deprecated("Roi is already extracted in the dataset, this class is now obsolete")
 class RoiExtractor:
     def __init__(
         self, frames: List["np.ndarray"], bbox: List[int], resize: None | int = None
@@ -32,7 +30,7 @@ class RoiExtractor:
     def _remove_bg(self, frame: "np.ndarray"):
         return remove(frame)
 
-    def _resize(self, frame: "np.ndarray") -> "np.ndarray":
+    def _resize(self, frame) -> "np.ndarray":
         if self.resize is None:
             return frame
         if frame.shape[0] >= frame.shape[1]:
