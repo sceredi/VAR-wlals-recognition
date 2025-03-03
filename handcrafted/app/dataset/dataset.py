@@ -52,7 +52,7 @@ class Dataset:
             instances = word_data["instances"]
             for instance in instances:
                 video = Video.from_instance(gloss, instance, self._only_samples)
-                if video.is_missing() == False:
+                if not video.is_missing():
                     instance["frame_end"] = video.get_end()
                 else:
                     instance = None
