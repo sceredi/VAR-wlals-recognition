@@ -74,7 +74,7 @@ class Video:
         return ret, frame
 
     def get_frames(self, last_frame=None) -> List["np.ndarray"]:
-        if not self._frames is None:
+        if self._frames is not None:
             return self._frames
         if last_frame is None:
             last_frame = self.frame_end
@@ -86,7 +86,7 @@ class Video:
                 break
             frames.append(frame)
             frame_number += 1
-        self.video_capture.release()
+        self.get_video_capture().release()
         self._frames = frames
         return frames
 
@@ -95,7 +95,7 @@ class Video:
             return self.frame_end
         ret = self.get_video_capture().get(cv2.CAP_PROP_FRAME_COUNT)
         print(f"Video {self.video_id} has {ret} frames")
-        self.video_capture.release()
+        self.get_video_capture().release()
         return int(ret)
 
     def __len__(self) -> int:
