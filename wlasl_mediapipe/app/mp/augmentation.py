@@ -31,7 +31,9 @@ def _rotate(data, rotation_matrix):
 
 
 def _rotate_z(data):
-    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    angle = np.random.choice(
+        [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
+    )
     theta = np.radians(angle)
     rotation_matrix = np.array(
         [
@@ -44,7 +46,9 @@ def _rotate_z(data):
 
 
 def _rotate_z_hands(lh, rh):
-    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    angle = np.random.choice(
+        [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
+    )
     theta = np.radians(angle)
     rotation_matrix = np.array(
         [
@@ -57,7 +61,9 @@ def _rotate_z_hands(lh, rh):
 
 
 def _rotate_y(data):
-    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    angle = np.random.choice(
+        [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
+    )
     theta = np.radians(angle)
     rotation_matrix = np.array(
         [
@@ -70,7 +76,9 @@ def _rotate_y(data):
 
 
 def _rotate_y_hands(lh, rh):
-    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    angle = np.random.choice(
+        [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
+    )
     theta = np.radians(angle)
     rotation_matrix = np.array(
         [
@@ -83,7 +91,9 @@ def _rotate_y_hands(lh, rh):
 
 
 def _rotate_x(data):
-    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    angle = np.random.choice(
+        [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
+    )
     theta = np.radians(angle)
     rotation_matrix = np.array(
         [
@@ -96,7 +106,9 @@ def _rotate_x(data):
 
 
 def _rotate_x_hands(lh, rh):
-    angle = np.random.choice([np.random.uniform(-30, -10), np.random.uniform(10, 30)])
+    angle = np.random.choice(
+        [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
+    )
     theta = np.radians(angle)
     rotation_matrix = np.array(
         [
@@ -200,7 +212,7 @@ def augment(X, Y, num=None):
     X_aug = X.copy()
     Y_aug = Y.copy()
 
-    if num == None:
+    if num is None:
         for i in tqdm(range(len(Y)), ncols=100):
             num_aug = np.random.choice([1, 2, 3])
             for _ in range(num_aug):

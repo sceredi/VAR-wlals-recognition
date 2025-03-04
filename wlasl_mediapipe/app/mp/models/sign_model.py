@@ -55,19 +55,29 @@ class SignModel(object):
             )
 
     def expand_keypoints(self, left_hand_list, right_hand_list) -> None:
-        self.lh_embedding = self._get_hand_embedding_from_landmark_list(left_hand_list)
-        self.rh_embedding = self._get_hand_embedding_from_landmark_list(right_hand_list)
+        self.lh_embedding = self._get_hand_embedding_from_landmark_list(
+            left_hand_list
+        )
+        self.rh_embedding = self._get_hand_embedding_from_landmark_list(
+            right_hand_list
+        )
 
     @staticmethod
     def load(
-        video_id: str, expand_keypoints: bool = False, all_features: bool = True
+        video_id: str,
+        expand_keypoints: bool = False,
+        all_features: bool = True,
     ) -> "SignModel":
         """
         Load a SignModel from a file
         """
         path = os.path.join("data", "mp", video_id)
-        left_hand_list = load_array(os.path.join(path, f"lh_{video_id}.pickle"))
-        right_hand_list = load_array(os.path.join(path, f"rh_{video_id}.pickle"))
+        left_hand_list = load_array(
+            os.path.join(path, f"lh_{video_id}.pickle")
+        )
+        right_hand_list = load_array(
+            os.path.join(path, f"rh_{video_id}.pickle")
+        )
         pose_list = load_array(os.path.join(path, f"pose_{video_id}.pickle"))
         face_list = load_array(os.path.join(path, f"face_{video_id}.pickle"))
         return SignModel(

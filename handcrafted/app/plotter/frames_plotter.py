@@ -64,7 +64,9 @@ def plot_edge_frames(frames: List["np.ndarray"]) -> None:
     plot_frames(edge_frames)
 
 
-def plot_flow_frames(frames: List["np.ndarray"], last_frame_index: int = -1) -> None:
+def plot_flow_frames(
+    frames: List["np.ndarray"], last_frame_index: int = -1
+) -> None:
     if last_frame_index == -1:
         last_frame_index = len(frames) - 1
     flow_calculator = FlowCalculator(frames, last_frame_index)

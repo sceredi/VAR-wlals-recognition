@@ -88,7 +88,9 @@ class HaarDetector:
                     break
                 if rect is not None:
                     x, y, w, h = rect
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.rectangle(
+                        frame, (x, y), (x + w, y + h), (0, 255, 0), 2
+                    )
         # Repeating the dectections for the first 10 frames with the new average position
         for i, frame in enumerate(self.frames[:10]):
             avg_pos = self.calculate_average_position(all_detections)
@@ -104,5 +106,7 @@ class HaarDetector:
                     break
                 if rect is not None:
                     x, y, w, h = rect
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.rectangle(
+                        frame, (x, y), (x + w, y + h), (0, 255, 0), 2
+                    )
         return drawn_frames, rects

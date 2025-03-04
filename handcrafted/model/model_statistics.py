@@ -3,8 +3,11 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import (accuracy_score, classification_report,
-                             confusion_matrix)
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+)
 
 
 class ModelStatistics:
@@ -13,14 +16,14 @@ class ModelStatistics:
         self._save_dir = save_dir
         self._save_name = save_name
 
-    def plot_confusion_matrix(self, y_test, y_pred, save : bool = True):
+    def plot_confusion_matrix(self, y_test, y_pred, save: bool = True):
         """Plot confusion matrix."""
         cfm = confusion_matrix(y_test, y_pred)
         labels = sorted(set(y_test))
         df_cfm = pd.DataFrame(cfm, index=labels, columns=labels)
 
         plt.figure(figsize=(10, 7))
-        cfm_plot = sns.heatmap(df_cfm, annot=True, cmap="Blues", fmt="d")
+        _ = sns.heatmap(df_cfm, annot=True, cmap="Blues", fmt="d")
         plt.xlabel("Predicted")
         plt.ylabel("Actual")
         plt.title("Confusion Matrix")

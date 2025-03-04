@@ -21,7 +21,7 @@ class DTWClassifier:
         self.train_videos = []
         self.test_videos = []
 
-    def train_test_videos(self, num_glosses = 10):
+    def train_test_videos(self, num_glosses=10):
         """Create training and testing video sets."""
         selected_videos_train = []
         selected_videos_test = []
@@ -33,7 +33,9 @@ class DTWClassifier:
                 else:
                     selected_videos_test.append(video)
 
-        print(f"Train videos: {len(selected_videos_train)}, Test videos: {len(selected_videos_test)}")
+        print(
+            f"Train videos: {len(selected_videos_train)}, Test videos: {len(selected_videos_test)}"
+        )
         self.train_videos = selected_videos_train
         self.test_videos = selected_videos_test
 
@@ -48,7 +50,9 @@ class DTWClassifier:
 
     def process_video_pair(self, video_i: Video, video_j: Video) -> float:
         """Process and compute similarity between two video pairs."""
-        print(f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}")
+        print(
+            f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
+        )
         frames_i, frames_j = video_i.get_frames(), video_j.get_frames()
         print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
 
@@ -69,9 +73,15 @@ class DTWClassifier:
             for j in range(i, n):
                 z += 1
                 print(f"Processing video: {z}/{zz}")
-                similarity = 1.0 if i == j else self.process_video_pair(videos[i], videos[j])
+                similarity = (
+                    1.0
+                    if i == j
+                    else self.process_video_pair(videos[i], videos[j])
+                )
                 M[i, j] = similarity
-                print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {similarity}")
+                print(
+                    f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {similarity}"
+                )
 
         M = M + M.T - np.diag(M.diagonal())
         return M
@@ -87,7 +97,9 @@ class DTWClassifier:
             for j in range(X_train_len):
                 z += 1
                 print(f"Processing video: {z}/{zz}")
-                similarity = self.process_video_pair(self.test_videos[i], self.train_videos[j])
+                similarity = self.process_video_pair(
+                    self.test_videos[i], self.train_videos[j]
+                )
                 X_test[i, j] = similarity
 
         print(X_test)
@@ -96,12 +108,18 @@ class DTWClassifier:
     def compute_dtw_similarity_matrix(self) -> tuple:
         """Compute the final DTW similarity matrices for training and testing."""
         # X_train = self.similarity_matrix_training(self.train_videos)
-        X_test = self.similarity_matrix_test(len(self.train_videos)) #(len(X_train))
+        X_test = self.similarity_matrix_test(
+            len(self.train_videos)
+        )  # (len(X_train))
 
-        y_train = [self.glosses.index(video.gloss) for video in self.train_videos]
-        y_test = [self.glosses.index(video.gloss) for video in self.test_videos]
+        y_train = [
+            self.glosses.index(video.gloss) for video in self.train_videos
+        ]
+        y_test = [
+            self.glosses.index(video.gloss) for video in self.test_videos
+        ]
 
-        #return X_train.reshape((X_train.shape[0], -1)), X_test.reshape((X_test.shape[0], -1)), y_train, y_test
+        # return X_train.reshape((X_train.shape[0], -1)), X_test.reshape((X_test.shape[0], -1)), y_train, y_test
         return X_test.reshape((X_test.shape[0], -1)), y_train, y_test
 
     @staticmethod

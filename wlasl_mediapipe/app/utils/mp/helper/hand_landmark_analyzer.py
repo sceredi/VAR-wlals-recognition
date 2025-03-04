@@ -25,11 +25,15 @@ def extract_landmarks(results):
 
     left_hand = np.zeros(63).tolist()
     if results.left_hand_landmarks:
-        left_hand = landmark_to_array(results.left_hand_landmarks).reshape(63).tolist()
+        left_hand = (
+            landmark_to_array(results.left_hand_landmarks).reshape(63).tolist()
+        )
 
     right_hand = np.zeros(63).tolist()
     if results.right_hand_landmarks:
         right_hand = (
-            landmark_to_array(results.right_hand_landmarks).reshape(63).tolist()
+            landmark_to_array(results.right_hand_landmarks)
+            .reshape(63)
+            .tolist()
         )
     return pose, face, left_hand, right_hand

@@ -1,9 +1,11 @@
-# Description: This file contains the Frame class which is used to represent
-#              a frame in the video with all the extra inforamtions needed for
-#              the optical flow calculation.
+from typing import List
 
 import cv2
 import numpy as np
+
+# Description: This file contains the Frame class which is used to represent
+#              a frame in the video with all the extra inforamtions needed for
+#              the optical flow calculation.
 
 
 class Frame:
@@ -17,9 +19,6 @@ class Frame:
 
     def set_descriptors(self, descriptors: np.ndarray) -> None:
         self.descriptors = descriptors
-
-
-from typing import List
 
 
 class Frames:

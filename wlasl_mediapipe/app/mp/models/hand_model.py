@@ -36,7 +36,9 @@ class HandModel(object):
         angles_list = []
         for connection_from in connections:
             for connection_to in connections:
-                angle = self._get_angle_between_vectors(connection_from, connection_to)
+                angle = self._get_angle_between_vectors(
+                    connection_from, connection_to
+                )
                 # If the angle is not NaN we store it else we store 0
                 if angle == angle:
                     angles_list.append(angle)

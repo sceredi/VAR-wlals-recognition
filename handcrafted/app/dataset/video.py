@@ -34,7 +34,9 @@ class Video:
         self._sample = sample
 
     @classmethod
-    def from_instance(cls, gloss: str, instance: dict, is_sample: bool = False) -> "Video":
+    def from_instance(
+        cls, gloss: str, instance: dict, is_sample: bool = False
+    ) -> "Video":
         return cls(
             gloss,
             instance["video_id"],
@@ -43,7 +45,7 @@ class Video:
             instance["frame_end"],
             instance["fps"],
             instance["bbox"],
-            sample = is_sample,
+            sample=is_sample,
         )
 
     def __str__(self) -> str:
@@ -53,7 +55,7 @@ class Video:
         return str(self)
 
     def is_missing(self) -> bool:
-        return os.path.isfile(self.get_path()) == False
+        return not os.path.isfile(self.get_path())
 
     def has_keypoints(self) -> bool:
         return os.path.exists(f"data/mp/{self.video_id}")

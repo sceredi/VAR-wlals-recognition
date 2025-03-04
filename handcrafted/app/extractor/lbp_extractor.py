@@ -7,7 +7,9 @@ from skimage.feature import local_binary_pattern
 
 class LBPExtractor:
     def __init__(self, frames: List["np.ndarray"]) -> None:
-        self.frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) for frame in frames]
+        self.frames = [
+            cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) for frame in frames
+        ]
 
     def process_frames(self) -> List["np.ndarray"]:
         ret = []
@@ -22,7 +24,9 @@ class LBPExtractor:
 
         # Calculate histogram
         hist, _ = np.histogram(
-            lbp.ravel(), bins=np.arange(0, n_points + 3), range=(0, n_points + 2)
+            lbp.ravel(),
+            bins=np.arange(0, n_points + 3),
+            range=(0, n_points + 2),
         )
         hist = hist.astype("float")
         hist /= hist.sum() + 1e-7

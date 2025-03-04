@@ -35,8 +35,12 @@ def preprocess(video_src):
                 (h_range[0], s_range[0], v_range[0]),
                 (h_range[1], s_range[1], v_range[1]),
             )
-            roi_h_hist = cv2.calcHist([hsv_frame], [0], mask, [bin_count], h_range)
-            back_proj = cv2.calcBackProject([hsv_frame], [0], roi_h_hist, h_range, 1)
+            roi_h_hist = cv2.calcHist(
+                [hsv_frame], [0], mask, [bin_count], h_range
+            )
+            back_proj = cv2.calcBackProject(
+                [hsv_frame], [0], roi_h_hist, h_range, 1
+            )
 
             # 5
             frame_mask = cv2.inRange(
@@ -49,7 +53,11 @@ def preprocess(video_src):
             back_proj = cv2.bitwise_and(back_proj, back_proj, mask=frame_mask)
 
             # 7
-            term_crit = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 1)
+            term_crit = (
+                cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+                10,
+                1,
+            )
             _, roi_rect = cv2.meanShift(back_proj, roi_rect, term_crit)
 
             frame_with_roi = cv2.rectangle(
@@ -59,7 +67,9 @@ def preprocess(video_src):
                 (0, 0, 255),
                 1,
             )
-            tracking_rgb_frames.append(cv2.cvtColor(frame_with_roi, cv2.COLOR_BGR2RGB))
+            tracking_rgb_frames.append(
+                cv2.cvtColor(frame_with_roi, cv2.COLOR_BGR2RGB)
+            )
 
             back_proj_with_roi = cv2.rectangle(
                 cv2.cvtColor(back_proj, cv2.COLOR_GRAY2RGB),

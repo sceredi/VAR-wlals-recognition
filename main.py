@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sn
+
 # from dtaidistance import dtw
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
@@ -42,7 +43,9 @@ def get_roi_frames(
     return roi_frames
 
 
-def get_edge_frames(frames: List["np.ndarray"], plot=False) -> List["np.ndarray"]:
+def get_edge_frames(
+    frames: List["np.ndarray"], plot=False
+) -> List["np.ndarray"]:
     edge_detector = EdgeExtractor(frames)
     edge_frames = edge_detector.process_frames()
     if plot:
@@ -85,7 +88,9 @@ def get_haar_frames(frames: List["np.ndarray"], plot=False):
     # if not classifier.load(cv2.samples.findFile('app/haar/haarcascades/hand.xml')):
     #     print('Error loading hand cascade')
     #     exit(1)
-    if not classifier.load(cv2.samples.findFile("app/haar/haarcascades/face.xml")):
+    if not classifier.load(
+        cv2.samples.findFile("app/haar/haarcascades/face.xml")
+    ):
         print("Error loading face cascade")
         exit(1)
     haar_detector = HaarDetector(frames, classifier, detections_to_keep=3)
@@ -111,7 +116,7 @@ def plot_video(current_video: Video) -> None:
     # edge_frames = get_edge_frames(frames, plot=True)
     # edge_frames = [cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) for frame in edge_frames]
     # flow_frames = get_flow_frames(frames, last_frame_index=current_video.frame_end, plot=True)
-    contour_frames = detect_contour(frames, plot=True)
+    _ = detect_contour(frames, plot=True)
 
 
 def compute_dtw_distance(seq1, seq2):
@@ -140,7 +145,6 @@ def process_video(videos: List[Video], glosses):
         frames = video.get_frames(last_frame=240)
         hog_features = video.features_container.get_hog_features(frames)
 
-
         features = np.concatenate((hog_features), axis=1)
         print(features.shape)
         if video.split == "train":
@@ -161,17 +165,15 @@ def calculate_dtw_distance(sequences):
     dtw_matrix = np.zeros((num_sequences, num_sequences))
     for i in range(num_sequences):
         for j in range(i, num_sequences):
-            dtw_matrix[i, j] = fastdtw(sequences[i], sequences[j], dist=euclidean)[0]
+            dtw_matrix[i, j] = fastdtw(
+                sequences[i], sequences[j], dist=euclidean
+            )[0]
             dtw_matrix[j, i] = dtw_matrix[i, j]
     return [row for row in dtw_matrix]
 
 
 def dtw_per_class(dataset: Dataset, glosses: List[str]):
-    videos = [video for video in dataset.videos if video.gloss in glosses]
-
-
-def dtw_per_class(dataset: Dataset, glosses: List[str]):
-    videos = [video for video in dataset.videos if video.gloss in glosses]
+    _ = [video for video in dataset.videos if video.gloss in glosses]
 
 
 def svm_test(dataset: Dataset, glosses: List[str]):
@@ -374,7 +376,9 @@ def dtw_kernel(sequence1, sequence2):
 
 
 def process_video_pair(video_i: Video, video_j: Video):
-    print(f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}")
+    print(
+        f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
+    )
 
     frames_i = video_i.get_frames()
     frames_j = video_j.get_frames()
@@ -455,12 +459,12 @@ def similarity_matrix(dataset: Dataset, gloss: str):
 
     n = len(videos)
     sim_matrix = np.zeros((n, n))
-    sim_matrix_hog = np.zeros((n, n))
+    # sim_matrix_hog = np.zeros((n, n))
     # sim_matrix_skin = np.zeros((n, n))
-    sim_matrix_contour = np.zeros((n, n))
+    # sim_matrix_contour = np.zeros((n, n))
     print(f"Processing gloss: {gloss}")
     print(f"Number of videos: {n}")
-    print(f"--------------------------------------------")
+    print("--------------------------------------------")
     z = 0
     zz = (
         ((n * n) - n) // 2
@@ -474,9 +478,9 @@ def similarity_matrix(dataset: Dataset, gloss: str):
 
             if i == j:
                 similarity = 1.0
-                similarity_hog = 1.0
+                # similarity_hog = 1.0
                 # similarity_skin = 1.0
-                similarity_contour = 1.0
+                # similarity_contour = 1.0
             else:
                 # similarity_hog, similarity_contour = process_video_pair(i, j, videos)
                 similarity = process_video_pair(i, j, videos)
@@ -499,7 +503,7 @@ def similarity_matrix(dataset: Dataset, gloss: str):
             # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_hog[i, j]}")
             # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_skin[i, j]}")
             # print(f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {sim_matrix_contour[i, j]}")
-            print(f"--------------------------------------------")
+            print("--------------------------------------------")
 
     # mean_sim_matrix_hog = np.mean(sim_matrix_hog)
     # mean_sim_matrix_skin = np.mean(sim_matrix_skin)
@@ -516,21 +520,23 @@ def similarity_matrix_training(videos):
     n = len(videos)
     M = np.zeros((n, n))
     print(f"Number of videos: {n}")
-    print(f"--------------------------------------------")
+    print("--------------------------------------------")
     z = 0
     zz = (((n * n) - n) // 2) + n
     for i in range(n):
         for j in range(i, n):
             z += 1
             print(f"Processing video: {z}/{zz}")
-            similarity = 1.0 if i == j else process_video_pair(videos[i], videos[j])
+            similarity = (
+                1.0 if i == j else process_video_pair(videos[i], videos[j])
+            )
             M[i, j] = similarity
             # M[j, i] = similarity
 
             print(
                 f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {M[i, j]}"
             )
-            print(f"--------------------------------------------")
+            print("--------------------------------------------")
 
     M = M + M.T - np.diag(M.diagonal())
     np.set_printoptions(precision=17, suppress=True)

@@ -9,6 +9,7 @@ class HOGExtractor:
     """
     HOGExtractor class which is used to extract HOG features in a video.
     """
+
     def __init__(
         self,
         frames: List["np.ndarray"],
@@ -38,7 +39,9 @@ class HOGExtractor:
             processed_features.append(hog_features)
         return processed_features, processed_frames
 
-    def _extract(self, frame: "np.ndarray") -> Tuple["np.ndarray", "np.ndarray"]:
+    def _extract(
+        self, frame: "np.ndarray"
+    ) -> Tuple["np.ndarray", "np.ndarray"]:
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         hog_features, hog_image = hog(gray_frame, **self.hog_params)
         hog_image = (hog_image * 255).astype(np.uint8)

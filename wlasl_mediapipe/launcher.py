@@ -33,7 +33,11 @@ class Launcher:
         )
         print("\n\nClassification with augmentation:")
         self._analyze_with_dtw(
-            data, glosses, augment=augment, output_file="results_aug.log", topN=topN
+            data,
+            glosses,
+            augment=augment,
+            output_file="results_aug.log",
+            topN=topN,
         )
 
     def load_data(self) -> Dataset:
@@ -44,12 +48,12 @@ class Launcher:
         Loads the wlasl class list
         :param bool filtered: If True, returns the filtered labels, filtered by cosine similarity, otherwise by the order they appear in the file
         :return: List of glosses
-        """ 
+        """
         glosses = []
         if not filtered:
-            glosses = pd.read_csv("data/wlasl_class_list.txt", sep="\t", header=None)[
-                1
-            ].tolist()
+            glosses = pd.read_csv(
+                "data/wlasl_class_list.txt", sep="\t", header=None
+            )[1].tolist()
         else:
             glosses = FilteredLabels.get_labels()
         return glosses
@@ -61,7 +65,9 @@ class Launcher:
             lambda video: (video.split == "test") and video.gloss in glosses
         )
         mp_test_videos = [
-            MediapipeVideo(video, plot=False, expand_keypoints=True, all_features=False)
+            MediapipeVideo(
+                video, plot=False, expand_keypoints=True, all_features=False
+            )
             for video in test_videos
         ]
         return mp_test_videos

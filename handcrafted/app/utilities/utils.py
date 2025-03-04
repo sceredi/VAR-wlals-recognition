@@ -10,7 +10,9 @@ def create_mp4_video_from_frames(frames, fps, video_path):
     compressed_path = "{}.mp4".format(str(uuid.uuid4()))
 
     size = (frames[0].shape[1], frames[0].shape[0])
-    out = cv2.VideoWriter(temp_video_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, size)
+    out = cv2.VideoWriter(
+        temp_video_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, size
+    )
 
     for i in range(len(frames)):
         out.write(frames[i][..., ::-1].copy())
@@ -38,7 +40,11 @@ def draw_connected_components(labels):
 
 
 def draw_detected_objects(
-    image, detected_bbs, detected_centroids, contours=None, detected_colors=(0, 0, 255)
+    image,
+    detected_bbs,
+    detected_centroids,
+    contours=None,
+    detected_colors=(0, 0, 255),
 ):
     if contours is not None:
         image_with_detected_objects = cv2.polylines(
@@ -84,11 +90,19 @@ def draw_tracked_objects(
             color = tracked_colors
 
         image_with_tracked_objects = cv2.rectangle(
-            image_with_tracked_objects, tracked_bbs[i][0], tracked_bbs[i][1], color, 1
+            image_with_tracked_objects,
+            tracked_bbs[i][0],
+            tracked_bbs[i][1],
+            color,
+            1,
         )
         for j in range(len(tracks[i]) - 1):
             image_with_tracked_objects = cv2.line(
-                image_with_tracked_objects, tracks[i][j], tracks[i][j + 1], color, 1
+                image_with_tracked_objects,
+                tracks[i][j],
+                tracks[i][j + 1],
+                color,
+                1,
             )
 
     return image_with_tracked_objects

@@ -19,9 +19,11 @@ def calc_dtw_distance(
     for other_video in others:
         curr += 1
         if (
-            video.sign_model.has_left_hand == other_video.sign_model.has_left_hand
+            video.sign_model.has_left_hand
+            == other_video.sign_model.has_left_hand
         ) and (
-            video.sign_model.has_right_hand == other_video.sign_model.has_right_hand
+            video.sign_model.has_right_hand
+            == other_video.sign_model.has_right_hand
         ):
             distance = {
                 "left": 0.0,
@@ -40,7 +42,9 @@ def calc_dtw_distance(
             }
         if other_video.video.gloss not in ret:
             ret[other_video.video.gloss] = []
-        ret[other_video.video.gloss].append(distance["left"] + distance["right"])
+        ret[other_video.video.gloss].append(
+            distance["left"] + distance["right"]
+        )
     return _best_choice(ret)
 
 
@@ -74,12 +78,17 @@ def classify(
     for gloss in tqdm(train_videos):
         current_train = [
             MediapipeVideo(
-                train_video, plot=False, expand_keypoints=True, all_features=True
+                train_video,
+                plot=False,
+                expand_keypoints=True,
+                all_features=True,
             )
             for train_video in train_videos[gloss]
         ]
         if augment != 0:
-            augmented_train = [video.augment(augment) for video in current_train]
+            augmented_train = [
+                video.augment(augment) for video in current_train
+            ]
             for videos in augmented_train:
                 current_train.extend(videos)
         for video in test_videos:
@@ -113,7 +122,8 @@ def _do_classification(
 
 
 def _calc_acc(
-    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]], topN: int
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]],
+    topN: int,
 ) -> float:
     right = 0
     tot = len(classified_glosses)
@@ -140,5 +150,9 @@ def pretty_print(
     print(f"\nAccuracy: {acc}")
     with open(output_file, "w") as file:
         file.write(f"Top{topN} score:")
-        file.write(tabulate(rows, headers=["Real Word", "Classified Word", "Distance"]))
+        file.write(
+            tabulate(
+                rows, headers=["Real Word", "Classified Word", "Distance"]
+            )
+        )
         file.write(f"\nAccuracy: {acc}")

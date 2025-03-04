@@ -7,8 +7,9 @@ from wlasl_mediapipe.app.mp.augmentation import augment_video
 from wlasl_mediapipe.app.mp.hands_extractor import MediapipeLandmarksExtractor
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 from wlasl_mediapipe.app.utils.mp.file_utils import save_array
-from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import \
-    extract_landmarks
+from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import (
+    extract_landmarks,
+)
 
 
 class MediapipeVideo:
@@ -75,7 +76,11 @@ class MediapipeVideo:
                 f"data/mp/{self.video.video_id}/rh_{self.video.video_id}.pickle",
             )
             self.sign_model = SignModel(
-                left_hand_list, right_hand_list, pose_list, face_list, expand_keypoints
+                left_hand_list,
+                right_hand_list,
+                pose_list,
+                face_list,
+                expand_keypoints,
             )
 
     def from_sign_model(self, sign_model: SignModel) -> "MediapipeVideo":

@@ -8,7 +8,9 @@ import numpy as np
 
 
 class SkinExtractor:
-    def __init__(self, frames: List["np.ndarray"], face_rects: List[List[int]]) -> None:
+    def __init__(
+        self, frames: List["np.ndarray"], face_rects: List[List[int]]
+    ) -> None:
         self.frames = frames
         self.face_rects = face_rects
 
@@ -56,10 +58,12 @@ class SkinExtractor:
         if upper_skin_value > 255:
             upper_skin_value = 255
         lower_skin = np.array(
-            [lower_skin_hue, lower_skin_saturation, lower_skin_value], dtype=np.uint8
+            [lower_skin_hue, lower_skin_saturation, lower_skin_value],
+            dtype=np.uint8,
         )
         upper_skin = np.array(
-            [upper_skin_hue, upper_skin_saturation, upper_skin_value], dtype=np.uint8
+            [upper_skin_hue, upper_skin_saturation, upper_skin_value],
+            dtype=np.uint8,
         )
 
         # Convert frame to HSV color space
