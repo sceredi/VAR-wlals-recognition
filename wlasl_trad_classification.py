@@ -2,7 +2,6 @@ from sklearn.metrics import accuracy_score
 
 from handcrafted.app.dataset.dataset import Dataset
 from handcrafted.model.dtw_classifier import DTWClassifier
-from handcrafted.model.svc_classifier import SVClassifier
 
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")

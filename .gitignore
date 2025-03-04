@@ -194,4 +194,7 @@ fabric.properties
 .envrc
 wlasl_transformer.weights.h5
 
+# Node modules
+node_modules/
+
 tests.ipynb

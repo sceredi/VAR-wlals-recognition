@@ -23,3 +23,4 @@ opendatasets==0.1.22
 isort==6.0.0
 black[jupyter]==25.1.0
 flake8==7.1.2
+ruff==0.9.9
