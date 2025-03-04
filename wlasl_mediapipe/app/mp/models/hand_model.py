@@ -16,12 +16,12 @@ class HandModel(object):
 
     def __init__(self, landmarks: List[float]):
         # Define the connections
-        self.connections = mp.solutions.holistic.HAND_CONNECTIONS
+        self.connections = mp.solutions.holistic.HAND_CONNECTIONS  # type: ignore
         # print(np.array(landmarks).shape)
 
         # Create feature vector (list of the angles between all the connections)
-        landmarks = np.array(landmarks).reshape((21, 3))
-        self.feature_vector = self._get_feature_vector(landmarks)
+        landmarks = np.array(landmarks).reshape((21, 3))  # type: ignore
+        self.feature_vector = self._get_feature_vector(landmarks)  # type: ignore
 
     def _get_feature_vector(self, landmarks: np.ndarray) -> List[float]:
         """

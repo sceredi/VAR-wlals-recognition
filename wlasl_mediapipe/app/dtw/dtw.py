@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 
 import numpy as np
-from fastdtw import fastdtw
+from fastdtw import fastdtw  # type: ignore
 from tabulate import tabulate
 from tqdm import tqdm
 

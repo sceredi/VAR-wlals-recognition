@@ -15,7 +15,7 @@
   "homepage": "https://github.com/sceredi/VAR-wlals-recognition#readme",
   "scripts": {
     "lint:write": "ruff check --fix",
-    "lint:check": "ruff check",
+    "lint:check": "ruff check && pyright **/*.py",
     "format:write": "isort . && black .",
     "format:check": "isort --check . && black --check . && flake8 **/*.py",
     "prepare": "husky"

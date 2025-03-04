@@ -16,7 +16,7 @@ class MediapipeLandmarksExtractor:
     def __init__(
         self,
     ) -> None:
-        self.detector = mp.solutions.holistic.Holistic(
+        self.detector = mp.solutions.holistic.Holistic(  # type: ignore
             static_image_mode=False,
             model_complexity=2,
             min_detection_confidence=0.5,

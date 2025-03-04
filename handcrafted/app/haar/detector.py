@@ -92,7 +92,7 @@ class HaarDetector:
                         frame, (x, y), (x + w, y + h), (0, 255, 0), 2
                     )
         # Repeating the dectections for the first 10 frames with the new average position
-        for i, frame in enumerate(self.frames[:10]):
+        for i, frame in enumerate(self.frames[:10]):  # type: ignore
             avg_pos = self.calculate_average_position(all_detections)
             detections = self._frame_detect(frame, avg_pos)
             if detections == [] and all_detections != []:

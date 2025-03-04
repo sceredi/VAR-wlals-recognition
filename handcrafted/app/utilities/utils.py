@@ -11,7 +11,7 @@ def create_mp4_video_from_frames(frames, fps, video_path):
 
     size = (frames[0].shape[1], frames[0].shape[0])
     out = cv2.VideoWriter(
-        temp_video_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, size
+        temp_video_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, size  # type: ignore
     )
 
     for i in range(len(frames)):
@@ -30,7 +30,7 @@ def create_mp4_video_from_frames(frames, fps, video_path):
 def draw_connected_components(labels):
     label_hue = np.uint8(179 * labels / np.max(labels))
     blank_ch = 255 * np.ones_like(label_hue)
-    labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
+    labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])  # type: ignore
 
     labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
 

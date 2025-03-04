@@ -10,7 +10,7 @@ import pandas as pd
 import seaborn as sn
 
 # from dtaidistance import dtw
-from fastdtw import fastdtw
+from fastdtw import fastdtw  # type: ignore
 from scipy.spatial.distance import euclidean
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
@@ -244,7 +244,7 @@ def svm_test(dataset: Dataset, glosses: List[str]):
     df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
     plt.figure(figsize=(10, 7))
     cfm_plot = sn.heatmap(df_cfm, annot=True)
-    cfm_plot.figure.savefig("../cfm/cfm5.png")
+    cfm_plot.figure.savefig("../cfm/cfm5.png")  # type: ignore
 
 
 def svm_test_similarity(dataset: Dataset, glosses: List[str]):
@@ -345,10 +345,10 @@ def svm_test_similarity(dataset: Dataset, glosses: List[str]):
     df_cfm = pd.DataFrame(cfm, index=glosses, columns=glosses)
     plt.figure(figsize=(10, 7))
     cfm_plot = sn.heatmap(df_cfm, annot=True)
-    cfm_plot.figure.savefig("../cfm/cfm6.png")
+    cfm_plot.figure.savefig("../cfm/cfm6.png")  # type: ignore
 
     plt.figure(figsize=(10, 7))
-    plt.scatter(X_test[:, 0], Y_test, c=Y_pred, cmap="viridis", edgecolors="k")
+    plt.scatter(X_test[:, 0], Y_test, c=Y_pred, cmap="viridis", edgecolors="k")  # type: ignore
     plt.title("Classificazioni risultanti da SVC con kernel RBF e DTW")
     plt.xlabel("DTW Distance")
     plt.ylabel("Classe")
@@ -483,7 +483,8 @@ def similarity_matrix(dataset: Dataset, gloss: str):
                 # similarity_contour = 1.0
             else:
                 # similarity_hog, similarity_contour = process_video_pair(i, j, videos)
-                similarity = process_video_pair(i, j, videos)
+                # similarity = process_video_pair(i, j, videos)
+                similarity = process_video_pair(videos[i], videos[j])
 
             sim_matrix[i, j] = similarity
             sim_matrix[j, i] = similarity

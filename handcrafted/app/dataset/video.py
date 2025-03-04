@@ -119,7 +119,7 @@ class Video:
 
         # Calcola l'interpolatore per il video corrente
         interpolator = interp1d(
-            x_old, frames, kind="linear", axis=None, fill_value="extrapolate"
+            x_old, frames, kind="linear", axis=None, fill_value="extrapolate"  # type: ignore
         )
 
         # Applica l'interpolazione al nuovo vettore di tempo

@@ -1,7 +1,7 @@
 from typing import List
 
 import numpy as np
-from fastdtw import fastdtw
+from fastdtw import fastdtw  # type: ignore
 from sklearn.preprocessing import StandardScaler
 
 from handcrafted.app.dataset.dataset import Dataset

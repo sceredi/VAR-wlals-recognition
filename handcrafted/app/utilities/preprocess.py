@@ -32,8 +32,8 @@ def preprocess(video_src):
             bin_count = 100
             mask = cv2.inRange(
                 hsv_frame,
-                (h_range[0], s_range[0], v_range[0]),
-                (h_range[1], s_range[1], v_range[1]),
+                (h_range[0], s_range[0], v_range[0]),  # type: ignore
+                (h_range[1], s_range[1], v_range[1]),  # type: ignore
             )
             roi_h_hist = cv2.calcHist(
                 [hsv_frame], [0], mask, [bin_count], h_range
@@ -45,8 +45,8 @@ def preprocess(video_src):
             # 5
             frame_mask = cv2.inRange(
                 hsv_frame,
-                (h_range[0], s_range[0], v_range[0]),
-                (h_range[1], s_range[1], v_range[1]),
+                (h_range[0], s_range[0], v_range[0]),  # type: ignore
+                (h_range[1], s_range[1], v_range[1]),  # type: ignore
             )
 
             # 6

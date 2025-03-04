@@ -36,12 +36,12 @@ class FlowCalculator:
         for i, frame in enumerate(self.frames[1 : self.last_frame_index + 1]):
             next_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             flow = cv2.calcOpticalFlowFarneback(
-                prev_frame, next_frame, None, **self.params
+                prev_frame, next_frame, None, **self.params  # type: ignore
             )
             magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
             hsv[..., 0] = angle * 180 / np.pi / 2
             hsv[..., 2] = cv2.normalize(
-                magnitude, None, 0, 255, cv2.NORM_MINMAX
+                magnitude, None, 0, 255, cv2.NORM_MINMAX  # type: ignore
             )
             bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
             if plot_each_frame:
@@ -54,7 +54,7 @@ class FlowCalculator:
         return frames
 
     def _plot(self, frame, flow, index):
-        fig, axes = plt.subplots(1, 2)
+        _fig, axes = plt.subplots(1, 2)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         axes[0].imshow(frame)

@@ -34,7 +34,7 @@ class SkinExtractor:
         hsv_head = cv2.cvtColor(head_region, cv2.COLOR_BGR2HSV)
 
         # Calculate mean color of the head region
-        mean_color = np.mean(hsv_head, axis=(0, 1))
+        mean_color = np.mean(hsv_head, axis=(0, 1))  # type: ignore
 
         # Define color range around the mean color
         tolerance = 30  # Adjust as needed

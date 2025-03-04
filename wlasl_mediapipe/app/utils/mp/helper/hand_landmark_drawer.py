@@ -1,8 +1,8 @@
 import mediapipe as mp
 
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_holistic = mp.solutions.holistic
+mp_drawing = mp.solutions.drawing_utils  # type: ignore
+mp_drawing_styles = mp.solutions.drawing_styles  # type: ignore
+mp_holistic = mp.solutions.holistic  # type: ignore
 
 
 def draw_landmarks_on_image(image, results):

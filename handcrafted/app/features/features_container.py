@@ -100,6 +100,7 @@ class FeaturesContainer:
 
         return feature
 
+    # TODO: check return type
     def get_hog_features(
         self, frames
     ) -> "np.ndarray":  # Tuple[List["np.ndarray"], List["np.ndarray"]]:
@@ -107,7 +108,7 @@ class FeaturesContainer:
             self._hog_features, self._hog_frames = HOGExtractor(
                 frames
             ).process_frames()
-        return self._hog_features
+        return self._hog_features  # type: ignore
 
     def get_flow_features(
         self,
@@ -185,18 +186,17 @@ class FeaturesContainer:
             self._skin_features = SkinExtractor(frames, face_rects).extract()
         if flatten:
             if self._skin_features_flattened is None:
-                self._skin_features_flattened = (
-                    self._skin_features.copy().reshape(
-                        self._skin_features.shape[0], -1
-                    )
+                self._skin_features_flattened = self._skin_features.copy().reshape(  # type: ignore
+                    self._skin_features.shape[0], -1  # type: ignore
                 )
             return self._skin_features_flattened
         return self._skin_features
 
+    # TODO: check return type
     def get_lbp_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
         if self._lbp_features is None:
             self._lbp_features = LBPExtractor(frames).process_frames()
-        return self._lbp_features
+        return self._lbp_features  # type: ignore
 
     def get_color_histogram(
         self, frames, to_color=cv2.COLOR_BGR2HSV, flatten: bool = True
