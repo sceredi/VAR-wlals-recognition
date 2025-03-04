@@ -50,9 +50,11 @@ jobs:
             python-version: '3.10'
             cache: 'pip'
       - name: Install dependencies
-        run: pip install ruff
+        run: pip install ruff pyright
       - name: Lint code with ruff
         run: ruff check
+      - name: Lint code with pyright
+        run: pyright **/*.py
 
   success:
     runs-on: ubuntu-latest
