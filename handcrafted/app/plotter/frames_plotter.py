@@ -5,6 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+from app.extractor.lbp_extractor import LBPExtractor
 from handcrafted.app.dataset.video import Video
 from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.edge_extractor import EdgeExtractor
@@ -78,6 +79,47 @@ def plot_hog_frames(frames: List["np.ndarray"]) -> None:
     hog_extractor = HOGExtractor(frames)
     hog_features, hog_frames = hog_extractor.process_frames()
     plot_frames(hog_frames, is_gray_scale=True)
+
+
+def plot_lbp_frames(frames: List[np.ndarray]) -> None:
+    lbp_extractor = LBPExtractor(frames)
+    lbp_frames = lbp_extractor.get_lbp_frames()
+    lbp_features = lbp_extractor.get_lbp_features()
+
+    num_frames = len(frames) * 2
+    cols = int(math.ceil(math.sqrt(num_frames)))
+    rows = int(math.ceil(num_frames / cols))
+
+    fig, axes = plt.subplots(rows, cols, figsize=(cols * 4, rows * 3))
+    axes = axes.flatten()
+
+    for i, (lbp_frame, (hist, bins)) in enumerate(
+        zip(lbp_frames, lbp_features)
+    ):
+        ax_img = axes[2 * i]
+        ax_img.imshow(lbp_frame, cmap="gray")
+        ax_img.set_title(f"LBP Frame {i + 1}")
+        ax_img.axis("off")
+
+        ax_hist = axes[2 * i + 1]
+        ax_hist.bar(
+            bins[:-1],
+            hist,
+            width=1,
+            color="gray",
+            edgecolor="black",
+            alpha=0.7,
+        )
+        ax_hist.set_title(f"Histogram {i + 1}")
+        ax_hist.set_xlabel("LBP Value")
+        ax_hist.set_ylabel("Frequency")
+        ax_hist.set_xlim([0, len(bins) - 1])
+
+    for ax in axes[num_frames:]:
+        ax.axis("off")
+
+    plt.tight_layout()
+    plt.show()
 
 
 def plot_contour(frames: List[np.ndarray]) -> None:
