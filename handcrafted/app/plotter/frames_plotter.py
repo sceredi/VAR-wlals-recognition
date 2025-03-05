@@ -5,11 +5,11 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from app.extractor.lbp_extractor import LBPExtractor
 from handcrafted.app.dataset.video import Video
 from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.edge_extractor import EdgeExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
+from handcrafted.app.extractor.lbp_extractor import LBPExtractor
 from handcrafted.app.extractor.skin import SkinExtractor
 from handcrafted.app.flow.calculator import FlowCalculator
 from handcrafted.app.haar.detector import HaarDetector
@@ -27,7 +27,7 @@ class FramesPlotter:
         rows = int(math.ceil(num_frames / cols))
         _, axes = plt.subplots(rows, cols)
         axes = axes.flatten()
-        for i, (frame, ax) in enumerate(zip(self.frames, axes)):
+        for i, (frame, ax) in enumerate(zip(self.frames, axes, strict=False)):
             self._update(ax, frame, f"Frame {i+1}")
         for ax in axes[num_frames:]:
             self._remove_axis(ax)
@@ -94,7 +94,7 @@ def plot_lbp_frames(frames: List[np.ndarray]) -> None:
     axes = axes.flatten()
 
     for i, (lbp_frame, (hist, bins)) in enumerate(
-        zip(lbp_frames, lbp_features)
+        zip(lbp_frames, lbp_features, strict=False)
     ):
         ax_img = axes[2 * i]
         ax_img.imshow(lbp_frame, cmap="gray")

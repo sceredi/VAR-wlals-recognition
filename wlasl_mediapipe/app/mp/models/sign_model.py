@@ -13,8 +13,8 @@ class SignModel(object):
         self,
         left_hand_list: List[List[float]],
         right_hand_list: List[List[float]],
-        pose_list: List[List[float]] = [],
-        face_list: List[List[float]] = [],
+        pose_list: List[List[float]],
+        face_list: List[List[float]],
         expand_keypoints: bool = False,
         all_features: bool = True,
     ):

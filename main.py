@@ -169,7 +169,7 @@ def calculate_dtw_distance(sequences):
                 sequences[i], sequences[j], dist=euclidean
             )[0]
             dtw_matrix[j, i] = dtw_matrix[i, j]
-    return [row for row in dtw_matrix]
+    return list(dtw_matrix)
 
 
 def dtw_per_class(dataset: Dataset, glosses: List[str]):

@@ -74,7 +74,7 @@ def classify(
     augment: int,
     topN: int = 1,
 ) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
-    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = dict()
+    classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = {}
     for gloss in tqdm(train_videos):
         current_train = [
             MediapipeVideo(

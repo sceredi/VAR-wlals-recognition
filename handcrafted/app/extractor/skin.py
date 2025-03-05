@@ -81,7 +81,7 @@ class SkinExtractor:
 
     def extract(self):
         skin_frames = []
-        for frame, rect in zip(self.frames, self.face_rects):
+        for frame, rect in zip(self.frames, self.face_rects, strict=False):
             skin_frame = self._extract_from_frame(frame, rect)
             skin_frames.append(skin_frame)
         return skin_frames

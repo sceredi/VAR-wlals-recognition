@@ -78,7 +78,7 @@ class Launcher:
         splitted_train_videos = {}
         for gloss in glosses:
             splitted_train_videos[gloss] = dataset.get_videos(
-                lambda video: video.gloss == gloss
+                lambda video, gloss=gloss: video.gloss == gloss
                 and (video.split == "train" or video.split == "val")
             )
         return splitted_train_videos

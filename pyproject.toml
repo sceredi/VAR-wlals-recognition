@@ -12,5 +12,7 @@ exclude = '''
     | buck-out
     | build
     | dist
+    | data
+    | data-bk
 )/
 '''

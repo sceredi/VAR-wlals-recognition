@@ -12,16 +12,18 @@ class FlowCalculator:
         self,
         frames: List["np.ndarray"],
         last_frame_index: int,
-        params: dict = {
-            "pyr_scale": 0.3,
-            "levels": 5,
-            "winsize": 10,
-            "iterations": 6,
-            "poly_n": 5,
-            "poly_sigma": 1.5,
-            "flags": 0,
-        },
+            params=None,
     ):
+        if params is None:
+            params = {
+                "pyr_scale": 0.3,
+                "levels": 5,
+                "winsize": 10,
+                "iterations": 6,
+                "poly_n": 5,
+                "poly_sigma": 1.5,
+                "flags": 0,
+            }
         self.frames = frames
         self.last_frame_index = last_frame_index
         self.params = params

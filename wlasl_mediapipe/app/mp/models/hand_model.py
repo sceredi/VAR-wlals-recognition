@@ -55,12 +55,7 @@ class HandModel(object):
         Return
             List of vectors representing hand connections
         """
-        return list(
-            map(
-                lambda t: landmarks[t[1]] - landmarks[t[0]],
-                self.connections,
-            )
-        )
+        return [landmarks[t[1]] - landmarks[t[0]] for t in self.connections]
 
     @staticmethod
     def _get_angle_between_vectors(u: np.ndarray, v: np.ndarray) -> float:
