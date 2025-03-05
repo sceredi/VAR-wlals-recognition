@@ -16,8 +16,8 @@
   "scripts": {
     "lint:write": "ruff check --fix",
     "lint:check": "ruff check && pyright **/*.py",
-    "format:write": "isort . && black **/*.py *.ipynb",
-    "format:check": "isort --check . && black --check **/*.py *.ipynb && (flake8 **/*.py || true)",
+    "format:write": "isort . && black .",
+    "format:check": "isort --check . && black --check . && (flake8 **/*.py || true)",
     "prepare": "husky"
   },
   "devDependencies": {

@@ -12,7 +12,7 @@ class FlowCalculator:
         self,
         frames: List["np.ndarray"],
         last_frame_index: int,
-            params=None,
+        params=None,
     ):
         if params is None:
             params = {

@@ -13,8 +13,8 @@ class SignModel(object):
         self,
         left_hand_list: List[List[float]],
         right_hand_list: List[List[float]],
-        pose_list: List[List[float]],
-        face_list: List[List[float]],
+        pose_list: List[List[float]] | None = None,
+        face_list: List[List[float]] | None = None,
         expand_keypoints: bool = False,
         all_features: bool = True,
     ):
@@ -25,6 +25,11 @@ class SignModel(object):
             has_x_hand: bool; True if x hand is detected in the video, otherwise False
             xh_embedding: ndarray; Array of shape (n_frame, nb_connections * nb_connections)
         """
+        if pose_list is None:
+            pose_list = []
+        if face_list is None:
+            face_list = []
+
         self.has_left_hand = np.sum(left_hand_list) != 0
         self.has_right_hand = np.sum(right_hand_list) != 0
         self.has_pose = np.sum(pose_list) != 0

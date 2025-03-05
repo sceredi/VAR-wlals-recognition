@@ -53,7 +53,8 @@ class LBPExtractor:
             The LBP features
         """
         self._lbp_frames, self._features = zip(
-            *(self._extract(self._to_gray(frame)) for frame in self._frames), strict=False
+            *(self._extract(self._to_gray(frame)) for frame in self._frames),
+            strict=False
         )
         hists, _ = self._features
         return hists
