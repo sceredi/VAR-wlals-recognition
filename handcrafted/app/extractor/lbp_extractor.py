@@ -16,9 +16,9 @@ class LBPExtractor:
         Parameters
         ----------
         frames : List[np.ndarray]
-            The frames to extract LBP features from
-        radius : int
-            The radius of the LBP circle.
+            The frames to extract LBP features from.
+        radius : int, optional
+            The radius of the LBP circle (default is 3).
 
         """
         self._frames = frames
@@ -35,7 +35,7 @@ class LBPExtractor:
         Parameters
         ----------
         frame : np.ndarray
-            The frame to convert to grayscale
+            The frame to convert to grayscale.
 
         Returns
         -------
@@ -71,7 +71,7 @@ class LBPExtractor:
         Parameters
         ----------
         frame : np.ndarray
-            The frame to extract LBP features from
+            The frame to extract LBP features from.
 
         Returns
         -------
