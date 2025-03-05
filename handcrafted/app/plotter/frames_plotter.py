@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from handcrafted.app.dataset.video import Video
+from handcrafted.app.extractor.color_histogram_extractor import ColorHistogram
 from handcrafted.app.extractor.contour_extractor import ContourExtractor
 from handcrafted.app.extractor.edge_extractor import EdgeExtractor
 from handcrafted.app.extractor.hog_extractor import HOGExtractor
@@ -116,6 +117,80 @@ def plot_lbp_frames(frames: List[np.ndarray]) -> None:
         ax_hist.set_xlim([0, len(bins) - 1])
 
     for ax in axes[num_frames:]:
+        ax.axis("off")
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_color_hist(
+    frames: List[np.ndarray],
+    to_color=cv2.COLOR_BGR2HSV,
+    colors=("h", "s", "v"),
+) -> None:
+    color_hist_extractor = ColorHistogram(frames)
+    frames_hists = color_hist_extractor.process_frames(
+        to_color, separate_colors=True
+    )
+    cols = 1 + len(colors)
+    rows = len(frames)
+
+    fig, axes = plt.subplots(rows, cols, figsize=(cols * 4, rows * 3))
+    axes = axes.flatten()
+
+    subplot_index = 0  # Keep track of subplot index
+    for i, (frame, hists) in enumerate(
+        zip(frames, frames_hists, strict=False)
+    ):
+        ax_img = axes[subplot_index]  # Use subplot_index
+        ax_img.imshow(cv2.cvtColor(frame, to_color))
+        ax_img.set_title(f"Frame {i + 1}")
+        ax_img.axis("off")
+        subplot_index += 1  # Increment for the next subplot
+
+        # More descriptive colors for histograms, and ensure enough colors
+        hist_cols = [
+            "red",
+            "green",
+            "blue",
+            "purple",
+            "orange",
+            "cyan",
+        ]  # Extended color list
+        hist_labels = (
+            list(colors)
+            if colors
+            else [f"Channel {j+1}" for j in range(len(hists))]
+        )  # Use provided colors or generic labels
+
+        for j, (color, hist) in enumerate(
+            zip(hist_labels, hists, strict=False)
+        ):
+            if subplot_index < len(
+                axes
+            ):  # Check if subplot index is within bounds
+                ax_hist = axes[subplot_index]  # Use subplot_index
+                bins = np.arange(257)
+                hist = hist.flatten()
+                ax_hist.bar(
+                    bins[:-1],
+                    hist,
+                    width=1,
+                    color=hist_cols[
+                        j % len(hist_cols)
+                    ],  # Cycle through colors if more histograms than colors
+                    alpha=0.7,
+                )
+                ax_hist.set_title(
+                    f"{color.upper()} Histogram"
+                )  # Use color label in title
+                ax_hist.set_xlabel("Pixel Value")  # Corrected x-axis label
+                ax_hist.set_ylabel("Frequency")
+                ax_hist.set_xlim([0, len(bins) - 1])
+                subplot_index += 1  # Increment for the next subplot
+
+    # Turn off any unused axes
+    for ax in axes[subplot_index:]:
         ax.axis("off")
 
     plt.tight_layout()
