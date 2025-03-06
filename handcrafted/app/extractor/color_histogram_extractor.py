@@ -1,3 +1,5 @@
+"""ColorHistogram class for extracting color histogram from a list of image frames."""
+
 from typing import List
 
 import cv2
