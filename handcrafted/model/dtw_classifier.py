@@ -1,3 +1,5 @@
+"""Dynamic Time Warping (DTW) Classifier."""
+
 from typing import List
 
 import numpy as np
@@ -9,20 +11,51 @@ from handcrafted.app.dataset.video import Video
 
 
 def standardize_features(features: np.ndarray) -> np.ndarray:
-    """Standardize the feature set."""
+    """Standardize the feature set.
+
+    Parameters
+    ----------
+    features : np.ndarray
+        The feature set to standardize.
+
+    Returns
+    -------
+    np.ndarray
+        The standardized feature set.
+
+    """
     scaler = StandardScaler()
     return scaler.fit_transform(features)
 
 
 class DTWClassifier:
+    """Dynamic Time Warping (DTW) Classifier."""
+
     def __init__(self, dataset: Dataset, glosses: List[str]) -> None:
+        """Initialize the DTW Classifier.
+
+        Parameters
+        ----------
+        dataset : Dataset
+            The dataset object.
+        glosses : List[str]
+            The list of glosses.
+
+        """
         self.dataset = dataset
         self.glosses = glosses
         self.train_videos = []
         self.test_videos = []
 
-    def train_test_videos(self, num_glosses=10):
-        """Create training and testing video sets."""
+    def train_test_videos(self, num_glosses: int = 10):
+        """Create training and testing video sets.
+
+        Parameters
+        ----------
+        num_glosses : int, optional
+            The number of glosses to consider (default is 10).
+
+        """
         selected_videos_train = []
         selected_videos_test = []
 
@@ -41,7 +74,21 @@ class DTWClassifier:
 
     @staticmethod
     def dtw_kernel(sequence1: np.ndarray, sequence2: np.ndarray) -> float:
-        """Calculate the DTW similarity kernel."""
+        """Calculate the DTW similarity kernel.
+
+        Parameters
+        ----------
+        sequence1 : np.ndarray
+            The first sequence.
+        sequence2 : np.ndarray
+            The second sequence.
+
+        Returns
+        -------
+        float
+            The DTW similarity kernel.
+
+        """
         distance, _ = fastdtw(sequence1, sequence2)
         normalized_distance = distance / (1 + distance)
         similarity = np.exp(-normalized_distance)
@@ -49,7 +96,21 @@ class DTWClassifier:
         return similarity
 
     def process_video_pair(self, video_i: Video, video_j: Video) -> float:
-        """Process and compute similarity between two video pairs."""
+        """Process and compute similarity between two video pairs.
+
+        Parameters
+        ----------
+        video_i : Video
+            The first video.
+        video_j : Video
+            The second video.
+
+        Returns
+        -------
+        float
+            The similarity between the two video pairs.
+
+        """
         print(
             f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
         )
@@ -62,7 +123,19 @@ class DTWClassifier:
         return self.dtw_kernel(sequence1, sequence2)
 
     def similarity_matrix_training(self, videos: List[Video]) -> np.ndarray:
-        """Compute the training similarity matrix."""
+        """Compute the training similarity matrix.
+
+        Parameters
+        ----------
+        videos : List[Video]
+            The list of videos to compute the similarity matrix.
+
+        Returns
+        -------
+        np.ndarray
+            The training similarity matrix.
+
+        """
         n = len(videos)
         M = np.zeros((n, n))
 
@@ -87,7 +160,19 @@ class DTWClassifier:
         return M
 
     def similarity_matrix_test(self, X_train_len: int) -> np.ndarray:
-        """Compute the test similarity matrix."""
+        """Compute the test similarity matrix.
+
+        Parameters
+        ----------
+        X_train_len : int
+            The length of the training set.
+
+        Returns
+        -------
+        np.ndarray
+            The test similarity matrix.
+
+        """
         X_test = np.zeros((len(self.test_videos), X_train_len))
 
         z = 0
@@ -106,7 +191,14 @@ class DTWClassifier:
         return X_test
 
     def compute_dtw_similarity_matrix(self) -> tuple:
-        """Compute the final DTW similarity matrices for training and testing."""
+        """Compute the final DTW similarity matrices for training and testing.
+
+        Returns
+        -------
+        tuple
+            X_test, y_train, y_test (the final DTW similarity matrices for training and testing).
+
+        """
         # X_train = self.similarity_matrix_training(self.train_videos)
         X_test = self.similarity_matrix_test(
             len(self.train_videos)
@@ -124,6 +216,20 @@ class DTWClassifier:
 
     @staticmethod
     def dtw_predict(X_test: np.ndarray, y_train: List[int]) -> List[int]:
-        """Predict the classes for test data."""
+        """Predict the classes for test data.
+
+        Parameters
+        ----------
+        X_test : np.ndarray
+            The test data.
+        y_train : List[int]
+            The training data.
+
+        Returns
+        -------
+        List[int]
+            The predicted classes for the test data.
+
+        """
         nearest_neighbor_indices = np.argmax(X_test, axis=1)
         return [y_train[idx] for idx in nearest_neighbor_indices]
