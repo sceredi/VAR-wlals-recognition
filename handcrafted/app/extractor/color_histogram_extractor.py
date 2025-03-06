@@ -1,5 +1,3 @@
-"""ColorHistogram class for extracting color histograms from a list of image frames."""
-
 from typing import List
 
 import cv2
@@ -21,7 +19,10 @@ class ColorHistogram:
         self.frames = frames
 
     def process_frames(
-        self, to_color: int = cv2.COLOR_BGR2HSV, separate_colors: bool = False
+        self,
+        to_color=cv2.COLOR_BGR2HSV,
+        separate_colors=False,
+        normalize=False,
     ) -> np.ndarray:
         """Extract color histograms from a list of frames.
 
@@ -31,6 +32,8 @@ class ColorHistogram:
             The color space conversion code (default is cv2.COLOR_BGR2HSV).
         separate_colors : bool, optional
             Whether to extract histograms for each channel separately (default is False).
+        normalize: bool, optional
+            Whether to normalize the histograms (default is False).
 
         Returns
         -------
@@ -41,21 +44,27 @@ class ColorHistogram:
         ret = []
         for frame in self.frames:
             if not separate_colors:
-                ret.append(self._extract(cv2.cvtColor(frame, to_color)))
+                ret.append(
+                    self._extract(cv2.cvtColor(frame, to_color), normalize)
+                )
             else:
                 ret.append(
-                    self._extract_separate(cv2.cvtColor(frame, to_color))
+                    self._extract_separate(
+                        cv2.cvtColor(frame, to_color), normalize
+                    )
                 )
         return np.array(ret)
 
     @staticmethod
-    def _extract(frame: np.ndarray):
+    def _extract(frame: np.ndarray, normalize: bool):
         """Extract a color histogram from a single frame.
 
         Parameters
         ----------
         frame : np.ndarray
             The frame to extract the histogram from.
+        normalize: bool
+            Whether to normalize the histogram.
 
         Returns
         -------
@@ -63,20 +72,23 @@ class ColorHistogram:
             The color histogram.
 
         """
-        histogram = cv2.calcHist(
+        hist = cv2.calcHist(
             [frame], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256]
         )
-        return histogram
-        # return histogram / histogram.sum()
+        if normalize:
+            hist = cv2.normalize(hist, hist, 0, 1, cv2.NORM_MINMAX)
+        return hist
 
     @staticmethod
-    def _extract_separate(frame: np.ndarray):
+    def _extract_separate(frame: np.ndarray, normalize: bool):
         """Extract separate color histograms for each channel.
 
         Parameters
         ----------
         frame : np.ndarray
             The frame to extract histograms from.
+        normalize: bool
+            Whether to normalize the histogram.
 
         Returns
         -------
@@ -87,5 +99,7 @@ class ColorHistogram:
         hists = []
         for i in range(3):
             hist = cv2.calcHist([frame], [i], None, [256], [0, 256])
+            if normalize:
+                hist = cv2.normalize(hist, hist, 0, 1, cv2.NORM_MINMAX)
             hists.append(hist)
         return hists

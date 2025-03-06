@@ -127,10 +127,11 @@ def plot_color_hist(
     frames: List[np.ndarray],
     to_color=cv2.COLOR_BGR2HSV,
     colors=("h", "s", "v"),
+    normalize=False,
 ) -> None:
     color_hist_extractor = ColorHistogram(frames)
     frames_hists = color_hist_extractor.process_frames(
-        to_color, separate_colors=True
+        to_color, separate_colors=True, normalize=normalize
     )
     cols = 1 + len(colors)
     rows = len(frames)
