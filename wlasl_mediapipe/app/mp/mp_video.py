@@ -13,6 +13,8 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import (
 
 
 class MediapipeVideo:
+    """Class to handle a video with MediaPipe features."""
+
     def __init__(
         self,
         video: Video,
@@ -21,6 +23,22 @@ class MediapipeVideo:
         all_features: bool = True,
         sign_model: SignModel | None = None,
     ):
+        """Initializes the MediapipeVideo object.
+
+        Parameters
+        ----------
+        video : Video
+            The video.
+        plot : bool, optional
+            If True, plots the annotated frames, by default True.
+        expand_keypoints : bool, optional
+            If True, expands the hands keypoints, by calculating the angle,
+            in radians, between the connected keypoints, by default False.
+        all_features : bool, optional
+            If True, extracts all the features, by default True.
+        sign_model : SignModel, optional
+            The sign model, by default None.
+        """
         self.video = video
         if sign_model is None:
             if not os.path.exists(f"data/mp/{self.video.video_id}"):
@@ -29,7 +47,14 @@ class MediapipeVideo:
         else:
             self.sign_model = sign_model
 
-    def get_base_video(self):
+    def get_base_video(self) -> Video:
+        """Returns the base video.
+
+        Returns
+        -------
+        Video
+            The base video.
+        """
         return self.video
 
     def _load_models(
@@ -37,7 +62,18 @@ class MediapipeVideo:
         plot: bool = True,
         expand_keypoints: bool = False,
         all_features: bool = True,
-    ):
+    ) -> None:
+        """Loads the models.
+
+        Parameters
+        ----------
+        plot : bool, optional
+            If True, plots the annotated frames, by default True.
+        expand_keypoints : bool, optional
+            If True, expands the hands keypoints, by calculating the angle,
+            in radians, between the connected keypoints, by default False.
+        all_features : bool, optional
+        """
         if os.path.exists(f"data/mp/{self.video.video_id}"):
             self.sign_model = SignModel.load(
                 self.video.video_id, expand_keypoints, all_features
@@ -84,6 +120,18 @@ class MediapipeVideo:
             )
 
     def from_sign_model(self, sign_model: SignModel) -> "MediapipeVideo":
+        """Returns a new MediapipeVideo object from the given sign model.
+
+        Parameters
+        ----------
+        sign_model : SignModel
+            The sign model.
+
+        Returns
+        -------
+        MediapipeVideo
+            The new MediapipeVideo object.
+        """
         return MediapipeVideo(
             self.video,
             plot=False,
@@ -93,5 +141,17 @@ class MediapipeVideo:
         )
 
     def augment(self, n: int = 1) -> List["MediapipeVideo"]:
+        """Augments the video.
+
+        Parameters
+        ----------
+        n : int, optional
+            The number of augmentations, by default 1.
+
+        Returns
+        -------
+        List[MediapipeVideo]
+            The augmented videos.
+        """
         others = augment_video(self, n)
         return others
