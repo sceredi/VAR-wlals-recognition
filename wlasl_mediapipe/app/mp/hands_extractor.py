@@ -11,11 +11,12 @@ from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_drawer import (
 
 
 class MediapipeLandmarksExtractor:
-    """Wrapper for mediapipe Hands class"""
+    """Wrapper for mediapipe Holistic class."""
 
     def __init__(
         self,
     ) -> None:
+        """Initializes the MediapipeLandmarksExtractor object."""
         self.detector = mp.solutions.holistic.Holistic(  # type: ignore
             static_image_mode=False,
             model_complexity=2,
@@ -24,11 +25,36 @@ class MediapipeLandmarksExtractor:
             refine_face_landmarks=True,
         )
 
-    def _process_frame(self, frame: "np.ndarray") -> List["np.ndarray"] | None:
+    def _process_frame(self, frame: np.ndarray) -> List[np.ndarray]:
+        """Process frame and return landmarks.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to process.
+
+        Returns
+        -------
+        List[np.ndarray]
+            The landmarks.
+        """
         return self.detector.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
-    def process_video(self, video: Video) -> Tuple[List, List["np.ndarray"]]:
-        """Process video and return landmarks and annotated frames"""
+    def process_video(
+        self, video: Video
+    ) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+        """Process video and return landmarks.
+
+        Parameters
+        ----------
+        video : Video
+            The video to process.
+
+        Returns
+        -------
+        Tuple[List[np.ndarray], List[np.ndarray]]
+            The landmarks and the annotated frames.
+        """
         landmarks = []
         annotated_frames = []
         for frame in video.get_frames():
