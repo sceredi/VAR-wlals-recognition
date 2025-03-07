@@ -1,8 +1,21 @@
+"""Utility functions to extract the landmarks from the mediapipe object."""
+
 import numpy as np
 
 
 def landmark_to_array(mp_landmark_list) -> np.ndarray:
-    """Return a np array of size (nb_keypoints x 3)"""
+    """Convert the mediapipe landmark list to a numpy array.
+
+    Parameters
+    ----------
+    mp_landmark_list : mediapipe object
+        The mediapipe object that contains the landmarks.
+
+    Returns
+    -------
+    np.ndarray
+        The landmarks in a numpy array.
+    """
     keypoints = []
     for landmark in mp_landmark_list.landmark:
         keypoints.append([landmark.x, landmark.y, landmark.z])
@@ -11,10 +24,20 @@ def landmark_to_array(mp_landmark_list) -> np.ndarray:
 
 def extract_landmarks(results):
     """Extract the results of both hands and convert them to a np array of size
-    if a hand doesn't appear, return an array of zeros
+    if a hand doesn't appear, return an array of zeros.
 
-    :param results: mediapipe object that contains the 3D position of all keypoints
-    :return: Two np arrays of size (1, 21 * 3) = (1, nb_keypoints * nb_coordinates) corresponding to both hands
+    Parameters
+    ----------
+    results : mediapipe object
+        The mediapipe object that contains the 3D position of all keypoints.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+        The first np array has size 1404 and contains the face landmarks.
+        The second np array has size 99 and contains the pose landmarks.
+        The third np array has size 63 and contains the left hand landmarks.
+        The fourth np array has size 63 and contains the right hand landmarks.
     """
     face = np.zeros(1404).tolist()
     if results.face_landmarks:

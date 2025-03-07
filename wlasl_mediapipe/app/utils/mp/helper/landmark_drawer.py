@@ -1,12 +1,28 @@
+"""Utility functions for drawing landmarks on images."""
+
 import mediapipe as mp
+import numpy as np
 
 mp_drawing = mp.solutions.drawing_utils  # type: ignore
 mp_drawing_styles = mp.solutions.drawing_styles  # type: ignore
 mp_holistic = mp.solutions.holistic  # type: ignore
 
 
-def draw_landmarks_on_image(image, results):
-    """Draws hand landmarks on the provided image."""
+def draw_landmarks_on_image(image: np.ndarray, results) -> np.ndarray:
+    """Draws the landmarks on the image.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        The image to draw the landmarks on.
+    results : mediapipe object
+        The mediapipe object that contains the landmarks.
+
+    Returns
+    -------
+    np.ndarray
+        The image with the landmarks drawn on it.
+    """
     annotated_image = image.copy()
 
     # Loop through the detected hands to visualize.
