@@ -9,6 +9,8 @@ from wlasl_mediapipe.app.utils.mp.file_utils import load_array
 
 
 class SignModel(object):
+    """Object that contains all the information about a sign video."""
+
     def __init__(
         self,
         left_hand_list: List[List[float]],
@@ -18,12 +20,23 @@ class SignModel(object):
         expand_keypoints: bool = False,
         all_features: bool = True,
     ):
-        """
-        Params
-            x_hand_list: List of all landmarks for each frame of a video
-        Args
-            has_x_hand: bool; True if x hand is detected in the video, otherwise False
-            xh_embedding: ndarray; Array of shape (n_frame, nb_connections * nb_connections)
+        """Initializes the SignModel object.
+
+        Parameters
+        ----------
+        left_hand_list : List[List[float]]
+            List of landmarks for the left hand.
+        right_hand_list : List[List[float]]
+            List of landmarks for the right hand.
+        pose_list : List[List[float]], optional
+            List of landmarks for the pose, by default None.
+        face_list : List[List[float]], optional
+            List of landmarks for the face, by default None.
+        expand_keypoints : bool, optional
+            Whether to expand the keypoints into embeddings,by calculating the angle,
+            in radians, between the connected keypoints, by default False.
+        all_features : bool, optional
+            Whether to include all features, by default True.
         """
         if pose_list is None:
             pose_list = []
@@ -59,7 +72,21 @@ class SignModel(object):
                 (-1, 132, 3),
             )
 
-    def expand_keypoints(self, left_hand_list, right_hand_list) -> None:
+    def expand_keypoints(
+        self,
+        left_hand_list: List[List[float]],
+        right_hand_list: List[List[float]],
+    ) -> None:
+        """Expand the keypoints into embeddings, by calculating the angle,
+        in radians, between the connected keypoints.
+
+        Parameters
+        ----------
+        left_hand_list : List[List[float]]
+            List of landmarks for the left hand.
+        right_hand_list : List[List[float]]
+            List of landmarks for the
+        """
         self.lh_embedding = self._get_hand_embedding_from_landmark_list(
             left_hand_list
         )
@@ -73,8 +100,22 @@ class SignModel(object):
         expand_keypoints: bool = False,
         all_features: bool = True,
     ) -> "SignModel":
-        """
-        Load a SignModel from a file
+        """Load a SignModel object from the pickle files.
+
+        Parameters
+        ----------
+        video_id : str
+            The video id.
+        expand_keypoints : bool, optional
+            Whether to expand the keypoints into embeddings, by calculating the angle,
+            in radians, between the connected keypoints, by default False.
+        all_features : bool, optional
+            Whether to include all features, by default True.
+
+        Returns
+        -------
+        SignModel
+            The loaded SignModel object.
         """
         path = os.path.join("data", "mp", video_id)
         left_hand_list = load_array(
@@ -98,12 +139,18 @@ class SignModel(object):
     def _get_hand_embedding_from_landmark_list(
         hand_list: List[List[float]],
     ) -> List[List[float]]:
-        """
-        Params
-            hand_list: List of all landmarks for each frame of a video
-        Return
+        """Get the hand embedding from the landmark list.
+
+        Parameters
+        ----------
+        hand_list : List[List[float]]
+            List of all landmarks for each frame of a video.
+
+        Returns
+        -------
+        List[List[float]]
             Array of shape (n_frame, nb_connections * nb_connections) containing
-            the feature_vectors of the hand for each frame
+            the feature_vectors of the hand for each frame.
         """
         embedding = []
         for frame_idx in range(len(hand_list)):
@@ -119,6 +166,20 @@ class SignModel(object):
     def _filter_frames_feature_list(
         frames_feature_list: List[List[float]], filter: List[int]
     ) -> List[List[float]]:
+        """Filter the frames feature list.
+
+        Parameters
+        ----------
+        frames_feature_list : List[List[float]]
+            List of all landmarks for each frame of a video.
+        filter : List[int]
+            List of indices to keep.
+
+        Returns
+        -------
+        List[List[float]]
+            List of landmarks for each frame of a video.
+        """
         new_frames_feature_list = []
         for frame_feature in frames_feature_list:
             reshaped_frame_feature = np.array(frame_feature).reshape(
