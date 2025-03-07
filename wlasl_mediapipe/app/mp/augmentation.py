@@ -1,10 +1,28 @@
+"""Augmentation helper functions for the MediaPipe model."""
+
+from typing import List, Tuple
+
 import numpy as np
 from tqdm import tqdm
 
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 
 
-def _rotate_hand(data, rotation_matrix):
+def _rotate_hand(data: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
+    """Rotate the hand data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The hand data.
+    rotation_matrix : np.ndarray
+        The rotation matrix.
+
+    Returns
+    -------
+    np.ndarray
+        The rotated hand data.
+    """
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
     data = data.reshape(-1, 3)
@@ -17,7 +35,21 @@ def _rotate_hand(data, rotation_matrix):
     return data
 
 
-def _rotate(data, rotation_matrix):
+def _rotate(data: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
+    """Rotate the data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+    rotation_matrix : np.ndarray
+        The rotation matrix.
+
+    Returns
+    -------
+    np.ndarray
+        The rotated data.
+    """
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
     data = data.reshape(-1, 3)
@@ -30,7 +62,19 @@ def _rotate(data, rotation_matrix):
     return data
 
 
-def _rotate_z(data):
+def _rotate_z(data: np.ndarray) -> np.ndarray:
+    """Rotate the data around the z-axis.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The rotated data.
+    """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
     )
@@ -45,7 +89,23 @@ def _rotate_z(data):
     return _rotate(data, rotation_matrix)
 
 
-def _rotate_z_hands(lh, rh):
+def _rotate_z_hands(
+    lh: np.ndarray, rh: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Rotate the hands around the z-axis.
+
+    Parameters
+    ----------
+    lh : np.ndarray
+        The left hand data.
+    rh : np.ndarray
+        The right hand data.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        The rotated left and right hand data.
+    """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
     )
@@ -60,7 +120,19 @@ def _rotate_z_hands(lh, rh):
     return _rotate_hand(lh, rotation_matrix), _rotate_hand(rh, rotation_matrix)
 
 
-def _rotate_y(data):
+def _rotate_y(data: np.ndarray) -> np.ndarray:
+    """Rotate the data around the y-axis.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The rotated data.
+    """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
     )
@@ -75,7 +147,23 @@ def _rotate_y(data):
     return _rotate(data, rotation_matrix)
 
 
-def _rotate_y_hands(lh, rh):
+def _rotate_y_hands(
+    lh: np.ndarray, rh: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Rotate the hands around the y-axis.
+
+    Parameters
+    ----------
+    lh : np.ndarray
+        The left hand data.
+    rh : np.ndarray
+        The right hand data.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        The rotated left and right hand data.
+    """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
     )
@@ -90,7 +178,19 @@ def _rotate_y_hands(lh, rh):
     return _rotate_hand(lh, rotation_matrix), _rotate_hand(rh, rotation_matrix)
 
 
-def _rotate_x(data):
+def _rotate_x(data: np.ndarray) -> np.ndarray:
+    """Rotate the data around the x-axis.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The rotated data.
+    """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
     )
@@ -105,7 +205,23 @@ def _rotate_x(data):
     return _rotate(data, rotation_matrix)
 
 
-def _rotate_x_hands(lh, rh):
+def _rotate_x_hands(
+    lh: np.ndarray, rh: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Rotate the hands around the x-axis.
+
+    Parameters
+    ----------
+    lh : np.ndarray
+        The left hand data.
+    rh : np.ndarray
+        The right hand data.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        The rotated left and right hand data.
+    """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
     )
@@ -120,7 +236,19 @@ def _rotate_x_hands(lh, rh):
     return _rotate_hand(lh, rotation_matrix), _rotate_hand(rh, rotation_matrix)
 
 
-def _zoom(data):
+def _zoom(data: np.ndarray) -> np.ndarray:
+    """Zoom the data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The zoomed data.
+    """
     factor = np.random.uniform(0.8, 1.2)
     center = np.array([0.5, 0.5])
     non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
@@ -132,7 +260,19 @@ def _zoom(data):
     return data
 
 
-def _shift(data):
+def _shift(data: np.ndarray) -> np.ndarray:
+    """Shift the data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The shifted data.
+    """
     x_shift = np.random.uniform(-0.2, 0.2)
     y_shift = np.random.uniform(-0.2, 0.2)
     non_zero = np.argwhere(np.any(data[:, :, :2] != 0, axis=2))
@@ -143,7 +283,19 @@ def _shift(data):
     return data
 
 
-def _mask(data):
+def _mask(data: np.ndarray) -> np.ndarray:
+    """Mask some of the keypoints.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The masked data.
+    """
     _, landmarks, _ = data.shape
     num_hands = int(0.3 * 42)
     num_rest = int(0.6 * (landmarks - 42))
@@ -160,16 +312,52 @@ def _mask(data):
     return data
 
 
-def hflip(data):
+def hflip(data: np.ndarray) -> np.ndarray:
+    """Flip the data horizontally.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The horizontally flipped data.
+    """
     data[:, :, 0] = 1 - data[:, :, 0]
     return data
 
 
-def speedup(data):
+def speedup(data: np.ndarray) -> np.ndarray:
+    """Speedup the data by removing every second frame.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The sped up data.
+    """
     return data[::2]
 
 
-def _apply_augmentations(data):
+def _apply_augmentations(data: np.ndarray) -> np.ndarray:
+    """Apply augmentations to the data.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The concatenated left and right hand data with pose and possibly face keypoints.
+
+    Returns
+    -------
+    np.ndarray
+        The augmented data.
+    """
     aug_functions = [
         _rotate_x,
         _rotate_y,
@@ -191,7 +379,23 @@ def _apply_augmentations(data):
     return data
 
 
-def _apply_lhrh_augmentations(lh, rh):
+def _apply_lhrh_augmentations(
+    lh: np.ndarray, rh: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Apply augmentations to the left and right hand data.
+
+    Parameters
+    ----------
+    lh : np.ndarray
+        The left hand data.
+    rh : np.ndarray
+        The right hand data.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        The augmented left and right hand data.
+    """
     aug_functions = [
         _rotate_x_hands,
         _rotate_y_hands,
@@ -208,7 +412,25 @@ def _apply_lhrh_augmentations(lh, rh):
     return lh, rh
 
 
-def augment(X, Y, num=None):
+def augment(
+    X: List[np.ndarray], Y: List[str], num: int | None = None
+) -> Tuple[List[np.ndarray], List[str]]:
+    """Augment the data.
+
+    Parameters
+    ----------
+    X : List[np.ndarray]
+        The data.
+    Y : List[str]
+        The labels.
+    num : int, optional
+        The number of augmentations to apply, by default None.
+
+    Returns
+    -------
+    Tuple[List[np.ndarray], List[str]]
+        The augmented data and labels.
+    """
     X_aug = X.copy()
     Y_aug = Y.copy()
 
@@ -227,7 +449,21 @@ def augment(X, Y, num=None):
     return X_aug, Y_aug
 
 
-def augment_video(video, num=1):
+def augment_video(video, num: int = 1):
+    """Augment the video.
+
+    Parameters
+    ----------
+    video : MediapipeVideo
+        The video.
+    num : int, optional
+        The number of augmentations to apply, by default 1.
+
+    Returns
+    -------
+    List[MediapipeVideo]
+        The augmented videos.
+    """
     aug_videos = []
     for _ in range(num):
         lh = video.sign_model.lh_matrix.copy()
