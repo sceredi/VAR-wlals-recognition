@@ -1,3 +1,5 @@
+"""Module to perform the DTW classification of the videos using MediaPipe features."""
+
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -12,7 +14,21 @@ from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 def calc_dtw_distance(
     video: MediapipeVideo, others: List[MediapipeVideo]
 ) -> Tuple[str, float]:
-    ret = {"ThisShouldBeAnError": [np.inf]}
+    """Calculates the DTW distance between the video and the others.
+
+    Parameters
+    ----------
+    video : MediapipeVideo
+        The video to compare.
+    others : List[MediapipeVideo]
+        The other videos.
+
+    Returns
+    -------
+    Tuple[str, float]
+        The gloss and the distance.
+    """
+    ret = {"IncompatibleHands": [np.inf]}
     left_hand = video.sign_model.lh_embedding
     right_hand = video.sign_model.rh_embedding
     curr = 0
@@ -49,23 +65,16 @@ def calc_dtw_distance(
 
 
 def _best_choice(distances) -> Tuple[str, float]:
-    """Given a list of distances, calculates the minimum the distances for each gloss"""
+    """Returns the best choice from the distances.
+
+    Parameters
+    ----------
+    distances : Dict[str, List[float]]
+        The distances.
+    """
     for gloss in distances:
         distances[gloss] = np.min(distances[gloss])
     return min(distances.items(), key=lambda x: x[1])
-
-
-def calc_accuracy(real_glosses, classified_glosses) -> float:
-    correct = 0
-    total = len(real_glosses)
-
-    for key, value in real_glosses.items():
-        if key in classified_glosses:
-            if classified_glosses[key][0] == value:
-                correct += 1
-
-    accuracy = correct / total * 100
-    return accuracy
 
 
 def classify(
@@ -74,6 +83,24 @@ def classify(
     augment: int,
     topN: int = 1,
 ) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
+    """Classifies the test videos using the train videos.
+
+    Parameters
+    ----------
+    test_videos : List[MediapipeVideo]
+        The test videos.
+    train_videos : Dict[str, List[Video]]
+        The train videos, in the format {gloss: [videos]}.
+    augment : int
+        The number of augmentations to apply.
+    topN : int, optional
+        The number of top predictions to consider, by default 1.
+
+    Returns
+    -------
+    Dict[MediapipeVideo, List[Tuple[str, float]]]
+        The classified glosses, in the format {video: [(gloss, distance)]}.
+    """
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = {}
     for gloss in tqdm(train_videos):
         current_train = [
@@ -104,6 +131,24 @@ def _do_classification(
     classified: Dict[MediapipeVideo, List[Tuple[str, float]]],
     topN: int,
 ) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
+    """Internal function to classify a video.
+
+    Parameters
+    ----------
+    video : MediapipeVideo
+        The video to classify.
+    current_train : List[MediapipeVideo]
+        The current train videos.
+    classified : Dict[MediapipeVideo, List[Tuple[str, float]]]
+        The classified glosses until now.
+    topN : int
+        The number of top predictions to consider.
+
+    Returns
+    -------
+    Dict[MediapipeVideo, List[Tuple[str, float]]]
+        The classified glosses, in the format {video: [(gloss, distance)].
+    """
     closest_word: Tuple[str, float] = calc_dtw_distance(video, current_train)
     classifications = classified.get(video)
     if classifications is None:
@@ -125,6 +170,20 @@ def _calc_acc(
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]],
     topN: int,
 ) -> float:
+    """Calculates the accuracy of the classification.
+
+    Parameters
+    ----------
+    classified_glosses : Dict[MediapipeVideo, List[Tuple[str, float]]]
+        The classified glosses, in the format {video: [(gloss, distance)]}.
+    topN : int
+        The number of top predictions to consider.
+
+    Returns
+    -------
+    float
+        The accuracy of the classification.
+    """
     right = 0
     tot = len(classified_glosses)
     for el in classified_glosses.items():
@@ -139,6 +198,17 @@ def pretty_print(
     output_file: str,
     topN: int,
 ):
+    """Prints the results of the classification in a pretty format.
+
+    Parameters
+    ----------
+    classified_glosses : Dict[MediapipeVideo, List[Tuple[str, float]]]
+        The classified glosses, in the format {video: [(gloss, distance)]}.
+    output_file : str
+        The output file where the results will be saved.
+    topN : int
+        The number of top predictions to consider.
+    """
     output_file = f"top{topN}-{output_file}"
     rows = []
     for el in classified_glosses.items():
