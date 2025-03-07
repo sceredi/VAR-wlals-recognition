@@ -5,31 +5,35 @@ import numpy as np
 
 
 class HandModel(object):
-    """
-    Class that contains the hand gesture information for an image taking inspiration from (https://github.com/gabguerin/Sign-Language-Recognition--MediaPipe-DTW)
-    Params
-        landmarks: List of positions for the hands
-     Args
-        connections: List of tuples containing the ids of the two landmarks representing a connection
-        feature_vector: List of length 21 * 21 = 441 containing the angles between all connections
-    """
+    """Object that contains the hand gesture information for an image."""
 
     def __init__(self, landmarks: List[float]):
+        """Initializes a HandModel object.
+
+        Parameters
+        ----------
+        landmarks : List[float]
+            List of positions for the hands.
+        """
         # Define the connections
         self.connections = mp.solutions.holistic.HAND_CONNECTIONS  # type: ignore
-        # print(np.array(landmarks).shape)
 
         # Create feature vector (list of the angles between all the connections)
         landmarks = np.array(landmarks).reshape((21, 3))  # type: ignore
         self.feature_vector = self._get_feature_vector(landmarks)  # type: ignore
 
     def _get_feature_vector(self, landmarks: np.ndarray) -> List[float]:
-        """
-        Params
-            landmarks: numpy array of shape (21, 3)
-        Return
-            List of length nb_connections * nb_connections containing
-            all the angles between the connections
+        """Get the feature vector for the hand landmarks.
+
+        Parameters
+        ----------
+        landmarks : np.ndarray
+            The landmarks for the hand.
+
+        Returns
+        -------
+        List[float]
+            List of the angles between the connections.
         """
         connections = self._get_connections_from_landmarks(landmarks)
 
@@ -49,21 +53,35 @@ class HandModel(object):
     def _get_connections_from_landmarks(
         self, landmarks: np.ndarray
     ) -> List[np.ndarray]:
-        """
-        Params
-            landmarks: numpy array of shape (21, 3)
-        Return
-            List of vectors representing hand connections
+        """Get the connections from the landmarks.
+
+        Parameters
+        ----------
+        landmarks : np.ndarray
+            The landmarks for the hand.
+
+        Returns
+        -------
+        List[np.ndarray]
+            List of vectors representing hand connections.
         """
         return [landmarks[t[1]] - landmarks[t[0]] for t in self.connections]
 
     @staticmethod
     def _get_angle_between_vectors(u: np.ndarray, v: np.ndarray) -> float:
-        """
-        Args
-            u, v: 3D vectors representing two connections
-        Return
-            Angle between the two vectors
+        """Calculate the angle between two vectors.
+
+        Parameters
+        ----------
+        u : np.ndarray
+            Vector representing the first element of a connection.
+        v : np.ndarray
+            Vector representing the second element of a connection.
+
+        Returns
+        -------
+        float
+            Angle between the two vectors in radians.
         """
         if np.array_equal(u, v):
             return 0
