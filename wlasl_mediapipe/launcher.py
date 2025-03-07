@@ -11,7 +11,15 @@ from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 
 
 class Launcher:
+    """Helper class to launch the classification process using MediaPipe features."""
+
     def start(self) -> None:
+        """Launches the classification process using MediaPipe features.
+        The parameters are passed as command line arguments as follows:
+        1. Number of words to classify
+        2. TopN: Number of top predictions to consider
+        3. Augment: Number of augmentations to apply to each video.
+        """
         # Check if there are at least two arguments
         nwords = 10
         topN = 5
@@ -41,13 +49,27 @@ class Launcher:
         )
 
     def load_data(self) -> Dataset:
+        """Loads the WLASL dataset with only the keypoints.
+
+        Returns
+        -------
+        Dataset
+            The dataset with only the keypoints.
+        """
         return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
 
     def load_glosses(self, filtered: bool = False) -> List[str]:
-        """
-        Loads the wlasl class list
-        :param bool filtered: If True, returns the filtered labels, filtered by cosine similarity, otherwise by the order they appear in the file
-        :return: List of glosses
+        """Loads the wlasl class list.
+
+        Parameters
+        ----------
+        filtered : bool
+            If True, returns the filtered labels, filtered by cosine similarity, otherwise by the order they appear in the file.
+
+        Returns
+        -------
+        List[str]
+            List of glosses.
         """
         glosses = []
         if not filtered:
@@ -61,6 +83,20 @@ class Launcher:
     def get_test_videos(
         self, dataset: Dataset, glosses: List[str]
     ) -> List[MediapipeVideo]:
+        """Gets the test videos for the given glosses.
+
+        Parameters
+        ----------
+        dataset : Dataset
+            The dataset.
+        glosses : List[str]
+            The glosses to consider.
+
+        Returns
+        -------
+        List[MediapipeVideo]
+            The test videos.
+        """
         test_videos = dataset.get_videos(
             lambda video: (video.split == "test") and video.gloss in glosses
         )
@@ -75,6 +111,20 @@ class Launcher:
     def get_train_videos(
         self, dataset: Dataset, glosses: List[str]
     ) -> Dict[str, List[Video]]:
+        """Gets the train videos for the given glosses.
+
+        Parameters
+        ----------
+        dataset : Dataset
+            The dataset.
+        glosses : List[str]
+            The glosses to consider.
+
+        Returns
+        -------
+        Dict[str, List[Video]]
+            A dictionary with the glosses as keys and the list of train videos as values.
+        """
         splitted_train_videos = {}
         for gloss in glosses:
             splitted_train_videos[gloss] = dataset.get_videos(
@@ -83,7 +133,6 @@ class Launcher:
             )
         return splitted_train_videos
 
-    # TODO: classify will be called from the notebook
     def _analyze_with_dtw(
         self,
         dataset: Dataset,
@@ -92,6 +141,21 @@ class Launcher:
         output_file: str = "results.log",
         topN: int = 1,
     ) -> None:
+        """Analyzes the dataset using DTW, and prints the results.
+
+        Parameters
+        ----------
+        dataset : Dataset
+            The dataset.
+        glosses : List[str]
+            The glosses to consider.
+        augment : int, optional
+            The number of augmentations to apply to each video, by default 0.
+        output_file : str, optional
+            The output file where the results will be saved, by default "results.log".
+        topN : int, optional
+            The number of top predictions to consider, by default 1.
+        """
         test_videos = self.get_test_videos(dataset, glosses)
         splitted_train_videos = self.get_train_videos(dataset, glosses)
         classified_glosses = classify(
