@@ -1,6 +1,7 @@
 from sklearn.decomposition import PCA
 
 
+# TODO
 class custom_pca:
     def __init__(self, n_components):
         self.n_components = n_components

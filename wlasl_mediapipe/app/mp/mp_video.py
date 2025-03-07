@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from handcrafted.app.dataset.video import Video
-from handcrafted.app.plotter.frames_plotter import FramesPlotter
+from handcrafted.app.features.plotter.frames_plotter import FramesPlotter
 from wlasl_mediapipe.app.mp.augmentation import augment_video
 from wlasl_mediapipe.app.mp.keypoints_extractor import (
     MediapipeLandmarksExtractor,

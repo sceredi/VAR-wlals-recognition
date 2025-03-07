@@ -6,15 +6,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from handcrafted.app.dataset.video import Video
-from handcrafted.app.extractor.color_histogram_extractor import ColorHistogram
-from handcrafted.app.extractor.contour_extractor import ContourExtractor
-from handcrafted.app.extractor.edge_extractor import EdgeExtractor
-from handcrafted.app.extractor.hog_extractor import HOGExtractor
-from handcrafted.app.extractor.lbp_extractor import LBPExtractor
-from handcrafted.app.extractor.skin import SkinExtractor
-from handcrafted.app.flow.calculator import FlowCalculator
-from handcrafted.app.haar.detector import HaarDetector
-from handcrafted.app.roi.roi_extractor import RoiExtractor
+from handcrafted.app.features.extractor.color_histogram_extractor import (
+    ColorHistogram,
+)
+from handcrafted.app.features.extractor.contour_extractor import (
+    ContourExtractor,
+)
+from handcrafted.app.features.extractor.edge_extractor import EdgeExtractor
+from handcrafted.app.features.extractor.flow_calculator import FlowCalculator
+from handcrafted.app.features.extractor.haar.haar_detector import HaarDetector
+from handcrafted.app.features.extractor.hog_extractor import HOGExtractor
+from handcrafted.app.features.extractor.lbp_extractor import LBPExtractor
+from handcrafted.app.features.extractor.skin import SkinExtractor
+from handcrafted.app.preprocess.roi_extractor import RoiExtractor
 
 
 class FramesPlotter:

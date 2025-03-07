@@ -18,14 +18,16 @@ from sklearn.svm import SVC
 
 from handcrafted.app.dataset.dataset import Dataset
 from handcrafted.app.dataset.video import Video
-from handcrafted.app.extractor.contour_extractor import ContourExtractor
-from handcrafted.app.extractor.edge_extractor import EdgeExtractor
-from handcrafted.app.extractor.hog_extractor import HOGExtractor
-from handcrafted.app.extractor.skin import SkinExtractor
-from handcrafted.app.flow.calculator import FlowCalculator
-from handcrafted.app.haar.detector import HaarDetector
-from handcrafted.app.plotter.frames_plotter import FramesPlotter
-from handcrafted.app.roi.roi_extractor import RoiExtractor
+from handcrafted.app.features.extractor.contour_extractor import (
+    ContourExtractor,
+)
+from handcrafted.app.features.extractor.edge_extractor import EdgeExtractor
+from handcrafted.app.features.extractor.flow_calculator import FlowCalculator
+from handcrafted.app.features.extractor.haar.haar_detector import HaarDetector
+from handcrafted.app.features.extractor.hog_extractor import HOGExtractor
+from handcrafted.app.features.extractor.skin import SkinExtractor
+from handcrafted.app.features.plotter.frames_plotter import FramesPlotter
+from handcrafted.app.preprocess.roi_extractor import RoiExtractor
 
 
 def plot_frames(frames: List["np.ndarray"], is_gray_scale=False) -> None:
