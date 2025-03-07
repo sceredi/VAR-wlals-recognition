@@ -4,6 +4,8 @@ import numpy as np
 
 
 class GlobalFilters(object):
+    """Utility object used to filter the landmarks."""
+
     def __init__(self) -> None:
         self.pose_filter = [11, 12, 13, 14, 15, 16]
         self.face_filter = [
@@ -177,12 +179,29 @@ class GlobalFilters(object):
 
     @staticmethod
     def filter(features: np.ndarray, filter_list: List[int]) -> np.ndarray:
+        """Filters the features based on the given filter list.
+
+        Parameters
+        ----------
+        features : np.ndarray
+            The features to filter.
+        filter_list : List[int]
+            The filter list.
+
+        Returns
+        -------
+        np.ndarray
+            The filtered features.
+        """
         return features[filter_list]
 
 
 class FilteredLabels(object):
+    """Utility object used to filter the labels."""
+
     @staticmethod
     def get_labels():
+        """Returns the filtered labels, filtered based on cosine similarity."""
         return [
             "give",
             "turn",
