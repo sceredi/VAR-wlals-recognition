@@ -9,7 +9,7 @@ from wlasl_mediapipe.app.mp.keypoints_extractor import (
 )
 from wlasl_mediapipe.app.mp.models.sign_model import SignModel
 from wlasl_mediapipe.app.utils.mp.file_utils import save_array
-from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_analyzer import (
+from wlasl_mediapipe.app.utils.mp.helper.landmark_analyzer import (
     extract_landmarks,
 )
 

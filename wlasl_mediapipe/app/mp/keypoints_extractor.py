@@ -5,7 +5,7 @@ import mediapipe as mp
 import numpy as np
 
 from handcrafted.app.dataset.video import Video
-from wlasl_mediapipe.app.utils.mp.helper.hand_landmark_drawer import (
+from wlasl_mediapipe.app.utils.mp.helper.landmark_drawer import (
     draw_landmarks_on_image,
 )
 
