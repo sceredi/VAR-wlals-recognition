@@ -155,12 +155,10 @@ def _do_classification(
         classified[video] = [closest_word]
     else:
         for i, cl in enumerate(classifications):
-            if closest_word[1] < cl[1] or cl[1] == np.inf:
+            if closest_word[1] < cl[1]:
                 classifications.insert(i, closest_word)
-                if len(classifications) > topN:
-                    classifications.pop()
                 break
-            elif len(classifications) < topN:
+            elif i == len(classifications) - 1:
                 classifications.append(closest_word)
                 break
     return classified
