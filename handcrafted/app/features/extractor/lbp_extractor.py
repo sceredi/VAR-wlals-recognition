@@ -1,4 +1,4 @@
-"""LBPExtractor class for extracting Local Binary Patterns (LBP) features from a list of image frames."""
+"""Module for extracting Local Binary Patterns (LBP) features from a list of image frames."""
 
 from typing import List, Tuple
 

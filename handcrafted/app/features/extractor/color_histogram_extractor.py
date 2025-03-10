@@ -1,4 +1,4 @@
-"""ColorHistogram class for extracting color histogram from a list of image frames."""
+"""Module ColorHistogram for extracting color histogram from a list of image frames."""
 
 from typing import List
 

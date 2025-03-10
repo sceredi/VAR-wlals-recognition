@@ -1,3 +1,5 @@
+"""Module for extracting edges from a list of frames."""
+
 from typing import List
 
 import cv2
@@ -5,21 +7,48 @@ import numpy as np
 
 
 class EdgeExtractor:
-    """
-    EdgeExtractor class which is used to detect edges in a video.
-    """
+    """EdgeExtractor class which is used to detect edges in a video."""
 
-    def __init__(self, frames: List["np.ndarray"]) -> None:
+    def __init__(self, frames: List[np.ndarray]) -> None:
+        """Initializes the EdgeExtractor class.
+
+        Parameters
+        ----------
+        frames: List[np.ndarray]
+            List of frames to extract edges from.
+
+        """
         self.frames = frames
 
-    def process_frames(self) -> List["np.ndarray"]:
+    def process_frames(self) -> List[np.ndarray]:
+        """Processes the frames to extract edges.
+
+        Returns
+        -------
+        List[np.ndarray]
+            List of frames with edges extracted.
+        """
         frames = []
         for frame in self.frames:
             frame = self._extract(frame)
             frames.append(frame)
         return frames
 
-    def _extract(self, frame: "np.ndarray") -> "np.ndarray":
+    @staticmethod
+    def _extract(frame: np.ndarray) -> np.ndarray:
+        """Extracts edges from a frame.
+
+        Parameters
+        ----------
+        frame: np.ndarray
+            Frame to extract edges from.
+
+        Returns
+        -------
+        np.ndarray
+            Frame with edges extracted.
+
+        """
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blurred_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
         equalize_hist = cv2.equalizeHist(blurred_frame)

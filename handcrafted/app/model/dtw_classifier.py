@@ -1,4 +1,4 @@
-"""Dynamic Time Warping (DTW) Classifier."""
+"""Module for classification based on hand-crafted features and Dynamic Time Warping (DTW)."""
 
 from typing import List
 
