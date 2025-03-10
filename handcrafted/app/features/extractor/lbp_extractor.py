@@ -60,12 +60,9 @@ class LBPExtractor:
             *(self._extract(self._to_gray(frame)) for frame in self._frames),
             strict=False
         )
-        hists, _ = self._features
-        return hists
+        return self._features
 
-    def _extract(
-        self, frame: np.ndarray
-    ) -> Tuple[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+    def _extract(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """Extract LBP features from a single frame.
 
         Parameters
@@ -76,21 +73,21 @@ class LBPExtractor:
         Returns
         -------
         Tuple[np.ndarray, np.ndarray]
-            The LBP features and the LBP frame.
+            The LBP frame and the LBP features.
 
         """
         lbp_frame = local_binary_pattern(
             frame, self._n_points, self._radius, method="uniform"
         )
 
-        hist, bins = np.histogram(
+        hist, _bins = np.histogram(
             lbp_frame.ravel(),
             bins=np.arange(0, self._n_bins + 1),
             range=(0, self._n_bins),
         )
         hist = hist.astype(np.float32) / hist.sum()
 
-        return lbp_frame, (hist, bins)
+        return lbp_frame, hist
 
     def get_lbp_frames(self) -> List[np.ndarray]:
         """Get the LBP frames.
