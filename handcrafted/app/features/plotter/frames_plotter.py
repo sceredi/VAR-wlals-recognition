@@ -98,13 +98,14 @@ def plot_lbp_frames(frames: List[np.ndarray]) -> None:
     fig, axes = plt.subplots(rows, cols, figsize=(cols * 4, rows * 3))
     axes = axes.flatten()
 
-    for i, (lbp_frame, (hist, bins)) in enumerate(
+    for i, (lbp_frame, hist) in enumerate(
         zip(lbp_frames, lbp_features, strict=False)
     ):
         ax_img = axes[2 * i]
         ax_img.imshow(lbp_frame, cmap="gray")
         ax_img.set_title(f"LBP Frame {i + 1}")
         ax_img.axis("off")
+        bins = np.arange(0, len(hist) + 1)
 
         ax_hist = axes[2 * i + 1]
         ax_hist.bar(
@@ -211,7 +212,9 @@ def plot_contour(frames: List[np.ndarray]) -> None:
 def plot_haar_frames(frames: List["np.ndarray"], plot: bool = True):
     classifier = cv2.CascadeClassifier()
     if not classifier.load(
-        cv2.samples.findFile("handcrafted/app/haar/haarcascades/face.xml")
+        cv2.samples.findFile(
+            "handcrafted/app/features/extractor/haar/haarcascades/face.xml"
+        )
     ):
         print("Error loading face cascade")
         exit(1)

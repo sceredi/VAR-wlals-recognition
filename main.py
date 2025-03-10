@@ -87,11 +87,10 @@ def detect_contour(frames: List[np.ndarray], plot=False) -> List[np.ndarray]:
 
 def get_haar_frames(frames: List["np.ndarray"], plot=False):
     classifier = cv2.CascadeClassifier()
-    # if not classifier.load(cv2.samples.findFile('app/haar/haarcascades/hand.xml')):
-    #     print('Error loading hand cascade')
-    #     exit(1)
     if not classifier.load(
-        cv2.samples.findFile("app/haar/haarcascades/face.xml")
+        cv2.samples.findFile(
+            "handcrafted/app/features/extractor/haar/haarcascades/face.xml"
+        )
     ):
         print("Error loading face cascade")
         exit(1)
