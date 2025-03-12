@@ -26,6 +26,8 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
+    "mutemotion-wlasl-translation-model-regression.ipynb",
+    "mutemotion-wlasl-translation-model-classification.ipynb",
 ]
 
 # Same as Black.
