@@ -46,7 +46,7 @@ class ModelStatistics:
 
         """
         cfm = confusion_matrix(y_test, y_pred)
-        labels = sorted(set(y_test))
+        labels = sorted(set(y_test) | set(y_pred))
         df_cfm = pd.DataFrame(cfm, index=labels, columns=labels)
 
         plt.figure(figsize=(10, 7))
