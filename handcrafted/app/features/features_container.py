@@ -48,11 +48,11 @@ class FeaturesContainer:
     ) -> "np.ndarray":
         frames = self.video.get_frames(last_frame=until_frame_number)
 
-        self._hog_features = self._load_or_compute_feature(
+        self._hog_features = self.load_or_compute_feature(
             "hog_features", self.get_hog_features, frames
         )
         print(f"hog_features shape: {np.array(self._hog_features).shape}")
-        self._lbp_features = self._load_or_compute_feature(
+        self._lbp_features = self.load_or_compute_feature(
             "lbp_features", self.get_lbp_features, frames
         )
         print(f"lbp_features shape: {np.array(self._lbp_features).shape}")
@@ -85,7 +85,7 @@ class FeaturesContainer:
         # )
         return np.concatenate((self._hog_features, self._lbp_features), axis=1)
 
-    def _load_or_compute_feature(
+    def load_or_compute_feature(
         self, feature_name: str, extraction_function, *args, **kwargs
     ):
         """Carica una feature se già esiste, altrimenti la calcola, la salva e crea la cartella video_id se necessario."""
