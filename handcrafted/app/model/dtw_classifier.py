@@ -243,7 +243,7 @@ class DTWClassifier:
         X_test : np.ndarray
             The test data.
         y_train : List[int]
-            The training data.
+            The training data labels to assign to the test data.
 
         Returns
         -------
