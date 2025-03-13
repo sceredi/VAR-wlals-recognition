@@ -14,7 +14,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         nwords = int(sys.argv[1])
 
-    output_file = f"trad_{nwords}_class_confusion_matrx"
+    output_file = f"trad_{nwords}_class_confusion_matrix"
 
     dtw_classifier = DTWClassifier(dataset, dataset.glosses)
     dtw_classifier.train_test_videos(num_glosses=nwords)
