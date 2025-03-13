@@ -60,7 +60,7 @@ class DTWClassifier:
         selected_videos_test = []
 
         for video in self.dataset.videos:
-            if video.gloss in self.glosses[1:num_glosses]:
+            if video.gloss in self.glosses[:num_glosses]:
                 if video.split == "train":
                     selected_videos_train.append(video)
                 else:

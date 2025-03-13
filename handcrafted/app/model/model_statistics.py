@@ -30,7 +30,9 @@ class ModelStatistics:
         self._save_dir = save_dir
         self._save_name = save_name
 
-    def plot_confusion_matrix(self, y_test, y_pred, save: bool = True) -> None:
+    def plot_confusion_matrix(
+        self, y_test, y_pred, save: bool = True, plot: bool = True
+    ) -> None:
         """Plot confusion matrix.
 
         Parameters
@@ -58,7 +60,8 @@ class ModelStatistics:
             plt.savefig(path)
             print(f"Confusion matrix saved at {path}")
 
-        plt.show()
+        if plot:
+            plt.show()
 
     @staticmethod
     def print_classification_report(y_test, y_pred) -> None:
