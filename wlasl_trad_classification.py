@@ -30,8 +30,8 @@ if __name__ == "__main__":
     print(y_test_labels)
     print(y_pred_labels)
 
-    model_stats = ModelStatistics(save_name=output_file)
-    model_stats.plot_confusion_matrix(y_test_labels, y_pred_labels, plot=False)
+    # model_stats = ModelStatistics(save_name=output_file)
+    # model_stats.plot_confusion_matrix(y_test_labels, y_pred_labels, plot=False)
 
     # svc_model = SVClassifier()
     # svc_model.train(X_train, y_train)

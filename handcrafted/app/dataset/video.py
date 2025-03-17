@@ -52,7 +52,6 @@ class Video:
         self.frame_start = frame_start
         self.frame_end = frame_end
         self.features_container = FeaturesContainer(self, save=True)
-        self._frames = None
         self._sample = sample
 
     @classmethod
@@ -139,8 +138,6 @@ class Video:
         List[np.ndarray]
             A list with all frames from the video.
         """
-        if self._frames is not None:
-            return self._frames
         if last_frame is None:
             last_frame = self.frame_end
         frames = []
@@ -152,7 +149,6 @@ class Video:
             frames.append(frame)
             frame_number += 1
         self.get_video_capture().release()
-        self._frames = frames
         return frames
 
     def get_end(self) -> int:

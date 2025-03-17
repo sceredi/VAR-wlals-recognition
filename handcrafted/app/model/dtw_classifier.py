@@ -1,10 +1,13 @@
 """Module for classification based on hand-crafted features and Dynamic Time Warping (DTW)."""
 
+import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
 import numpy as np
 from fastdtw import fastdtw  # type: ignore
 from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
 
 from handcrafted.app.dataset.dataset import Dataset
 from handcrafted.app.dataset.video import Video
@@ -92,7 +95,7 @@ class DTWClassifier:
         distance, _ = fastdtw(sequence1, sequence2)
         normalized_distance = distance / (1 + distance)
         similarity = np.exp(-normalized_distance)
-        print(f"Similarity: {similarity}")
+        # print(f"Similarity: {similarity}")
         return similarity
 
     def process_video_pair(self, video_i: Video, video_j: Video) -> float:
@@ -111,11 +114,11 @@ class DTWClassifier:
             The similarity between the two video pairs.
 
         """
-        print(
-            f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
-        )
+        # print(
+        #     f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
+        # )
         frames_i, frames_j = video_i.get_frames(), video_j.get_frames()
-        print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
+        # print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
 
         hog_features1 = video_i.features_container.load_or_compute_feature(
             "hog_features",
@@ -159,22 +162,20 @@ class DTWClassifier:
         n = len(videos)
         M = np.zeros((n, n))
 
-        z = 0
-        zz = (((n * n) - n) // 2) + n
+        def _processing_helper(i, j):
+            similarity = (
+                1.0
+                if i == j
+                else self.process_video_pair(videos[i], videos[j])
+            )
+            M[i, j] = similarity
 
-        for i in range(n):
-            for j in range(i, n):
-                z += 1
-                print(f"Processing video: {z}/{zz}")
-                similarity = (
-                    1.0
-                    if i == j
-                    else self.process_video_pair(videos[i], videos[j])
-                )
-                M[i, j] = similarity
-                print(
-                    f"Similarity between {videos[i].video_id} and {videos[j].video_id}: {similarity}"
-                )
+        with ThreadPoolExecutor(
+            multiprocessing.cpu_count() * 2 + 1
+        ) as executor:
+            for i in tqdm(range(n)):
+                for j in tqdm(range(i, n)):
+                    executor.submit(_processing_helper, i, j)
 
         M = M + M.T - np.diag(M.diagonal())
         return M
@@ -201,7 +202,7 @@ class DTWClassifier:
         for i in range(len(self.test_videos)):
             for j in range(X_train_len):
                 z += 1
-                print(f"Processing video: {z}/{zz}")
+                # print(f"Processing video: {z}/{zz}")
                 similarity = self.process_video_pair(
                     self.test_videos[i], self.train_videos[j]
                 )

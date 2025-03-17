@@ -377,13 +377,13 @@ def dtw_kernel(sequence1, sequence2):
 
 
 def process_video_pair(video_i: Video, video_j: Video):
-    print(
-        f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
-    )
+    # print(
+    #     f"Processing video pair: {video_i.get_path()} and {video_j.get_path()}"
+    # )
 
     frames_i = video_i.get_frames()
     frames_j = video_j.get_frames()
-    print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
+    # print(f"len 1st: {len(frames_i)}, 2nd: {len(frames_j)}")
     hog_features_i, _ = video_i.features_container.get_hog_features(frames_i)
     hog_features_j, _ = video_j.features_container.get_hog_features(frames_j)
     lbp_features_i = video_i.features_container.get_lbp_features(frames_i)

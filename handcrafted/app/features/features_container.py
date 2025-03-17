@@ -27,8 +27,6 @@ class FeaturesContainer:
         self.fs = FeaturesStorage()
         self.path = os.path.join("data", "hf", self.video.video_id)
 
-        self._hog_features = None
-        self._hog_frames = None
         self._flow_features = None
         self._flow_features_flattened = None
         self._contour_features = None
@@ -38,7 +36,6 @@ class FeaturesContainer:
         self._haar_features = None
         self._skin_features = None
         self._skin_features_flattened = None
-        self._lbp_features = None
         self._color_hist_features = None
         self._color_hist_features_flattened = None
 
@@ -92,7 +89,7 @@ class FeaturesContainer:
         feature_path = os.path.join(self.path, feature_name)
 
         if self.save and os.path.exists(feature_path):
-            print(f"Caricamento da file: {feature_path}")
+            # print(f"Caricamento da file: {feature_path}")
             return self.fs.load_feature(feature_path)
 
         feature = extraction_function(*args, **kwargs)
@@ -108,11 +105,8 @@ class FeaturesContainer:
     def get_hog_features(
         self, frames
     ) -> "np.ndarray":  # Tuple[List["np.ndarray"], List["np.ndarray"]]:
-        if self._hog_features is None:
-            self._hog_features, self._hog_frames = HOGExtractor(
-                frames
-            ).process_frames()
-        return self._hog_features  # type: ignore
+        _hog_features, _hog_frames = HOGExtractor(frames).process_frames()
+        return _hog_features  # type: ignore
 
     def get_flow_features(
         self,
@@ -200,9 +194,8 @@ class FeaturesContainer:
 
     # TODO: check return type
     def get_lbp_features(self, frames: List["np.ndarray"]) -> "np.ndarray":
-        if self._lbp_features is None:
-            self._lbp_features = LBPExtractor(frames).process_frames()
-        return self._lbp_features  # type: ignore
+        _lbp_features = LBPExtractor(frames).process_frames()
+        return _lbp_features  # type: ignore
 
     def get_color_histogram(
         self, frames, to_color=cv2.COLOR_BGR2HSV, flatten: bool = True
