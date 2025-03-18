@@ -72,7 +72,6 @@ class HaarDetector:
         rects = []
         drawn_frames = []
         all_detections = []
-        avg_pos = (0, 0)
         for frame in self.frames:
             val += 1
             avg_pos = self.calculate_average_position(all_detections)
