@@ -125,7 +125,7 @@ class FeaturesContainer:
         if self._flow_features is None:
             self._flow_features = FlowCalculator(
                 frames, last_frame_index
-            ).calculate(plot_each_frame=False)
+            ).calculate(plot_each_frame=False)[0]
         if flatten:
             if self._flow_features_flattened is None:
                 self._flow_features_flattened = [

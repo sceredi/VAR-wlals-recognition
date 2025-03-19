@@ -76,7 +76,7 @@ def plot_flow_frames(
     if last_frame_index == -1:
         last_frame_index = len(frames) - 1
     flow_calculator = FlowCalculator(frames, last_frame_index)
-    flow_frames = flow_calculator.calculate(plot_each_frame=False)
+    flow_frames = flow_calculator.calculate(plot_each_frame=False)[0]
     plot_frames(flow_frames)
 
 

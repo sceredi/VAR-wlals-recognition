@@ -30,17 +30,23 @@ class FlowCalculator:
 
     def calculate(self, plot_each_frame: bool = False):
         frames = []
+        magnitudes = []
+        angles = []
         prev_frame = cv2.cvtColor(self.frames[0], cv2.COLOR_BGR2GRAY)
         hsv = np.zeros_like(self.frames[0])
         hsv[..., 1] = 255
         bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
         frames.append(bgr)
+        prev_flow = None
         for i, frame in enumerate(self.frames[1 : self.last_frame_index + 1]):
             next_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             flow = cv2.calcOpticalFlowFarneback(
-                prev_frame, next_frame, None, **self.params  # type: ignore
+                prev_frame, next_frame, prev_flow, **self.params  # type: ignore
             )
+            prev_flow = flow
             magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+            magnitudes.append(magnitude)
+            angles.append(angle)
             hsv[..., 0] = angle * 180 / np.pi / 2
             hsv[..., 2] = cv2.normalize(
                 magnitude, None, 0, 255, cv2.NORM_MINMAX  # type: ignore
@@ -53,7 +59,7 @@ class FlowCalculator:
         mask = np.zeros_like(self.frames[0])
         for _ in range(self.last_frame_index + 1, len(self.frames)):
             frames.append(mask)
-        return frames
+        return frames, magnitudes, angles
 
     def _plot(self, frame, flow, index):
         _fig, axes = plt.subplots(1, 2)

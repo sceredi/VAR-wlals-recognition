@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 
+# TODO: if i change the number of bins I also have to update the documentation
 class ColorHistogram:
     """Color histogram extractor for feature extraction from frames."""
 
