@@ -40,22 +40,24 @@ In order to run the project you'll need:
 
 ### Creation and activation of the python virtual environment
 #### Creation
+
+```shell
+    python3 -m venv .venv
 ```
-python3 -m venv .venv
-```
+
 #### Activation
 - On linux/macos
     ```bash
     source .venv/bin/activate
     ```
 - On windows
-    ```script
+    ```shell
     .\.venv\Scrips\activate
     ```
 ### Dataset download
 To download the dataset, if you use bash, you can run the download script:
 ```shell
-./download.sh
+    ./download.sh
 ```
 alternatively you can:
 - download the zip from [here](https://drive.google.com/file/d/1QbuUJbwrq0D3hU8-sEePb4tJ87t2WA8r/view?usp=drive_link)
