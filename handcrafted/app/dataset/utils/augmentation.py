@@ -4,7 +4,7 @@ import imgaug as ia
 import imgaug.augmenters as iaa
 import numpy as np
 
-from app.dataset.signer_frames import SignerFrame
+from handcrafted.app.dataset.signer_frames import SignerFrame
 
 
 class DataAugmentation:
