@@ -16,6 +16,7 @@ class Video:
         gloss: str,
         video_id: str,
         split: str,
+        signer_id: int,
         frame_start: int,
         frame_end: int,
         fps: int,
@@ -32,6 +33,8 @@ class Video:
             The id of the video.
         split : str
             The split of the video, either "train", "val" or "test".
+        signer_id : int
+            The id of the signer.
         frame_start : int
             The frame of the video in which the sign starts.
         frame_end : int
@@ -47,6 +50,7 @@ class Video:
         self.gloss = gloss
         self.video_id = video_id
         self.split = split
+        self.signer_id = signer_id
         self.fps = fps
         self.bbox = bbox
         self.frame_start = frame_start
@@ -74,6 +78,7 @@ class Video:
             gloss,
             instance["video_id"],
             instance["split"],
+            instance["signer_id"],
             instance["frame_start"],
             instance["frame_end"],
             instance["fps"],
@@ -83,7 +88,7 @@ class Video:
 
     def __str__(self) -> str:
         """Return a string representation of the video object."""
-        return f"image(gloss={self.gloss}, video_id={self.video_id}, split={self.split}, frame_start={self.frame_start}, frame_end={self.frame_end}, fps={self.fps}, bbox={self.bbox})\n"
+        return f"image(gloss={self.gloss}, video_id={self.video_id}, split={self.split}, signer_id={self.signer_id}, frame_start={self.frame_start}, frame_end={self.frame_end}, fps={self.fps}, bbox={self.bbox})\n"
 
     def __repr__(self) -> str:
         """Return a string representation of the video object."""
