@@ -3,7 +3,7 @@ import random
 from sklearn.model_selection import train_test_split
 
 from handcrafted.app.dataset.signer_frames import SignerFrame
-from app.dataset.utils.augmentation import DataAugmentation
+from handcrafted.app.dataset.utils.augmentation import DataAugmentation
 
 
 class SignerDatasetSplitter:

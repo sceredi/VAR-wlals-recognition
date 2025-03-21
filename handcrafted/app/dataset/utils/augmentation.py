@@ -21,7 +21,7 @@ class DataAugmentation:
         self.augmenters = [
             iaa.Rotate((-45, 45)),  # Rotazione casuale
             iaa.Affine(
-                translate_percent={"x": (-0.3, 0.3), "y": (-0.3, 0.3)}
+                translate_percent={"x": (-0.3, 0.3), "y": (0, 0.3)}
             ),  # Traslazione
             iaa.AddToBrightness((-40, 40)),  # Modifica luminosità
             iaa.Fliplr(0.5),  # Flipping orizzontale con probabilità 50%
