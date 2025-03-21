@@ -1,8 +1,11 @@
+import math
 import os
+import random
 from typing import List, Tuple
 
 import cv2
 import numpy as np
+from rembg import remove
 from scipy.interpolate import interp1d
 
 from handcrafted.app.features.features_container import FeaturesContainer
@@ -131,13 +134,28 @@ class Video:
         ret, frame = self.get_video_capture().read()
         return ret, frame
 
-    def get_frames(self, last_frame=None) -> List["np.ndarray"]:
+    def get_frames(
+        self,
+        last_frame: int | None = None,
+        split_size: float | None = None,
+        cache_results: bool = True,
+        random_state: int = 42,
+        remove_bg: bool = False,
+    ) -> List["np.ndarray"]:
         """Get all frames from the video.
 
         Parameters
         ----------
         last_frame : int, optional
             The last frame to get, by default None, if None, all frames will be returned.
+        split_size : float, optional
+            The size of the split, by default None. If None, all frames will be returned.
+        cache_results : bool, optional
+            Whether to cache the results or not, by default True.
+        random_state : int, optional
+            The random state to use for shuffling, by default 42.
+        remove_bg : bool, optional
+            Whether to remove the background from the frames or not, by default False.
 
         Returns
         -------
@@ -145,7 +163,7 @@ class Video:
             A list with all frames from the video.
         """
         if self._frames is not None:
-            return self._frames
+            return self._frames  # type: ignore
         if last_frame is None:
             last_frame = self.frame_end
         frames = []
@@ -157,8 +175,16 @@ class Video:
             frames.append(frame)
             frame_number += 1
         self.get_video_capture().release()
-        self._frames = frames
-        return frames
+        if split_size is not None:
+            random.seed(random_state)
+            random.shuffle(frames)
+            tot_frames = math.ceil(len(frames) * split_size)
+            frames = frames[:tot_frames]
+        if remove_bg:
+            frames = [remove(frame) for frame in frames]
+        if cache_results:
+            self._frames = frames
+        return frames  # type: ignore
 
     def get_end(self) -> int:
         """Get the index of the last frame of the video.
