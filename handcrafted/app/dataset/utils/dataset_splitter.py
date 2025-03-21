@@ -3,11 +3,12 @@ import random
 from sklearn.model_selection import train_test_split
 
 from handcrafted.app.dataset.signer_frames import SignerFrame
-from handcrafted.app.dataset.utils.augmentation import DataAugmentation
+from app.dataset.utils.augmentation import DataAugmentation
 
 
 class SignerDatasetSplitter:
-    def __init__(self, videos, num_frames: int = 8):
+    def __init__(self, videos, num_frames: int = 8, seed: int = 42):
+        random.seed(seed)
         self.videos = videos
         self.num_frames = num_frames
 
