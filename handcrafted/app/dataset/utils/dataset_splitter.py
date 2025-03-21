@@ -1,25 +1,29 @@
-import random
-
+import numpy as np
 from sklearn.model_selection import train_test_split
 
+from app.dataset.video import Video
 from handcrafted.app.dataset.signer_frames import SignerFrame
 from handcrafted.app.dataset.utils.augmentation import DataAugmentation
 
 
 class SignerDatasetSplitter:
-    def __init__(self, videos, num_frames: int = 8, seed: int = 42):
-        random.seed(seed)
+    def __init__(
+        self, videos: list[Video], frames_split: float = 0.3, seed: int = 42
+    ):
+        np.random.seed(seed)
         self.videos = videos
-        self.num_frames = num_frames
+        self._frames_split = frames_split
 
     def _signer_dataset(self):
         signer_frames = []
         for video in self.videos:
             signer_id = video.signer_id
-            frames_in_video = video.get_frames()[: self.num_frames]
+            frames_in_video = video.get_frames(
+                split_size=self._frames_split, remove_bg=True
+            )
             for frame in frames_in_video:
                 signer_frames.append(SignerFrame(frame, signer_id))
-        random.shuffle(signer_frames)
+        np.random.shuffle(signer_frames)
         return signer_frames
 
     def train_test_split(

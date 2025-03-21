@@ -1,6 +1,5 @@
 import math
 import os
-import random
 from typing import List, Tuple
 
 import cv2
@@ -176,12 +175,15 @@ class Video:
             frame_number += 1
         self.get_video_capture().release()
         if split_size is not None:
-            random.seed(random_state)
-            random.shuffle(frames)
+            np.random.seed(random_state)
+            np.random.shuffle(frames)
             tot_frames = math.ceil(len(frames) * split_size)
             frames = frames[:tot_frames]
         if remove_bg:
-            frames = [remove(frame) for frame in frames]
+            frames = [
+                cv2.cvtColor(remove(frame), cv2.COLOR_BGRA2BGR)
+                for frame in frames
+            ]
         if cache_results:
             self._frames = frames
         return frames  # type: ignore

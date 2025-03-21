@@ -15,6 +15,7 @@ class DataAugmentation:
         seed: int = 42,
     ):
         ia.seed(seed)
+        np.random.seed(seed)
         random.seed(seed)
         self.signer_frames = signer_frames
         self.num_augmentations = num_augmentations
@@ -52,5 +53,5 @@ class DataAugmentation:
                         frame=augmented_frame, signer_id=signer_frame.signer_id
                     )
                 )
-        random.shuffle(augmented_signer_frames)
+        np.random.shuffle(augmented_signer_frames)
         return augmented_signer_frames
