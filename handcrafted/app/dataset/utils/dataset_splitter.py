@@ -19,7 +19,7 @@ class SignerDatasetSplitter:
         for video in self.videos:
             signer_id = video.signer_id
             frames_in_video = video.get_frames(
-                split_size=self._frames_split, remove_bg=True
+                split_size=self._frames_split, remove_bg=False
             )
             for frame in frames_in_video:
                 signer_frames.append(SignerFrame(frame, signer_id))
