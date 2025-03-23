@@ -137,7 +137,7 @@ class Video:
         self,
         last_frame: int | None = None,
         split_size: float | None = None,
-        cache_results: bool = True,
+        cache_results: bool = False,
         random_state: int = 42,
         remove_bg: bool = False,
     ) -> List["np.ndarray"]:
@@ -167,18 +167,25 @@ class Video:
             last_frame = self.frame_end
         frames = []
         frame_number = self.frame_start
-        while frame_number < last_frame:
-            ret, frame = self.get_frame(frame_number)
-            if not ret:
-                break
-            frames.append(frame)
-            frame_number += 1
+        if split_size is None:
+            while frame_number < last_frame:
+                ret, frame = self.get_frame(frame_number)
+                if not ret:
+                    break
+                frames.append(frame)
+                frame_number += 1
+        else:
+            tot_frames = math.ceil(last_frame * split_size)
+            frame_ids = np.random.choice(
+                np.arange(0, last_frame), tot_frames, replace=False
+            ).tolist()
+            for frame_id in frame_ids:
+                ret, frame = self.get_frame(frame_id)
+                if not ret:
+                    break
+                frames.append(frame)
         self.get_video_capture().release()
-        if split_size is not None:
-            np.random.seed(random_state)
-            np.random.shuffle(frames)
-            tot_frames = math.ceil(len(frames) * split_size)
-            frames = frames[:tot_frames]
+        self.video_capture = None
         if remove_bg:
             frames = [
                 cv2.cvtColor(remove(frame), cv2.COLOR_BGRA2BGR)
