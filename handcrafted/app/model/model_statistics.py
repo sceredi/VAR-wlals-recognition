@@ -23,7 +23,7 @@ class ModelStatistics:
         save_name : str
             Name of the file to save the plot.
         save_dir : str, optional
-            Directory to save the plot (default is "plots")
+            Directory to save the plot (default is "plots").
 
         """
         os.makedirs(save_dir, exist_ok=True)
@@ -43,6 +43,8 @@ class ModelStatistics:
             Predicted labels.
         save : bool, optional
             Whether to save the plot (default is True).
+        plot : bool, optional
+            Whether to display the plot (default is True).
 
         """
         cfm = confusion_matrix(y_test, y_pred)
