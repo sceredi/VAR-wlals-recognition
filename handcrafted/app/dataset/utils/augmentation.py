@@ -50,7 +50,9 @@ class DataAugmentation:
                 )
                 augmented_signer_frames.append(
                     SignerFrame(
-                        frame=augmented_frame, signer_id=signer_frame.signer_id
+                        frame=augmented_frame,
+                        signer_id=signer_frame.signer_id,
+                        extract_features=signer_frame.extract_features,
                     )
                 )
         np.random.shuffle(augmented_signer_frames)

@@ -8,11 +8,16 @@ from handcrafted.app.dataset.utils.augmentation import DataAugmentation
 
 class SignerDatasetSplitter:
     def __init__(
-        self, videos: list[Video], frames_split: float = 0.3, seed: int = 42
+        self,
+        videos: list[Video],
+        frames_split: float = 0.3,
+        seed: int = 42,
+        extract_features: bool = True,
     ):
         np.random.seed(seed)
         self.videos = videos
         self._frames_split = frames_split
+        self._extract_features = extract_features
 
     def _signer_dataset(self):
         signer_frames = []
@@ -22,7 +27,13 @@ class SignerDatasetSplitter:
                 split_size=self._frames_split, remove_bg=False
             )
             for frame in frames_in_video:
-                signer_frames.append(SignerFrame(frame, signer_id))
+                signer_frames.append(
+                    SignerFrame(
+                        frame,
+                        signer_id,
+                        extract_features=self._extract_features,
+                    )
+                )
         np.random.shuffle(signer_frames)
         return signer_frames
 
