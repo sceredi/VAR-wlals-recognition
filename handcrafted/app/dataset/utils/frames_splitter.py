@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.utils import shuffle
 
-from app.dataset.dataset_loader import Signer
+from handcrafted.app.dataset.dataset_loader import Signer
 
 
 class FramesSplitter:
