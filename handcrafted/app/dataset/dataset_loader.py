@@ -1,19 +1,18 @@
+import math
 import os
+
+import numpy as np
 
 
 class DatasetLoader:
     def __init__(
         self,
         directory: str = "./data/frames_no_bg/",
-        val_split: float = 0.2,
-        test_split: float = 0.2,
-        frames_split: float = 0.1,
     ) -> None:
         self._path = directory
-        self._val_split = val_split
-        self._test_split = test_split
-        self._frames_split = frames_split
         self.signers = self._load_dataset()
+        self.num_signers = len(self.signers)
+        print("Dataset loaded")
 
     def _load_dataset(self):
         signers = dict()
@@ -49,6 +48,35 @@ class Signer:
         self.id = id
         self.videos: list[Video] = []
 
+    def split(
+        self, val_split: float, test_split: float, random_state: int = 42
+    ):
+        np.random.seed(random_state)
+        val_videos = []
+        test_videos = []
+        test_videos_to_extract = math.ceil(len(self.videos) * test_split)
+        test_videos_ids = np.random.choice(
+            np.arange(0, len(self.videos)),
+            test_videos_to_extract,
+            replace=False,
+        ).tolist()
+        for test_video_id in test_videos_ids:
+            test_videos.append(self.videos[test_video_id])
+        for i, test_video_id in enumerate(test_videos_ids):
+            self.videos.remove(self.videos[test_video_id - i])
+        val_videos_to_extract = math.ceil(len(self.videos) * val_split)
+        val_videos_ids = np.random.choice(
+            np.arange(0, len(self.videos)),
+            val_videos_to_extract,
+            replace=False,
+        ).tolist()
+        for val_video_id in val_videos_ids:
+            val_videos.append(self.videos[val_video_id])
+        for i, val_video_id in enumerate(val_videos_ids):
+            self.videos.remove(self.videos[val_video_id - i])
+        print("Dataset splitted")
+        return self.videos, val_videos, test_videos
+
 
 class Video:
     def __init__(self, id: str) -> None:
@@ -60,6 +88,17 @@ class Video:
 
     def __eq__(self, other) -> bool:
         return self.id == other.id
+
+    def extract_frames(self, frames_split: float, seed: int):
+        frames = []
+        frames_to_extract = math.ceil(len(self.frames) * frames_split)
+        np.random.seed(seed)
+        frame_ids = np.random.choice(
+            np.arange(0, len(self.frames)), frames_to_extract, replace=False
+        ).tolist()
+        for frame_id in frame_ids:
+            frames.append(self.frames[frame_id])
+        return frames
 
 
 class Frame:
