@@ -19,7 +19,8 @@ class DatasetLoader:
         for dirname, _, filenames in tqdm(os.walk(self._path)):
             for filename in filenames:
                 dirname = dirname.removeprefix(self._path)
-                signer_id, video_id = dirname.split("/")
+                dirname = os.path.normpath(dirname)
+                signer_id, video_id = dirname.split(os.sep)
                 signer_id = signer_id
                 video_id = video_id
                 if signer_id not in signers:
@@ -37,7 +38,7 @@ class DatasetLoader:
                     video = existing_video
                 frame_id = filename.removesuffix(".png")
                 frame = Frame(
-                    frame_id, os.path.join(self._path, dirname, filename)
+                    frame_id, os.path.join(os.path.normpath(self._path), dirname, filename)
                 )
                 video.frames.append(frame)
         return signers
