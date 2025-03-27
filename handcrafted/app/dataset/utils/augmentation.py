@@ -10,14 +10,12 @@ from handcrafted.app.dataset.signer_frames import SignerFrame
 class DataAugmentation:
     def __init__(
         self,
-        signer_frames: list[SignerFrame],
         num_augmentations: int = 3,
         seed: int = 42,
     ):
         ia.seed(seed)
         np.random.seed(seed)
         random.seed(seed)
-        self.signer_frames = signer_frames
         self.num_augmentations = num_augmentations
         self.augmenters = [
             iaa.Rotate((-45, 45)),  # Rotazione casuale
@@ -40,20 +38,12 @@ class DataAugmentation:
     def _apply_augmentation(augmenter, frame: np.ndarray) -> np.ndarray:
         return augmenter(images=[frame])[0]
 
-    def random_augmentations(self):
-        augmented_signer_frames = self.signer_frames.copy()
-        for signer_frame in self.signer_frames:
-            for _ in range(self.num_augmentations):
-                augmenter = random.choice(self.augmenters)
-                augmented_frame = self._apply_augmentation(
-                    augmenter, signer_frame.frame
-                )
-                augmented_signer_frames.append(
-                    SignerFrame(
-                        frame=augmented_frame,
-                        signer_id=signer_frame.signer_id,
-                        extract_features=signer_frame.extract_features,
-                    )
-                )
-        np.random.shuffle(augmented_signer_frames)
-        return augmented_signer_frames
+    def augment_image(self, frame: np.ndarray, label: int) -> list[tuple[np.ndarray, int]]:
+        augmentations = []
+        for _ in range(self.num_augmentations):
+            augmenter = random.choice(self.augmenters)
+            augmented_frame = self._apply_augmentation(
+                augmenter, frame
+            )
+            augmentations.append((augmented_frame, label))
+        return augmentations
