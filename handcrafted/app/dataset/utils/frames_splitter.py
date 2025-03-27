@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.utils import shuffle
+from tqdm import tqdm
 
 from handcrafted.app.dataset.dataset_loader import Signer
 
@@ -27,7 +28,7 @@ class FramesSplitter:
         y_val = []
         X_test = []
         y_test = []
-        for signer in self._signers.values():
+        for signer in tqdm(self._signers.values()):
             train_videos, val_videos, test_videos = signer.split(
                 self._val_split, self._test_split, random_state=self._seed
             )

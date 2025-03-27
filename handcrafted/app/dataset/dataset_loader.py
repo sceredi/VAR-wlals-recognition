@@ -2,6 +2,7 @@ import math
 import os
 
 import numpy as np
+from tqdm import tqdm
 
 
 class DatasetLoader:
@@ -12,11 +13,10 @@ class DatasetLoader:
         self._path = directory
         self.signers = self._load_dataset()
         self.num_signers = len(self.signers)
-        print("Dataset loaded")
 
     def _load_dataset(self):
         signers = dict()
-        for dirname, _, filenames in os.walk(self._path):
+        for dirname, _, filenames in tqdm(os.walk(self._path)):
             for filename in filenames:
                 dirname = dirname.removeprefix(self._path)
                 signer_id, video_id = dirname.split("/")
@@ -74,7 +74,6 @@ class Signer:
             val_videos.append(self.videos[val_video_id])
         for i, val_video_id in enumerate(val_videos_ids):
             self.videos.remove(self.videos[val_video_id - i])
-        print("Dataset splitted")
         return self.videos, val_videos, test_videos
 
 
