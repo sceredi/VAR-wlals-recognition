@@ -1,7 +1,7 @@
 from sklearn.svm import SVC
 
 
-class SVClassifier:
+class SVCClassifier:
     def __init__(self, random_state: int = 42) -> None:
         self.svc = SVC(random_state=random_state, verbose=True)
 

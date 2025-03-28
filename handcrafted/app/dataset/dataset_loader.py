@@ -1,6 +1,7 @@
 import math
 import os
 
+import cv2
 import numpy as np
 from tqdm import tqdm
 
@@ -112,5 +113,5 @@ class Frame:
     def __str__(self):
         return f"Frame {self.id}, path: {self.path}"
 
-    def load_frame(self):
-        pass
+    def load_frame(self) -> np.ndarray:
+        return cv2.imread(self.path)
