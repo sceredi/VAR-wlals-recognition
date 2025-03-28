@@ -38,7 +38,10 @@ class DatasetLoader:
                     video = existing_video
                 frame_id = filename.removesuffix(".png")
                 frame = Frame(
-                    frame_id, os.path.join(os.path.normpath(self._path), dirname, filename)
+                    frame_id,
+                    os.path.join(
+                        os.path.normpath(self._path), dirname, filename
+                    ),
                 )
                 video.frames.append(frame)
         return signers

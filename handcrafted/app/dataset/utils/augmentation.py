@@ -4,8 +4,6 @@ import imgaug as ia
 import imgaug.augmenters as iaa
 import numpy as np
 
-from handcrafted.app.dataset.signer_frames import SignerFrame
-
 
 class DataAugmentation:
     def __init__(
@@ -38,12 +36,12 @@ class DataAugmentation:
     def _apply_augmentation(augmenter, frame: np.ndarray) -> np.ndarray:
         return augmenter(images=[frame])[0]
 
-    def augment_image(self, frame: np.ndarray, label: int) -> list[tuple[np.ndarray, int]]:
+    def augment_image(
+        self, frame: np.ndarray, label: int
+    ) -> list[tuple[np.ndarray, int]]:
         augmentations = []
         for _ in range(self.num_augmentations):
             augmenter = random.choice(self.augmenters)
-            augmented_frame = self._apply_augmentation(
-                augmenter, frame
-            )
+            augmented_frame = self._apply_augmentation(augmenter, frame)
             augmentations.append((augmented_frame, label))
         return augmentations

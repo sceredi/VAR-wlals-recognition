@@ -1,8 +1,10 @@
+from typing import Callable
+
 import numpy as np
 from sklearn.utils import shuffle
 from tqdm import tqdm
 
-from handcrafted.app.dataset.dataset_loader import Signer
+from handcrafted.app.dataset.dataset_loader import Frame, Signer
 
 
 class FramesSplitter:
@@ -21,7 +23,9 @@ class FramesSplitter:
         self._frames_split = frames_split
         self._seed = seed
 
-    def split(self):
+    def split(
+        self, X_content: Callable[[Frame], Frame | str] = lambda x: x.path
+    ):
         X_train = []
         y_train = []
         X_val = []
@@ -36,19 +40,19 @@ class FramesSplitter:
                 for frame in video.extract_frames(
                     self._frames_split, self._seed
                 ):
-                    X_train.append(frame.path)
+                    X_train.append(X_content(frame))
                     y_train.append(signer.id)
             for video in val_videos:
                 for frame in video.extract_frames(
                     self._frames_split, self._seed
                 ):
-                    X_val.append(frame.path)
+                    X_val.append(X_content(frame))
                     y_val.append(signer.id)
             for video in test_videos:
                 for frame in video.extract_frames(
                     self._frames_split, self._seed
                 ):
-                    X_test.append(frame.path)
+                    X_test.append(X_content(frame))
                     y_test.append(signer.id)
         X_train, y_train = shuffle(X_train, y_train, random_state=self._seed)
         X_val, y_val = shuffle(X_val, y_val, random_state=self._seed)

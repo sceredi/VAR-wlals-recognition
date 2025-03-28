@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-from tqdm import tqdm
 
-from handcrafted.app.features.extractor.color_histogram_extractor import ColorHistogram
+from handcrafted.app.features.extractor.color_histogram_extractor import (
+    ColorHistogram,
+)
 from handcrafted.app.features.extractor.hog_extractor import HOGExtractor
 from handcrafted.app.features.extractor.lbp_extractor import LBPExtractor
 
@@ -11,13 +12,19 @@ from handcrafted.app.features.extractor.lbp_extractor import LBPExtractor
 class DatasetCreator:
     def __init__(self, seed: int = 42):
         tf.random.set_seed(seed)
-        self.data_augmentation = tf.keras.Sequential([
-            tf.keras.layers.RandomFlip("horizontal"),  # Flip images horizontally
-            tf.keras.layers.RandomRotation(0.2),  # Rotate images by up to 20%
-            tf.keras.layers.RandomZoom(0.2),  # Zoom images by up to 20%
-            tf.keras.layers.RandomContrast(0.2),  # Change contrast
-            tf.keras.layers.RandomBrightness(0.2)  # Change brightness
-        ])
+        self.data_augmentation = tf.keras.Sequential(
+            [
+                tf.keras.layers.RandomFlip(
+                    "horizontal"
+                ),  # Flip images horizontally
+                tf.keras.layers.RandomRotation(
+                    0.2
+                ),  # Rotate images by up to 20%
+                tf.keras.layers.RandomZoom(0.2),  # Zoom images by up to 20%
+                tf.keras.layers.RandomContrast(0.2),  # Change contrast
+                tf.keras.layers.RandomBrightness(0.2),  # Change brightness
+            ]
+        )
 
     # def _extract_features(self, frame: np.ndarray) -> np.ndarray:
     #     hog_features, _ = HOGExtractor([frame]).process_frames()
@@ -40,7 +47,9 @@ class DatasetCreator:
         image = (image * 2) - 1
 
         if num_aug > 0:
-            augmented_images = [self.data_augmentation(image) for _ in range(num_aug)]
+            augmented_images = [
+                self.data_augmentation(image) for _ in range(num_aug)
+            ]
             return tf.stack(augmented_images), tf.stack([label] * num_aug)
         return image, label
 
@@ -60,17 +69,31 @@ class DatasetCreator:
     #
     #     return features, label
 
-    def create_dataset(self, file_paths, labels, num_aug: int = 0, batch_size: int = 32, shuffle: bool = True):
+    def create_dataset(
+        self,
+        file_paths,
+        labels,
+        num_aug: int = 0,
+        batch_size: int = 32,
+        shuffle: bool = True,
+    ):
         dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels))
 
         if num_aug > 0:
             dataset = dataset.flat_map(
                 lambda image_path, label: tf.data.Dataset.from_tensors(
-                    self.load_and_preprocess_image_with_label(image_path, label, num_aug)).unbatch())
+                    self.load_and_preprocess_image_with_label(
+                        image_path, label, num_aug
+                    )
+                ).unbatch()
+            )
         else:
             dataset = dataset.map(
-                lambda image_path, label: self.load_and_preprocess_image_with_label(image_path, label, num_aug),
-                num_parallel_calls=tf.data.AUTOTUNE)
+                lambda image_path, label: self.load_and_preprocess_image_with_label(
+                    image_path, label, num_aug
+                ),
+                num_parallel_calls=tf.data.AUTOTUNE,
+            )
 
         if shuffle:
             dataset = dataset.shuffle(buffer_size=1000)
@@ -83,11 +106,17 @@ class DatasetCreator:
         color_hist_features = ColorHistogram([frame]).process_frames(
             cv2.COLOR_BGR2HSV, separate_colors=False, normalize=True
         )
-        return np.concatenate([
-            np.ravel(hog_features), np.ravel(lbp_features), np.ravel(color_hist_features)
-        ]).astype(np.float32)
+        return np.concatenate(
+            [
+                np.ravel(hog_features),
+                np.ravel(lbp_features),
+                np.ravel(color_hist_features),
+            ]
+        ).astype(np.float32)
 
-    def load_and_preprocess_features_with_label(self, image_path, label, num_aug):
+    def load_and_preprocess_features_with_label(
+        self, image_path, label, num_aug
+    ):
         def _process(image_path):
             image = tf.io.read_file(image_path)
             image = tf.image.decode_png(image, channels=3)
@@ -98,27 +127,47 @@ class DatasetCreator:
             features = self._extract_features(image_np)
             return features
 
-        features = tf.py_function(func=_process, inp=[image_path], Tout=tf.float32)
+        features = tf.py_function(
+            func=_process, inp=[image_path], Tout=tf.float32
+        )
 
         if num_aug > 0:
-            augmented_features = [tf.py_function(func=_process, inp=[image_path], Tout=tf.float32) for _ in
-                                  range(num_aug)]
+            augmented_features = [
+                tf.py_function(
+                    func=_process, inp=[image_path], Tout=tf.float32
+                )
+                for _ in range(num_aug)
+            ]
             return tf.stack(augmented_features), tf.stack([label] * num_aug)
 
         return features, label
 
     # OPZIONE 1
-    def create_dataset_with_features(self, file_paths, labels, num_aug: int = 0, batch_size: int = 32, shuffle: bool = True):
+    def create_dataset_with_features(
+        self,
+        file_paths,
+        labels,
+        num_aug: int = 0,
+        batch_size: int = 32,
+        shuffle: bool = True,
+    ):
         dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels))
 
         if num_aug > 0:
             dataset = dataset.flat_map(
                 lambda image_path, label: tf.data.Dataset.from_tensors(
-                    self.load_and_preprocess_features_with_label(image_path, label, num_aug)).unbatch())
+                    self.load_and_preprocess_features_with_label(
+                        image_path, label, num_aug
+                    )
+                ).unbatch()
+            )
         else:
             dataset = dataset.map(
-                lambda image_path, label: self.load_and_preprocess_features_with_label(image_path, label, num_aug),
-                num_parallel_calls=tf.data.AUTOTUNE)
+                lambda image_path, label: self.load_and_preprocess_features_with_label(
+                    image_path, label, num_aug
+                ),
+                num_parallel_calls=tf.data.AUTOTUNE,
+            )
 
         if shuffle:
             dataset = dataset.shuffle(buffer_size=1000)
@@ -176,4 +225,3 @@ class DatasetCreator:
     #             yield np.array(batch_features), np.array(batch_labels)
     #
     #     return data_generator
-
