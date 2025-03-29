@@ -30,7 +30,9 @@ class DatasetCreator:
             ]
         )
 
-    def _extract_features(self, frame: np.ndarray) -> np.ndarray:
+    # TODO: delete
+    @staticmethod
+    def _extract_features(frame: np.ndarray) -> np.ndarray:
         hog_features, _ = HOGExtractor([frame]).process_frames()
         lbp_features = LBPExtractor([frame]).get_lbp_features()
         color_hist_features = ColorHistogram([frame]).process_frames(
@@ -43,18 +45,23 @@ class DatasetCreator:
             (hog_features, lbp_features, color_hist_features)
         )
 
-    def load_and_preprocess_image_with_label(self, image_path, label, num_aug):
+    @staticmethod
+    def load_image(image_path):
         image = tf.io.read_file(image_path)
         image = tf.image.decode_png(image, channels=3)
         image = tf.image.resize(image, (224, 224))
         image = image / 255.0
+        return image
+
+    def load_and_preprocess_image_with_label(self, image_path, label, num_aug):
+        image = self.load_image(image_path)
         image = (image * 2) - 1
 
         if num_aug > 0:
             augmented_images = [
                 self.data_augmentation(image) for _ in range(num_aug)
             ]
-            return tf.stack(augmented_images), tf.stack([label] * num_aug)
+            return tf.stack(augmented_images), tf.fill([num_aug], label)
         return image, label
 
     def create_dataset(
@@ -88,15 +95,13 @@ class DatasetCreator:
         dataset = dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
         return dataset
 
+    # TODO: delete
     def load_and_preprocess_features_with_label(
         self, image_path, label, num_aug
     ):
         def _process(image_path):
-            image = tf.io.read_file(image_path)
-            image = tf.image.decode_png(image, channels=3)
-            image = tf.image.resize(image, (224, 224))
+            image = self.load_image(image_path)
             image = tf.cast(image * 255, tf.uint8)
-
             image_np = image.numpy()
             features = self._extract_features(image_np)
             return features
@@ -112,21 +117,21 @@ class DatasetCreator:
                 )
                 for _ in range(num_aug)
             ]
-            return tf.stack(augmented_features), tf.stack([label] * num_aug)
+            return tf.stack(augmented_features), tf.fill([num_aug], label)
 
         return features, label
 
+    @staticmethod
     def create_custom_dataset(
-        self,
-        frames: list[Frame],
-        labels: np.ndarray,
-        batch_size: int = 32,
-        seed: int = 42,
+            frames: list[Frame],
+            labels: np.ndarray,
+            batch_size: int = 32,
+            seed: int = 42,
     ):
         batches = []
         for i in tqdm(range(0, len(frames), batch_size)):
-            batch_frames = frames[i : i + batch_size]
-            batch_labels = labels[i : i + batch_size]
+            batch_frames = frames[i: i + batch_size]
+            batch_labels = labels[i: i + batch_size]
             batches.append(MiniBatch(batch_frames, batch_labels, seed=seed))
         return batches
 
@@ -139,7 +144,8 @@ class MiniBatch:
         self.labels = labels
         self.seed = seed
 
-    def _extract_features(self, frame: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def _extract_features(frame: np.ndarray) -> np.ndarray:
         hog_features, _ = HOGExtractor([frame]).process_frames()
         lbp_features = LBPExtractor([frame]).get_lbp_features()
         color_hist_features = ColorHistogram([frame]).process_frames(
