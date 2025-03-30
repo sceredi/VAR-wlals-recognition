@@ -35,7 +35,7 @@ class DatasetCreator:
     def _extract_features(frame: np.ndarray) -> np.ndarray:
         hog_features, _ = HOGExtractor([frame]).process_frames()
         lbp_features = LBPExtractor([frame]).get_lbp_features()
-        color_hist_features = ColorHistogram([frame]).process_frames(
+        color_hist_features = ColorHistogram([frame], n_bins=8).process_frames(
             cv2.COLOR_BGR2HSV, separate_colors=False, normalize=True
         )
         hog_features = np.reshape(hog_features, -1)
@@ -148,7 +148,7 @@ class MiniBatch:
     def _extract_features(frame: np.ndarray) -> np.ndarray:
         hog_features, _ = HOGExtractor([frame]).process_frames()
         lbp_features = LBPExtractor([frame]).get_lbp_features()
-        color_hist_features = ColorHistogram([frame]).process_frames(
+        color_hist_features = ColorHistogram([frame], n_bins=8).process_frames(
             cv2.COLOR_BGR2HSV, separate_colors=False, normalize=True
         )
         hog_features = np.reshape(hog_features, -1)

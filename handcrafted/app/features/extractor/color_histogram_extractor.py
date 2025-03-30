@@ -6,20 +6,22 @@ import cv2
 import numpy as np
 
 
-# TODO: if i change the number of bins I also have to update the documentation
 class ColorHistogram:
     """Color histogram extractor for feature extraction from frames."""
 
-    def __init__(self, frames: List[np.ndarray]) -> None:
+    def __init__(self, frames: List[np.ndarray], n_bins: int = 256) -> None:
         """Initialize the ColorHistogram.
 
         Parameters
         ----------
         frames : List[np.ndarray]
             The frames to extract color histograms from.
+        n_bins : int, optional
+            The number of bins for the histograms (default is 256).
 
         """
         self.frames = frames
+        self.n_bins = n_bins
 
     def process_frames(
         self,
@@ -48,18 +50,20 @@ class ColorHistogram:
         for frame in self.frames:
             if not separate_colors:
                 ret.append(
-                    self._extract(cv2.cvtColor(frame, to_color), normalize)
+                    self._extract(
+                        cv2.cvtColor(frame, to_color), normalize, self.n_bins
+                    )
                 )
             else:
                 ret.append(
                     self._extract_separate(
-                        cv2.cvtColor(frame, to_color), normalize
+                        cv2.cvtColor(frame, to_color), normalize, self.n_bins
                     )
                 )
         return np.array(ret)
 
     @staticmethod
-    def _extract(frame: np.ndarray, normalize: bool):
+    def _extract(frame: np.ndarray, normalize: bool, n_bins: int = 256):
         """Extract a color histogram from a single frame.
 
         Parameters
@@ -76,14 +80,20 @@ class ColorHistogram:
 
         """
         hist = cv2.calcHist(
-            [frame], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256]
+            [frame],
+            [0, 1, 2],
+            None,
+            [n_bins, n_bins, n_bins],
+            [0, n_bins, 0, n_bins, 0, n_bins],
         )
         if normalize:
             hist = cv2.normalize(hist, hist, 0, 1, cv2.NORM_MINMAX)
         return hist
 
     @staticmethod
-    def _extract_separate(frame: np.ndarray, normalize: bool):
+    def _extract_separate(
+        frame: np.ndarray, normalize: bool, n_bins: int = 256
+    ):
         """Extract separate color histograms for each channel.
 
         Parameters
@@ -101,7 +111,7 @@ class ColorHistogram:
         """
         hists = []
         for i in range(3):
-            hist = cv2.calcHist([frame], [i], None, [256], [0, 256])
+            hist = cv2.calcHist([frame], [i], None, [n_bins], [0, n_bins])
             if normalize:
                 hist = cv2.normalize(hist, hist, 0, 1, cv2.NORM_MINMAX)
             hists.append(hist)
