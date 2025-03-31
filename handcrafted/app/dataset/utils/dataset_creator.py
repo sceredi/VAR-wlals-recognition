@@ -62,35 +62,27 @@ class DatasetCreator:
                 self.data_augmentation(image) for _ in range(num_aug)
             ]
             return tf.stack(augmented_images), tf.stack([label] * num_aug)
-        return image, label
+        return tf.stack([image]), tf.stack([label])
 
     def create_dataset(
         self,
         file_paths,
         labels,
-        num_aug: int = 0,
+        x_aug=None,
         batch_size: int = 32,
         shuffle: bool = True,
     ):
-        dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels))
-
-        if num_aug > 0:
-            dataset = dataset.flat_map(
-                lambda image_path, label: tf.data.Dataset.from_tensors(
-                    self.load_and_preprocess_image_with_label(
-                        image_path, label, num_aug
-                    )
-                ).unbatch()
-            )
-        else:
-            dataset = dataset.map(
-                lambda image_path,
-                label: self.load_and_preprocess_image_with_label(
-                    image_path, label, 0
-                ),
-                num_parallel_calls=tf.data.AUTOTUNE,
-            )
-
+        if x_aug is None:
+            x_aug = [0] * len(file_paths)
+            x_aug = np.array(x_aug, dtype=np.uint16)
+        dataset = tf.data.Dataset.from_tensor_slices(
+            (file_paths, labels, x_aug)
+        )
+        dataset = dataset.flat_map(
+            lambda img, label, num_aug: tf.data.Dataset.from_tensors(
+                self.load_and_preprocess_image_with_label(img, label, num_aug)
+            ).unbatch()
+        )
         if shuffle:
             dataset = dataset.shuffle(buffer_size=1000)
         dataset = dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)

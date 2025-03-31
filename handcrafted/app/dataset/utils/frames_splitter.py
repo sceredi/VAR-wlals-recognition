@@ -13,14 +13,14 @@ class FramesSplitter:
         signers: dict[str, Signer],
         val_split: float = 0.2,
         test_split: float = 0.2,
-        frames_split: float = 0.1,
+        frames_num: int = 500,
         seed: int = 42,
     ):
         np.random.seed(seed)
         self._signers = signers
         self._val_split = val_split
         self._test_split = test_split
-        self._frames_split = frames_split
+        self._frames_num = frames_num
         self._seed = seed
 
     def split(
@@ -33,26 +33,30 @@ class FramesSplitter:
         X_test = []
         y_test = []
         for signer in tqdm(self._signers.values()):
+            signer_frames_num = signer.get_frames_num()
             train_videos, val_videos, test_videos = signer.split(
                 self._val_split, self._test_split, random_state=self._seed
             )
             for video in train_videos:
+                num_aug = 0
+                if self._frames_num > signer_frames_num:
+                    num_aug = int(self._frames_num / signer_frames_num)
                 for frame in video.extract_frames(
-                    self._frames_split, self._seed
+                    self._frames_num, self._seed
                 ):
-                    X_train.append(X_content(frame))
+                    X_train.append((X_content(frame), num_aug))
                     y_train.append(signer.id)
             for video in val_videos:
                 for frame in video.extract_frames(
-                    self._frames_split, self._seed
+                    self._frames_num, self._seed
                 ):
-                    X_val.append(X_content(frame))
+                    X_val.append((X_content(frame), 0))
                     y_val.append(signer.id)
             for video in test_videos:
                 for frame in video.extract_frames(
-                    self._frames_split, self._seed
+                    self._frames_num, self._seed
                 ):
-                    X_test.append(X_content(frame))
+                    X_test.append((X_content(frame), 0))
                     y_test.append(signer.id)
         X_train, y_train = shuffle(X_train, y_train, random_state=self._seed)
         X_val, y_val = shuffle(X_val, y_val, random_state=self._seed)
