@@ -263,7 +263,11 @@ class Video:
 
         # Calculates the interpolation function
         interpolator = interp1d(
-            x_old, frames, kind="linear", axis=None, fill_value="extrapolate"  # type: ignore
+            x_old,
+            frames,
+            kind="linear",
+            axis=None,
+            fill_value="extrapolate",  # type: ignore
         )
 
         # Applies the interpolation function to the new frames

@@ -192,8 +192,11 @@ class FeaturesContainer:
             self._skin_features = SkinExtractor(frames, face_rects).extract()
         if flatten:
             if self._skin_features_flattened is None:
-                self._skin_features_flattened = self._skin_features.copy().reshape(  # type: ignore
-                    self._skin_features.shape[0], -1  # type: ignore
+                self._skin_features_flattened = (
+                    self._skin_features.copy().reshape(  # type: ignore
+                        self._skin_features.shape[0],
+                        -1,  # type: ignore
+                    )
                 )
             return self._skin_features_flattened
         return self._skin_features

@@ -16,7 +16,7 @@ class DatasetLoader:
         self.num_signers = len(self.signers)
 
     def _load_dataset(self):
-        signers = dict()
+        signers = {}
         for dirname, _, filenames in tqdm(os.walk(self._path)):
             for filename in filenames:
                 dirname = dirname.removeprefix(self._path)

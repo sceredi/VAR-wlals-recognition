@@ -58,7 +58,7 @@ class LBPExtractor:
         """
         self._lbp_frames, self._features = zip(
             *(self._extract(self._to_gray(frame)) for frame in self._frames),
-            strict=False
+            strict=False,
         )
         return self._features
 

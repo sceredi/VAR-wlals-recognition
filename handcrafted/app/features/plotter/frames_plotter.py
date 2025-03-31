@@ -33,7 +33,7 @@ class FramesPlotter:
         _, axes = plt.subplots(rows, cols)
         axes = axes.flatten()
         for i, (frame, ax) in enumerate(zip(self.frames, axes, strict=False)):
-            self._update(ax, frame, f"Frame {i+1}")
+            self._update(ax, frame, f"Frame {i + 1}")
         for ax in axes[num_frames:]:
             self._remove_axis(ax)
         plt.show()
@@ -166,7 +166,7 @@ def plot_color_hist(
         hist_labels = (
             list(colors)
             if colors
-            else [f"Channel {j+1}" for j in range(len(hists))]
+            else [f"Channel {j + 1}" for j in range(len(hists))]
         )  # Use provided colors or generic labels
 
         for j, (color, hist) in enumerate(

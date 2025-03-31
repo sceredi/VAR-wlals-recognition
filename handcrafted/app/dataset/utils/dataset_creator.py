@@ -84,7 +84,8 @@ class DatasetCreator:
             )
         else:
             dataset = dataset.map(
-                lambda image_path, label: self.load_and_preprocess_image_with_label(
+                lambda image_path,
+                label: self.load_and_preprocess_image_with_label(
                     image_path, label, 0
                 ),
                 num_parallel_calls=tf.data.AUTOTUNE,
@@ -123,15 +124,15 @@ class DatasetCreator:
 
     @staticmethod
     def create_custom_dataset(
-            frames: list[Frame],
-            labels: np.ndarray,
-            batch_size: int = 32,
-            seed: int = 42,
+        frames: list[Frame],
+        labels: np.ndarray,
+        batch_size: int = 32,
+        seed: int = 42,
     ):
         batches = []
         for i in tqdm(range(0, len(frames), batch_size)):
-            batch_frames = frames[i: i + batch_size]
-            batch_labels = labels[i: i + batch_size]
+            batch_frames = frames[i : i + batch_size]
+            batch_labels = labels[i : i + batch_size]
             batches.append(MiniBatch(batch_frames, batch_labels, seed=seed))
         return batches
 
@@ -162,7 +163,7 @@ class MiniBatch:
         features = []
         lbl = []
         augmenter = DataAugmentation(num_augmentations=num_aug)
-        for full_frame, label in zip(self.frames, self.labels):
+        for full_frame, label in zip(self.frames, self.labels, strict=False):
             frame = full_frame.load_frame()
             augs = augmenter.augment_image(frame, label)
             augs = augs + [(frame, label)]

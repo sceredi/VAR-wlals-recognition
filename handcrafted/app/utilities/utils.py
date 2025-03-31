@@ -11,7 +11,10 @@ def create_mp4_video_from_frames(frames, fps, video_path):
 
     size = (frames[0].shape[1], frames[0].shape[0])
     out = cv2.VideoWriter(
-        temp_video_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, size  # type: ignore
+        temp_video_path,
+        cv2.VideoWriter_fourcc(*"mp4v"),
+        fps,
+        size,  # type: ignore
     )
 
     for i in range(len(frames)):

@@ -70,7 +70,7 @@ indent-width = 4
 
 target-version = "py310"
 
-[lint]
+[tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 select = ["B", "C", "E4", "E7", "E9", "F", "W"]
 ignore = ["B023", "C901"]
@@ -82,7 +82,8 @@ unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[format]
+[tool.ruff.format]
+exclude = [ "*.ipynb" ]
 # Like Black, use double quotes for strings.
 quote-style = "double"
 
