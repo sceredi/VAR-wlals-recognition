@@ -61,7 +61,7 @@ class DatasetCreator:
             augmented_images = [
                 self.data_augmentation(image) for _ in range(num_aug)
             ]
-            return tf.stack(augmented_images), tf.fill([num_aug], label)
+            return tf.stack(augmented_images), tf.stack([label] * num_aug)
         return image, label
 
     def create_dataset(
@@ -85,7 +85,7 @@ class DatasetCreator:
         else:
             dataset = dataset.map(
                 lambda image_path, label: self.load_and_preprocess_image_with_label(
-                    image_path, label, num_aug
+                    image_path, label, 0
                 ),
                 num_parallel_calls=tf.data.AUTOTUNE,
             )
@@ -117,7 +117,7 @@ class DatasetCreator:
                 )
                 for _ in range(num_aug)
             ]
-            return tf.stack(augmented_features), tf.fill([num_aug], label)
+            return tf.stack(augmented_features), tf.stack([label] * num_aug)
 
         return features, label
 
