@@ -5,6 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from keras.src.callbacks import History
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
@@ -94,3 +95,36 @@ class ModelStatistics:
         """
         acc = accuracy_score(y_test, y_pred)
         print(f"Accuracy: {acc * 100:.2f}%")
+
+    @staticmethod
+    def plot_history(history: History) -> None:
+        """Plot training history.
+
+        Parameters
+        ----------
+        history : keras.src.callbacks.History
+            History object returned by model.fit().
+
+        """
+        plt.figure(figsize=(12, 6))
+
+        # Loss plot
+        plt.subplot(1, 2, 1)
+        plt.plot(history.history['loss'], label='Training Loss')
+        plt.plot(history.history['val_loss'], label='Validation Loss')
+        plt.title('Loss vs Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.legend()
+
+        # Accuracy plot
+        plt.subplot(1, 2, 2)
+        plt.plot(history.history['accuracy'], label='Training Accuracy')
+        plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+        plt.title('Accuracy vs Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
