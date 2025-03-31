@@ -53,9 +53,16 @@ class Signer:
         self.id = id
         self.videos: list[Video] = []
 
+    def get_frames_num(self):
+        num_frames = 0
+        for video in self.videos:
+            num_frames += len(video.frames)
+        return num_frames
+
     def split(
         self, val_split: float, test_split: float, random_state: int = 42
     ):
+        # TODO: if len(self.videos) == 1, then split the video into train and test
         np.random.seed(random_state)
         val_videos = []
         test_videos = []
@@ -93,9 +100,12 @@ class Video:
     def __eq__(self, other) -> bool:
         return self.id == other.id
 
-    def extract_frames(self, frames_split: float, seed: int):
+    def extract_frames(self, frames_num: float, seed: int):
         frames = []
-        frames_to_extract = math.ceil(len(self.frames) * frames_split)
+        if frames_num > len(self.frames):
+            frames_to_extract = len(self.frames)
+        else:
+            frames_to_extract = frames_num
         np.random.seed(seed)
         frame_ids = np.random.choice(
             np.arange(0, len(self.frames)), frames_to_extract, replace=False
