@@ -103,6 +103,7 @@ class DatasetCreator:
     def create_custom_dataset(
         frames: list[Frame],
         labels: np.ndarray,
+        augmentation: list[int],
         batch_size: int = 32,
         seed: int = 42,
     ):
@@ -110,16 +111,24 @@ class DatasetCreator:
         for i in tqdm(range(0, len(frames), batch_size)):
             batch_frames = frames[i : i + batch_size]
             batch_labels = labels[i : i + batch_size]
-            batches.append(MiniBatch(batch_frames, batch_labels, seed=seed))
+            batch_aug = augmentation[i : i + batch_size]
+            batches.append(
+                MiniBatch(batch_frames, batch_labels, aug=batch_aug, seed=seed)
+            )
         return batches
 
 
 class MiniBatch:
     def __init__(
-        self, frames: list[Frame], labels: np.ndarray, seed: int = 42
+        self,
+        frames: list[Frame],
+        labels: np.ndarray,
+        aug: list[int],
+        seed: int = 42,
     ):
         self.frames = frames
         self.labels = labels
+        self.aug = aug
         self.seed = seed
 
     @staticmethod
@@ -136,15 +145,17 @@ class MiniBatch:
             (hog_features, lbp_features, color_hist_features)
         )
 
-    def load(self, num_aug: int = 0, shuffle: bool = True):
+    def load(self, shuffle: bool = True):
         features = []
         lbl = []
-        augmenter = DataAugmentation(num_augmentations=num_aug)
-        for full_frame, label in zip(self.frames, self.labels, strict=False):
-            frame = full_frame.load_frame()
-            augs = augmenter.augment_image(frame, label)
-            augs = augs + [(frame, label)]
-            for f, _ in augs:
+        for full_frame, label, aug in zip(
+            self.frames, self.labels, self.aug, strict=False
+        ):
+            ims = [(full_frame, label)]
+            augmenter = DataAugmentation(num_augmentations=aug)
+            augs = augmenter.augment_image(full_frame, label)
+            ims = ims + augs
+            for f, _ in ims:
                 features.append(self._extract_features(f))
                 lbl.append(label)
         features = np.array(features)
