@@ -30,21 +30,6 @@ class DatasetCreator:
             ]
         )
 
-    # TODO: delete
-    @staticmethod
-    def _extract_features(frame: np.ndarray) -> np.ndarray:
-        hog_features, _ = HOGExtractor([frame]).process_frames()
-        lbp_features = LBPExtractor([frame]).get_lbp_features()
-        color_hist_features = ColorHistogram([frame], n_bins=8).process_frames(
-            cv2.COLOR_BGR2HSV, separate_colors=False, normalize=True
-        )
-        hog_features = np.reshape(hog_features, -1)
-        lbp_features = np.reshape(lbp_features, -1)
-        color_hist_features = np.reshape(color_hist_features, -1)
-        return np.concatenate(
-            (hog_features, lbp_features, color_hist_features)
-        )
-
     @staticmethod
     def load_image(image_path):
         image = tf.io.read_file(image_path)
@@ -53,7 +38,11 @@ class DatasetCreator:
         image = image / 255.0
         return image
 
+    @tf.function
     def load_and_preprocess_image_with_label(self, image_path, label, num_aug):
+        # image_path, num_aug = tf.unstack(image_path)
+        # num_aug = tf.cast(num_aug, tf.int32)
+        num_aug = 0
         image = self.load_image(image_path)
         image = (image * 2) - 1
 
@@ -67,52 +56,23 @@ class DatasetCreator:
     def create_dataset(
         self,
         file_paths,
+        augs,
         labels,
-        x_aug=None,
         batch_size: int = 32,
         shuffle: bool = True,
     ):
-        if x_aug is None:
-            x_aug = [0] * len(file_paths)
-            x_aug = np.array(x_aug, dtype=np.uint16)
         dataset = tf.data.Dataset.from_tensor_slices(
-            (file_paths, labels, x_aug)
+            (file_paths, augs, labels)
         )
         dataset = dataset.flat_map(
-            lambda img, label, num_aug: tf.data.Dataset.from_tensors(
-                self.load_and_preprocess_image_with_label(img, label, num_aug)
+            lambda img, aug, label: tf.data.Dataset.from_tensors(
+                self.load_and_preprocess_image_with_label(img, label, aug)
             ).unbatch()
         )
         if shuffle:
             dataset = dataset.shuffle(buffer_size=1000)
         dataset = dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
         return dataset
-
-    # TODO: delete
-    def load_and_preprocess_features_with_label(
-        self, image_path, label, num_aug
-    ):
-        def _process(image_path):
-            image = self.load_image(image_path)
-            image = tf.cast(image * 255, tf.uint8)
-            image_np = image.numpy()
-            features = self._extract_features(image_np)
-            return features
-
-        features = tf.py_function(
-            func=_process, inp=[image_path], Tout=tf.float32
-        )
-
-        if num_aug > 0:
-            augmented_features = [
-                tf.py_function(
-                    func=_process, inp=[image_path], Tout=tf.float32
-                )
-                for _ in range(num_aug)
-            ]
-            return tf.stack(augmented_features), tf.stack([label] * num_aug)
-
-        return features, label
 
     @staticmethod
     def create_custom_dataset(
