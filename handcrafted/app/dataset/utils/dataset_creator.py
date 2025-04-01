@@ -151,9 +151,10 @@ class MiniBatch:
         for full_frame, label, aug in zip(
             self.frames, self.labels, self.aug, strict=False
         ):
-            ims = [(full_frame, label)]
+            frame_image = full_frame.load_frame()
+            ims = [(frame_image, label)]
             augmenter = DataAugmentation(num_augmentations=aug)
-            augs = augmenter.augment_image(full_frame, label)
+            augs = augmenter.augment_image(frame_image, label)
             ims = ims + augs
             for f, _ in ims:
                 features.append(self._extract_features(f))
