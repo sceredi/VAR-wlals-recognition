@@ -63,6 +63,7 @@ class FramesSplitter:
                 ):
                     X_test.append(X_content(frame))
                     X_test_aug.append(0)
+
                     y_test.append(signer.id)
         X_train, X_train_aug, y_train = shuffle(
             X_train, X_train_aug, y_train, random_state=self._seed
@@ -75,12 +76,12 @@ class FramesSplitter:
         )
         return (
             np.array(X_train),
-            np.array(X_train_aug, dtype=np.uint16),
+            np.array(X_train_aug, dtype=np.int32),
             y_train,
             np.array(X_val),
-            np.array(X_val_aug, dtype=np.uint16),
+            np.array(X_val_aug, dtype=np.int32),
             y_val,
             np.array(X_test),
-            np.array(X_test_aug, dtype=np.uint16),
+            np.array(X_test_aug, dtype=np.int32),
             y_test,
         )

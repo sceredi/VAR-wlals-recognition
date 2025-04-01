@@ -38,20 +38,45 @@ class DatasetCreator:
         image = image / 255.0
         return image
 
-    @tf.function
     def load_and_preprocess_image_with_label(self, image_path, label, num_aug):
-        # image_path, num_aug = tf.unstack(image_path)
-        # num_aug = tf.cast(num_aug, tf.int32)
-        num_aug = 0
         image = self.load_image(image_path)
         image = (image * 2) - 1
 
-        if num_aug > 0:
-            augmented_images = [
-                self.data_augmentation(image) for _ in range(num_aug)
-            ]
-            return tf.stack(augmented_images), tf.stack([label] * num_aug)
-        return tf.stack([image]), tf.stack([label])
+        def augment_images():
+            # Use tf.range for dynamic loops compatible with tf.function
+            augmented_images = tf.TensorArray(
+                tf.float32, size=0, dynamic_size=True
+            )
+            i = tf.constant(0, dtype=tf.int32)
+
+            def condition(i, augmented_images):
+                return tf.less(i, num_aug)
+
+            def body(i, augmented_images):
+                augmented_image = self.data_augmentation(image)
+                augmented_images = augmented_images.write(i, augmented_image)
+                return tf.add(i, 1), augmented_images
+
+            i, augmented_images = tf.while_loop(
+                condition, body, [i, augmented_images]
+            )
+            augmented_images = augmented_images.write(i, image)
+            return augmented_images.stack()
+
+        # Use tf.cond to choose the appropriate branch based on num_aug
+        images = tf.cond(
+            tf.greater(num_aug, 0), augment_images, lambda: tf.stack([image])
+        )
+
+        # Ensure label is a tensor and has the correct shape
+        label = tf.convert_to_tensor(label)
+        if label.shape.rank == 0:
+            label = tf.expand_dims(label, 0)
+
+        # Repeat the label to match the number of images
+        labels = tf.tile(tf.expand_dims(label, 0), [tf.shape(images)[0], 1])
+
+        return images, labels
 
     def create_dataset(
         self,
