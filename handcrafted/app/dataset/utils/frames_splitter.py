@@ -63,7 +63,6 @@ class FramesSplitter:
                 ):
                     X_test.append(X_content(frame))
                     X_test_aug.append(0)
-
                     y_test.append(signer.id)
         X_train, X_train_aug, y_train = shuffle(
             X_train, X_train_aug, y_train, random_state=self._seed
