@@ -4,6 +4,7 @@ import os
 import cv2
 import numpy as np
 from tqdm import tqdm
+from sklearn.utils import shuffle
 
 
 class DatasetLoader:
@@ -62,37 +63,61 @@ class Signer:
     def split(
         self, val_split: float, test_split: float, random_state: int = 42
     ):
-        # TODO: if len(self.videos) == 1, then split the video into train and test
         np.random.seed(random_state)
         val_videos = []
         test_videos = []
-        test_videos_to_extract = math.ceil(len(self.videos) * test_split)
-        test_videos_ids = np.random.choice(
-            np.arange(0, len(self.videos)),
-            test_videos_to_extract,
-            replace=False,
-        ).tolist()
-        for test_video_id in test_videos_ids:
-            test_videos.append(self.videos[test_video_id])
-        for i, test_video_id in enumerate(test_videos_ids):
-            self.videos.remove(self.videos[test_video_id - i])
-        val_videos_to_extract = math.ceil(len(self.videos) * val_split)
-        val_videos_ids = np.random.choice(
-            np.arange(0, len(self.videos)),
-            val_videos_to_extract,
-            replace=False,
-        ).tolist()
-        for val_video_id in val_videos_ids:
-            val_videos.append(self.videos[val_video_id])
-        for i, val_video_id in enumerate(val_videos_ids):
-            self.videos.remove(self.videos[val_video_id - i])
-        return self.videos, val_videos, test_videos
+        if len(self.videos) > 2:
+            test_videos_to_extract = math.ceil(len(self.videos) * test_split)
+            test_videos_ids = np.random.choice(
+                np.arange(0, len(self.videos)),
+                test_videos_to_extract,
+                replace=False,
+            ).tolist()
+            for test_video_id in test_videos_ids:
+                test_videos.append(self.videos[test_video_id])
+            for i, test_video_id in enumerate(test_videos_ids):
+                self.videos.remove(self.videos[test_video_id - i])
+            val_videos_to_extract = math.ceil(len(self.videos) * val_split)
+            val_videos_ids = np.random.choice(
+                np.arange(0, len(self.videos)),
+                val_videos_to_extract,
+                replace=False,
+            ).tolist()
+            for val_video_id in val_videos_ids:
+                val_videos.append(self.videos[val_video_id])
+            for i, val_video_id in enumerate(val_videos_ids):
+                self.videos.remove(self.videos[val_video_id - i])
+            return self.videos, val_videos, test_videos
+        else:
+            tot_frames = []
+            video_id = self.videos[0].id
+            for video in self.videos:
+                tot_frames.extend(video.frames)
+            tot_frames = shuffle(tot_frames, random_state=random_state)
+            tot_frames_len = len(tot_frames)
+            test_frames_to_extract = math.ceil(tot_frames_len * test_split)
+            val_frames_to_extract = math.ceil(tot_frames_len * val_split)
+            test_frames = tot_frames[:test_frames_to_extract]
+            val_frames = tot_frames[
+                test_frames_to_extract : test_frames_to_extract
+                + val_frames_to_extract
+            ]
+            train_frames = tot_frames[
+                test_frames_to_extract + val_frames_to_extract :
+            ]
+            test_videos = [Video(video_id, frames=test_frames)]
+            val_videos = [Video(video_id, frames=val_frames)]
+            train_videos = [Video(video_id, frames=train_frames)]
+            return train_videos, val_videos, test_videos
 
 
 class Video:
-    def __init__(self, id: str) -> None:
+    def __init__(self, id: str, frames=None) -> None:
         self.id = id
-        self.frames: list[Frame] = []
+        if frames is None:
+            self.frames: list[Frame] = []
+        else:
+            self.frames = frames
 
     def __str__(self):
         return f"Video {self.id}"
