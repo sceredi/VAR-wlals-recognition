@@ -24,8 +24,7 @@ def landmark_to_array(mp_landmark_list) -> np.ndarray:
 
 
 def extract_landmarks(results):
-    """Extract the results of both hands and convert them to a np array of size
-    if a hand doesn't appear, return an array of zeros.
+    """Extract the results of both hands and convert them to a np array of size if a hand doesn't appear, return an array of zeros.
 
     Parameters
     ----------
