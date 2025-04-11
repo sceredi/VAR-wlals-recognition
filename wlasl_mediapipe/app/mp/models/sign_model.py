@@ -1,3 +1,5 @@
+"""Module to handle the hands, pose and face models of a sign video."""
+
 import os
 from typing import List
 
@@ -20,7 +22,7 @@ class SignModel(object):
         expand_keypoints: bool = False,
         all_features: bool = True,
     ):
-        """Initializes the SignModel object.
+        """Initialize the SignModel object.
 
         Parameters
         ----------
@@ -78,8 +80,7 @@ class SignModel(object):
         left_hand_list: List[List[float]],
         right_hand_list: List[List[float]],
     ) -> None:
-        """Expand the keypoints into embeddings, by calculating the angle,
-        in radians, between the connected keypoints.
+        """Expand the keypoints into embeddings, by calculating the angle, in radians, between the connected keypoints.
 
         Parameters
         ----------

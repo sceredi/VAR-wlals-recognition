@@ -1,3 +1,5 @@
+"""Module that contains the GlobalFilters and FilteredLabels classes."""
+
 from typing import List
 
 import numpy as np
@@ -7,6 +9,7 @@ class GlobalFilters(object):
     """Utility object used to filter the landmarks."""
 
     def __init__(self) -> None:
+        """Initialize the GlobalFilters object."""
         self.pose_filter = [11, 12, 13, 14, 15, 16]
         self.face_filter = [
             0,
@@ -179,7 +182,7 @@ class GlobalFilters(object):
 
     @staticmethod
     def filter(features: np.ndarray, filter_list: List[int]) -> np.ndarray:
-        """Filters the features based on the given filter list.
+        """Filter the features based on the given filter list.
 
         Parameters
         ----------
@@ -202,7 +205,7 @@ class FilteredLabels(object):
 
     @staticmethod
     def get_labels():
-        """Returns the filtered labels, filtered based on cosine similarity."""
+        """Return the filtered labels, filtered based on cosine similarity."""
         return [
             "give",
             "turn",

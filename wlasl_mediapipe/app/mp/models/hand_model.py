@@ -1,3 +1,5 @@
+"""Module that contains the HandModel class."""
+
 from typing import List
 
 import mediapipe as mp
@@ -8,7 +10,7 @@ class HandModel(object):
     """Object that contains the hand gesture information for an image."""
 
     def __init__(self, landmarks: List[float]):
-        """Initializes a HandModel object.
+        """Initialize a HandModel object.
 
         Parameters
         ----------
