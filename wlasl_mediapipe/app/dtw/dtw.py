@@ -14,7 +14,7 @@ from wlasl_mediapipe.app.mp.mp_video import MediapipeVideo
 def calc_dtw_distance(
     video: MediapipeVideo, others: List[MediapipeVideo]
 ) -> Tuple[str, float]:
-    """Calculates the DTW distance between the video and the others.
+    """Calculate the DTW distance between the video and the others.
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ def calc_dtw_distance(
 
 
 def _best_choice(distances) -> Tuple[str, float]:
-    """Returns the best choice from the distances.
+    """Return the best choice from the distances.
 
     Parameters
     ----------
@@ -85,7 +85,7 @@ def classify(
     augment: int,
     topN: int = 1,
 ) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
-    """Classifies the test videos using the train videos.
+    """Classify the test videos using the train videos.
 
     Parameters
     ----------
@@ -134,7 +134,7 @@ def _do_classification(
     classified: Dict[MediapipeVideo, List[Tuple[str, float]]],
     topN: int,
 ) -> Dict[MediapipeVideo, List[Tuple[str, float]]]:
-    """Internal function to classify a video.
+    """Classify a video.
 
     Parameters
     ----------
@@ -172,7 +172,7 @@ def _calc_acc(
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]],
     topN: int,
 ) -> float:
-    """Calculates the accuracy of the classification.
+    """Calculate the accuracy of the classification.
 
     Parameters
     ----------
@@ -201,7 +201,7 @@ def pretty_print(
     output_file: str,
     topN: int,
 ):
-    """Prints the results of the classification in a pretty format.
+    """Print the results of the classification in a pretty format.
 
     Parameters
     ----------

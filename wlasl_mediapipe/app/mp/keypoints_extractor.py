@@ -1,3 +1,5 @@
+"""Module for extracting keypoints from video frames using mediapipe."""
+
 from typing import List, Tuple
 
 import cv2
@@ -16,7 +18,7 @@ class MediapipeLandmarksExtractor:
     def __init__(
         self,
     ) -> None:
-        """Initializes the MediapipeLandmarksExtractor object."""
+        """Initialize the MediapipeLandmarksExtractor object."""
         self.detector = mp.solutions.holistic.Holistic(  # type: ignore
             static_image_mode=False,
             model_complexity=2,
