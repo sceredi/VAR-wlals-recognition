@@ -1,4 +1,5 @@
-# Purpose: Extracts a region of interest from a list of frames
+"""Module to extract the region of interest from the frames."""
+
 from typing import List
 
 import cv2
@@ -7,20 +8,43 @@ from rembg import remove
 
 
 class RoiExtractor:
+    """Class to extract the region of interest from the frames."""
+
     def __init__(
         self,
         frames: List["np.ndarray"],
         bbox: List[int],
         resize: None | int = None,
     ) -> None:
+        """Initialize the RoiExtractor object.
+
+        Parameters
+        ----------
+        frames : List[np.ndarray]
+            The frames to process.
+        bbox : List[int]
+            The bounding box to extract the region of interest.
+        resize : int, optional
+            The size to resize the frames to, by default None.
+
+        """
         self.frames = frames
         self.bbox = bbox
         self.resize = resize
 
     def extract(self, remove_background=False) -> List["np.ndarray"]:
-        """Extracts the region of interest from the frames
-        If remove_background is True, then the background will be removed
-        this will slow the computation down as it uses a unet model to do so
+        """Extract the region of interest from the frames.
+
+        Parameters
+        ----------
+        remove_background : bool, optional
+            Whether to remove the background, by default False.
+
+        Returns
+        -------
+        List[np.ndarray]
+            The extracted frames.
+
         """
         frames = []
         for frame in self.frames:
@@ -34,9 +58,35 @@ class RoiExtractor:
         return frames
 
     def _remove_bg(self, frame: "np.ndarray"):
+        """Remove the background from the frame.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to process.
+
+        Returns
+        -------
+        np.ndarray
+            The frame with the background removed.
+
+        """
         return remove(frame)
 
     def _resize(self, frame) -> "np.ndarray":
+        """Resize the frame to the given size.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to resize.
+
+        Returns
+        -------
+        np.ndarray
+            The resized frame.
+
+        """
         if self.resize is None:
             return frame
         if frame.shape[0] >= frame.shape[1]:
@@ -52,6 +102,19 @@ class RoiExtractor:
         return frame
 
     def _pad(self, frame: "np.ndarray") -> "np.ndarray":
+        """Pad the frame to the given size.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to pad.
+
+        Returns
+        -------
+        np.ndarray
+            The padded frame.
+
+        """
         if self.resize is None:
             return frame
         pad_width = self.resize - frame.shape[0]

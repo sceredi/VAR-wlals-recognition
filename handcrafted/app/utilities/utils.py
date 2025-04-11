@@ -1,3 +1,5 @@
+"""Module containing utility functions for video processing and object detection."""
+
 import os
 import uuid
 
@@ -6,6 +8,23 @@ import numpy as np
 
 
 def create_mp4_video_from_frames(frames, fps, video_path):
+    """Create a mp4 video from frames.
+
+    Parameters
+    ----------
+    frames : list[np.ndarray]
+        List of frames to create the video from.
+    fps : int
+        Frames per second of the video.
+    video_path : str
+        Path to save the video.
+
+    Returns
+    -------
+    str
+        Path to the created video.
+
+    """
     temp_video_path = "tempfile.mp4"
     compressed_path = "{}.mp4".format(str(uuid.uuid4()))
 
@@ -31,6 +50,19 @@ def create_mp4_video_from_frames(frames, fps, video_path):
 
 
 def draw_connected_components(labels):
+    """Draw connected components.
+
+    Parameters
+    ----------
+    labels : np.ndarray
+        Array of labels for the connected components.
+
+    Returns
+    -------
+    np.ndarray
+        Image with connected components drawn.
+
+    """
     label_hue = np.uint8(179 * labels / np.max(labels))
     blank_ch = 255 * np.ones_like(label_hue)
     labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])  # type: ignore
@@ -49,6 +81,28 @@ def draw_detected_objects(
     contours=None,
     detected_colors=(0, 0, 255),
 ):
+    """Draw detected objects on the image.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Image to draw on.
+    detected_bbs : list[tuple]
+        List of bounding boxes for detected objects.
+
+    detected_centroids : list[tuple]
+        List of centroids for detected objects.
+    contours : list[np.ndarray], optional
+        List of contours for detected objects, by default None
+    detected_colors : tuple or list, optional
+        Color for detected objects, by default (0, 0, 255)
+
+    Returns
+    -------
+    np.ndarray
+        Image with detected objects drawn.
+
+    """
     if contours is not None:
         image_with_detected_objects = cv2.polylines(
             image.copy(), contours, True, (0, 255, 0), 1
@@ -79,6 +133,27 @@ def draw_detected_objects(
 def draw_tracked_objects(
     image, tracked_bbs, tracks, contours=None, tracked_colors=(0, 0, 255)
 ):
+    """Draw tracked objects on the image.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Image to draw on.
+    tracked_bbs : list[tuple]
+        List of bounding boxes for tracked objects.
+    tracks : list[tuple]
+        List of tracks for tracked objects.
+    contours : list[np.ndarray], optional
+        List of contours for tracked objects, by default None
+    tracked_colors : tuple or list, optional
+        Color for tracked objects, by default (0, 0, 255)
+
+    Returns
+    -------
+    np.ndarray
+        Image with tracked objects drawn.
+
+    """
     if contours is not None:
         image_with_tracked_objects = cv2.polylines(
             image.copy(), contours, True, (0, 255, 0), 1
@@ -112,6 +187,21 @@ def draw_tracked_objects(
 
 
 def compute_iou(bb1, bb2):
+    """Compute the Intersection over Union (IoU) of two bounding boxes.
+
+    Parameters
+    ----------
+    bb1 : tuple
+        First bounding box, represented as ((x1, y1), (x2, y2)).
+    bb2 : tuple
+        Second bounding box, represented as ((x1, y1), (x2, y2)).
+
+    Returns
+    -------
+    float
+        The IoU of the two bounding boxes.
+
+    """
     bb1_x1 = bb1[0][0]
     bb1_y1 = bb1[0][1]
     bb1_x2 = bb1[1][0]
@@ -142,6 +232,19 @@ def compute_iou(bb1, bb2):
 
 
 def video_to_img(back_projs):
+    """Create a video from the back projections.
+
+    Parameters
+    ----------
+    back_projs : list[np.ndarray]
+        List of back projections.
+
+    Returns
+    -------
+    np.ndarray
+        The video created from the back projections.
+
+    """
     estimated_fg = []
     estimated_fg.append(back_projs[0])
     fg = back_projs[0]
