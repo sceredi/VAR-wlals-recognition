@@ -1,3 +1,5 @@
+"""Module containing the Launcher class, which is used to launch the classification process using MediaPipe features."""
+
 import sys
 from typing import Dict, List
 
@@ -14,11 +16,13 @@ class Launcher:
     """Helper class to launch the classification process using MediaPipe features."""
 
     def start(self) -> None:
-        """Launches the classification process using MediaPipe features.
+        """Launch the classification process using MediaPipe features.
+
         The parameters are passed as command line arguments as follows:
         1. Number of words to classify
         2. TopN: Number of top predictions to consider
         3. Augment: Number of augmentations to apply to each video.
+
         """
         # Check if there are at least two arguments
         nwords = 10
@@ -49,7 +53,7 @@ class Launcher:
         )
 
     def load_data(self) -> Dataset:
-        """Loads the WLASL dataset with only the keypoints.
+        """Load the WLASL dataset with only the keypoints.
 
         Returns
         -------
@@ -60,7 +64,7 @@ class Launcher:
         return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
 
     def load_glosses(self, filtered: bool = False) -> List[str]:
-        """Loads the wlasl class list.
+        """Load the wlasl class list.
 
         Parameters
         ----------
@@ -85,7 +89,7 @@ class Launcher:
     def get_test_videos(
         self, dataset: Dataset, glosses: List[str]
     ) -> List[MediapipeVideo]:
-        """Gets the test videos for the given glosses.
+        """Get the test videos for the given glosses.
 
         Parameters
         ----------
@@ -114,7 +118,7 @@ class Launcher:
     def get_train_videos(
         self, dataset: Dataset, glosses: List[str]
     ) -> Dict[str, List[Video]]:
-        """Gets the train videos for the given glosses.
+        """Get the train videos for the given glosses.
 
         Parameters
         ----------
