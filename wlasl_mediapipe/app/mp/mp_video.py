@@ -1,3 +1,5 @@
+"""Module to handle a video with MediaPipe features."""
+
 import os
 from typing import List
 
@@ -25,7 +27,7 @@ class MediapipeVideo:
         all_features: bool = True,
         sign_model: SignModel | None = None,
     ):
-        """Initializes the MediapipeVideo object.
+        """Initialize the MediapipeVideo object.
 
         Parameters
         ----------
@@ -51,7 +53,7 @@ class MediapipeVideo:
             self.sign_model = sign_model
 
     def get_base_video(self) -> Video:
-        """Returns the base video.
+        """Return the base video.
 
         Returns
         -------
@@ -67,7 +69,7 @@ class MediapipeVideo:
         expand_keypoints: bool = False,
         all_features: bool = True,
     ) -> None:
-        """Loads the models.
+        """Load the models.
 
         Parameters
         ----------
@@ -77,6 +79,7 @@ class MediapipeVideo:
             If True, expands the hands keypoints, by calculating the angle,
             in radians, between the connected keypoints, by default False.
         all_features : bool, optional
+            If True, extracts all the features, by default True.
 
         """
         if os.path.exists(f"data/mp/{self.video.video_id}"):
@@ -125,7 +128,7 @@ class MediapipeVideo:
             )
 
     def from_sign_model(self, sign_model: SignModel) -> "MediapipeVideo":
-        """Returns a new MediapipeVideo object from the given sign model.
+        """Return a new MediapipeVideo object from the given sign model.
 
         Parameters
         ----------
@@ -147,7 +150,7 @@ class MediapipeVideo:
         )
 
     def augment(self, n: int = 1) -> List["MediapipeVideo"]:
-        """Augments the video.
+        """Augment the video.
 
         Parameters
         ----------
