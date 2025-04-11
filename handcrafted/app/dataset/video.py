@@ -1,3 +1,5 @@
+"""Module that contains the Video class."""
+
 import math
 import os
 from typing import List, Tuple

@@ -1,3 +1,5 @@
+"""Module for splitting frames into train, validation, and test sets."""
+
 from typing import Callable
 
 import numpy as np
@@ -8,6 +10,8 @@ from handcrafted.app.dataset.dataset_loader import Frame, Signer
 
 
 class FramesSplitter:
+    """Class for splitting frames into train, validation, and test sets."""
+
     def __init__(
         self,
         signers: dict[str, Signer],
@@ -16,6 +20,22 @@ class FramesSplitter:
         frames_to_extract: int = 500,
         seed: int = 42,
     ):
+        """Initialize the FramesSplitter object.
+
+        Parameters
+        ----------
+        signers : dict[str, Signer]
+            The signers to split.
+        val_split : float, optional
+            The proportion of the dataset to include in the validation split, by default 0.2.
+        test_split : float, optional
+            The proportion of the dataset to include in the test split, by default 0.2.
+        frames_to_extract : int, optional
+            The number of frames to extract from each video, by default 500.
+        seed : int, optional
+            The random seed to use for shuffling the data, by default 42.
+
+        """
         np.random.seed(seed)
         self._signers = signers
         self._val_split = val_split
@@ -26,6 +46,26 @@ class FramesSplitter:
     def split(
         self, X_content: Callable[[Frame], Frame | str] = lambda x: x.path
     ):
+        """Split the frames into train, validation, and test sets.
+
+        Parameters
+        ----------
+        X_content : Callable[[Frame], Frame | str], optional
+            The function to extract the content from the frame, by default lambda x: x.path.
+            This function should take a Frame object and return a Frame or a string.
+            If a string is returned, it will be used as the path to the frame.
+            If a Frame is returned, it will be used as the frame itself.
+
+        Returns
+        -------
+        tuple
+            tuple of np.ndarray
+                The train, validation, and test sets.
+                The first element is the train set, the second element is the validation set,
+                and the third element is the test set.
+                Each element is a tuple of (X, y), where X is the data and y is the labels.
+
+        """
         X_train = []
         X_train_aug = []
         y_train = []

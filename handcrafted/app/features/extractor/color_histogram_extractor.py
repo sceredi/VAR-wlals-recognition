@@ -72,6 +72,8 @@ class ColorHistogram:
             The frame to extract the histogram from.
         normalize: bool
             Whether to normalize the histogram.
+        n_bins : int, optional
+            The number of bins for the histogram (default is 256).
 
         Returns
         -------
@@ -102,6 +104,8 @@ class ColorHistogram:
             The frame to extract histograms from.
         normalize: bool
             Whether to normalize the histogram.
+        n_bins : int, optional
+            The number of bins for the histograms (default is 256).
 
         Returns
         -------
