@@ -1,3 +1,5 @@
+"""Module for training and testing a DTW classifier on the WLASL dataset."""
+
 import sys
 
 from sklearn.metrics import accuracy_score
