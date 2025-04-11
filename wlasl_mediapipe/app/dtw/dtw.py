@@ -27,6 +27,7 @@ def calc_dtw_distance(
     -------
     Tuple[str, float]
         The gloss and the distance.
+
     """
     ret = {"IncompatibleHands": [np.inf]}
     left_hand = video.sign_model.lh_embedding
@@ -71,6 +72,7 @@ def _best_choice(distances) -> Tuple[str, float]:
     ----------
     distances : Dict[str, List[float]]
         The distances.
+
     """
     for gloss in distances:
         distances[gloss] = np.min(distances[gloss])
@@ -100,6 +102,7 @@ def classify(
     -------
     Dict[MediapipeVideo, List[Tuple[str, float]]]
         The classified glosses, in the format {video: [(gloss, distance)]}.
+
     """
     classified_glosses: Dict[MediapipeVideo, List[Tuple[str, float]]] = {}
     for gloss in tqdm(train_videos):
@@ -148,6 +151,7 @@ def _do_classification(
     -------
     Dict[MediapipeVideo, List[Tuple[str, float]]]
         The classified glosses, in the format {video: [(gloss, distance)].
+
     """
     closest_word: Tuple[str, float] = calc_dtw_distance(video, current_train)
     classifications = classified.get(video)
@@ -181,6 +185,7 @@ def _calc_acc(
     -------
     float
         The accuracy of the classification.
+
     """
     right = 0
     tot = len(classified_glosses)
@@ -206,6 +211,7 @@ def pretty_print(
         The output file where the results will be saved.
     topN : int
         The number of top predictions to consider.
+
     """
     output_file = f"top{topN}-{output_file}"
     rows = []

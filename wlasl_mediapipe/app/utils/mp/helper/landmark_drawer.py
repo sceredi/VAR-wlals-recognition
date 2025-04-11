@@ -22,6 +22,7 @@ def draw_landmarks_on_image(image: np.ndarray, results) -> np.ndarray:
     -------
     np.ndarray
         The image with the landmarks drawn on it.
+
     """
     annotated_image = image.copy()
 

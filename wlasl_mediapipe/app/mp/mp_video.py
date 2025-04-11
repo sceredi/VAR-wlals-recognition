@@ -40,6 +40,7 @@ class MediapipeVideo:
             If True, extracts all the features, by default True.
         sign_model : SignModel, optional
             The sign model, by default None.
+
         """
         self.video = video
         if sign_model is None:
@@ -56,6 +57,7 @@ class MediapipeVideo:
         -------
         Video
             The base video.
+
         """
         return self.video
 
@@ -75,6 +77,7 @@ class MediapipeVideo:
             If True, expands the hands keypoints, by calculating the angle,
             in radians, between the connected keypoints, by default False.
         all_features : bool, optional
+
         """
         if os.path.exists(f"data/mp/{self.video.video_id}"):
             self.sign_model = SignModel.load(
@@ -133,6 +136,7 @@ class MediapipeVideo:
         -------
         MediapipeVideo
             The new MediapipeVideo object.
+
         """
         return MediapipeVideo(
             self.video,
@@ -154,6 +158,7 @@ class MediapipeVideo:
         -------
         List[MediapipeVideo]
             The augmented videos.
+
         """
         others = augment_video(self, n)
         return others

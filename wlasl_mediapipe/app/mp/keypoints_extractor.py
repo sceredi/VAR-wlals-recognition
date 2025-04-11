@@ -37,6 +37,7 @@ class MediapipeLandmarksExtractor:
         -------
         List[np.ndarray]
             The landmarks.
+
         """
         return self.detector.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
@@ -54,6 +55,7 @@ class MediapipeLandmarksExtractor:
         -------
         Tuple[List[np.ndarray], List[np.ndarray]]
             The landmarks and the annotated frames.
+
         """
         landmarks = []
         annotated_frames = []

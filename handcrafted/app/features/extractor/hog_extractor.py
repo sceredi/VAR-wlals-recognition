@@ -73,6 +73,7 @@ class HOGExtractor:
         -------
         Tuple[np.ndarray, np.ndarray]
             Tuple containing the HOG features and the processed frame.
+
         """
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         hog_features, hog_image = hog(gray_frame, **self.hog_params)

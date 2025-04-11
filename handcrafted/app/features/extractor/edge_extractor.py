@@ -27,6 +27,7 @@ class EdgeExtractor:
         -------
         List[np.ndarray]
             List of frames with edges extracted.
+
         """
         frames = []
         for frame in self.frames:

@@ -15,6 +15,7 @@ def landmark_to_array(mp_landmark_list) -> np.ndarray:
     -------
     np.ndarray
         The landmarks in a numpy array.
+
     """
     keypoints = []
     for landmark in mp_landmark_list.landmark:
@@ -38,6 +39,7 @@ def extract_landmarks(results):
         The second np array has size 99 and contains the pose landmarks.
         The third np array has size 63 and contains the left hand landmarks.
         The fourth np array has size 63 and contains the right hand landmarks.
+
     """
     face = np.zeros(1404).tolist()
     if results.face_landmarks:

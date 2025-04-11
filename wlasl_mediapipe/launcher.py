@@ -55,6 +55,7 @@ class Launcher:
         -------
         Dataset
             The dataset with only the keypoints.
+
         """
         return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
 
@@ -70,6 +71,7 @@ class Launcher:
         -------
         List[str]
             List of glosses.
+
         """
         glosses = []
         if not filtered:
@@ -96,6 +98,7 @@ class Launcher:
         -------
         List[MediapipeVideo]
             The test videos.
+
         """
         test_videos = dataset.get_videos(
             lambda video: (video.split == "test") and video.gloss in glosses
@@ -124,6 +127,7 @@ class Launcher:
         -------
         Dict[str, List[Video]]
             A dictionary with the glosses as keys and the list of train videos as values.
+
         """
         splitted_train_videos = {}
         for gloss in glosses:
@@ -155,6 +159,7 @@ class Launcher:
             The output file where the results will be saved, by default "results.log".
         topN : int, optional
             The number of top predictions to consider, by default 1.
+
         """
         test_videos = self.get_test_videos(dataset, glosses)
         splitted_train_videos = self.get_train_videos(dataset, glosses)

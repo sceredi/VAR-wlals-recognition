@@ -192,6 +192,7 @@ class GlobalFilters(object):
         -------
         np.ndarray
             The filtered features.
+
         """
         return features[filter_list]
 

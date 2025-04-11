@@ -14,6 +14,7 @@ class HandModel(object):
         ----------
         landmarks : List[float]
             List of positions for the hands.
+
         """
         # Define the connections
         self.connections = mp.solutions.holistic.HAND_CONNECTIONS  # type: ignore
@@ -34,6 +35,7 @@ class HandModel(object):
         -------
         List[float]
             List of the angles between the connections.
+
         """
         connections = self._get_connections_from_landmarks(landmarks)
 
@@ -64,6 +66,7 @@ class HandModel(object):
         -------
         List[np.ndarray]
             List of vectors representing hand connections.
+
         """
         return [landmarks[t[1]] - landmarks[t[0]] for t in self.connections]
 
@@ -82,6 +85,7 @@ class HandModel(object):
         -------
         float
             Angle between the two vectors in radians.
+
         """
         if np.array_equal(u, v):
             return 0

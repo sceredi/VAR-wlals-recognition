@@ -15,6 +15,7 @@ def save_array(arr: List | np.ndarray, path: str) -> None:
         The array to save.
     path : str
         The path to save the array to.
+
     """
     file = open(path, "wb")
     pkl.dump(arr, file)
@@ -33,6 +34,7 @@ def load_array(path: str) -> np.ndarray:
     -------
     np.ndarray
         The loaded numpy array.
+
     """
     file = open(path, "rb")
     arr = pkl.load(file)

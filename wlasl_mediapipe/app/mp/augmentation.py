@@ -22,6 +22,7 @@ def _rotate_hand(data: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The rotated hand data.
+
     """
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
@@ -49,6 +50,7 @@ def _rotate(data: np.ndarray, rotation_matrix: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The rotated data.
+
     """
     frames, landmarks, _ = data.shape
     center = np.array([0.5, 0.5, 0])
@@ -74,6 +76,7 @@ def _rotate_z(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The rotated data.
+
     """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
@@ -105,6 +108,7 @@ def _rotate_z_hands(
     -------
     Tuple[np.ndarray, np.ndarray]
         The rotated left and right hand data.
+
     """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
@@ -132,6 +136,7 @@ def _rotate_y(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The rotated data.
+
     """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
@@ -163,6 +168,7 @@ def _rotate_y_hands(
     -------
     Tuple[np.ndarray, np.ndarray]
         The rotated left and right hand data.
+
     """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
@@ -190,6 +196,7 @@ def _rotate_x(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The rotated data.
+
     """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
@@ -221,6 +228,7 @@ def _rotate_x_hands(
     -------
     Tuple[np.ndarray, np.ndarray]
         The rotated left and right hand data.
+
     """
     angle = np.random.choice(
         [np.random.uniform(-30, -10), np.random.uniform(10, 30)]
@@ -248,6 +256,7 @@ def _zoom(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The zoomed data.
+
     """
     factor = np.random.uniform(0.8, 1.2)
     center = np.array([0.5, 0.5])
@@ -272,6 +281,7 @@ def _shift(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The shifted data.
+
     """
     x_shift = np.random.uniform(-0.2, 0.2)
     y_shift = np.random.uniform(-0.2, 0.2)
@@ -295,6 +305,7 @@ def _mask(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The masked data.
+
     """
     _, landmarks, _ = data.shape
     num_hands = int(0.3 * 42)
@@ -324,6 +335,7 @@ def hflip(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The horizontally flipped data.
+
     """
     data[:, :, 0] = 1 - data[:, :, 0]
     return data
@@ -341,6 +353,7 @@ def speedup(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The sped up data.
+
     """
     return data[::2]
 
@@ -357,6 +370,7 @@ def _apply_augmentations(data: np.ndarray) -> np.ndarray:
     -------
     np.ndarray
         The augmented data.
+
     """
     aug_functions = [
         _rotate_x,
@@ -395,6 +409,7 @@ def _apply_lhrh_augmentations(
     -------
     Tuple[np.ndarray, np.ndarray]
         The augmented left and right hand data.
+
     """
     aug_functions = [
         _rotate_x_hands,
@@ -430,6 +445,7 @@ def augment(
     -------
     Tuple[List[np.ndarray], List[str]]
         The augmented data and labels.
+
     """
     X_aug = X.copy()
     Y_aug = Y.copy()
@@ -463,6 +479,7 @@ def augment_video(video, num: int = 1):
     -------
     List[MediapipeVideo]
         The augmented videos.
+
     """
     aug_videos = []
     for _ in range(num):

@@ -47,6 +47,7 @@ class Video:
             The bounding box of the sign in the video, on the format [x_min, y_min, x_max, y_max].
         sample : bool, optional
             Whether the video is a sample video or not, by default False.
+
         """
         self.video_capture = None
         self.gloss = gloss
@@ -75,6 +76,7 @@ class Video:
             The instance from which to create the video object.
         is_sample : bool, optional
             Whether the video is a sample video or not, by default False.
+
         """
         return cls(
             gloss,
@@ -128,6 +130,7 @@ class Video:
         -------
         Tuple[bool, np.ndarray]
             A tuple with a boolean indicating if the frame was successfully read and the frame itself.
+
         """
         self.get_video_capture().set(cv2.CAP_PROP_POS_FRAMES, frame_number)
         ret, frame = self.get_video_capture().read()
@@ -160,6 +163,7 @@ class Video:
         -------
         List[np.ndarray]
             A list with all frames from the video.
+
         """
         if self._frames is not None:
             return self._frames  # type: ignore
@@ -202,6 +206,7 @@ class Video:
         -------
         int
             The index of the last frame of the video.
+
         """
         if self.frame_end != -1:
             return self.frame_end
@@ -217,6 +222,7 @@ class Video:
         -------
         int
             The number of frames in the video.
+
         """
         return len(self.get_frames())
 
@@ -234,6 +240,7 @@ class Video:
         -------
         np.ndarray
             The padded frames.
+
         """
         num_frames_to_add = target_num_frames - len(frames)
         last_frame = frames[-1]
@@ -257,6 +264,7 @@ class Video:
         -------
         List[np.ndarray]
             The interpolated frames.
+
         """
         x_old = np.linspace(0, 1, len(frames))
         x_new = np.linspace(0, 1, target_num_frames)

@@ -18,8 +18,7 @@ class RoiExtractor:
         self.resize = resize
 
     def extract(self, remove_background=False) -> List["np.ndarray"]:
-        """
-        Extracts the region of interest from the frames
+        """Extracts the region of interest from the frames
         If remove_background is True, then the background will be removed
         this will slow the computation down as it uses a unet model to do so
         """

@@ -37,6 +37,7 @@ class SignModel(object):
             in radians, between the connected keypoints, by default False.
         all_features : bool, optional
             Whether to include all features, by default True.
+
         """
         if pose_list is None:
             pose_list = []
@@ -86,6 +87,7 @@ class SignModel(object):
             List of landmarks for the left hand.
         right_hand_list : List[List[float]]
             List of landmarks for the
+
         """
         self.lh_embedding = self._get_hand_embedding_from_landmark_list(
             left_hand_list
@@ -116,6 +118,7 @@ class SignModel(object):
         -------
         SignModel
             The loaded SignModel object.
+
         """
         path = os.path.join("data", "mp", video_id)
         left_hand_list = load_array(
@@ -151,6 +154,7 @@ class SignModel(object):
         List[List[float]]
             Array of shape (n_frame, nb_connections * nb_connections) containing
             the feature_vectors of the hand for each frame.
+
         """
         embedding = []
         for frame_idx in range(len(hand_list)):
@@ -179,6 +183,7 @@ class SignModel(object):
         -------
         List[List[float]]
             List of landmarks for each frame of a video.
+
         """
         new_frames_feature_list = []
         for frame_feature in frames_feature_list:
