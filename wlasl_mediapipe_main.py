@@ -1,3 +1,5 @@
+"""Main entry point for the WLASL Mediapipe application."""
+
 import time
 
 from wlasl_mediapipe.launcher import Launcher
