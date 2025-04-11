@@ -10,7 +10,7 @@ class EdgeExtractor:
     """EdgeExtractor class which is used to detect edges in a video."""
 
     def __init__(self, frames: List[np.ndarray]) -> None:
-        """Initializes the EdgeExtractor class.
+        """Initialize the EdgeExtractor class.
 
         Parameters
         ----------
@@ -21,7 +21,7 @@ class EdgeExtractor:
         self.frames = frames
 
     def process_frames(self) -> List[np.ndarray]:
-        """Processes the frames to extract edges.
+        """Process the frames to extract edges.
 
         Returns
         -------
@@ -37,7 +37,7 @@ class EdgeExtractor:
 
     @staticmethod
     def _extract(frame: np.ndarray) -> np.ndarray:
-        """Extracts edges from a frame.
+        """Extract edges from a frame.
 
         Parameters
         ----------

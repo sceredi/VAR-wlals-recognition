@@ -1,4 +1,4 @@
-# Purpose: Detects hands in a video stream
+"""Module for Haar Cascade Object Detection."""
 
 from typing import List
 
@@ -9,17 +9,46 @@ from handcrafted.app.dataset.frames import Frame, Frames
 
 
 class HaarDetector:
+    """Class for Haar Cascade Object Detection."""
+
     def __init__(
         self,
         frames: List["np.ndarray"],
         classifier,
         detections_to_keep: int = 1,
     ):
+        """Initialize the HaarDetector object.
+
+        Parameters
+        ----------
+        frames : List[np.ndarray]
+            The frames to process.
+        classifier : cv2.CascadeClassifier
+            The Haar Cascade classifier.
+        detections_to_keep : int, optional
+            The number of detections to keep, by default 1.
+
+        """
         self.classifier = classifier
         self.frames = Frames(frames)
         self.detections_to_keep = detections_to_keep
 
     def calculate_average_position(self, detections):
+        """Calculate the average position of the detected objects.
+
+        This is used to make a more robust detection by using the average position, as the face tipically does not move a lot.
+
+        Parameters
+        ----------
+        detections : List[List[int]]
+            The list of detected objects.
+
+        Returns
+        -------
+        Tuple[float, float]
+            The average position of the detected objects.
+
+        """
         if detections is None or len(detections) == 0:
             return None
         avg_x = 0
@@ -42,15 +71,45 @@ class HaarDetector:
         return (avg_x, avg_y)
 
     def position_sorting_criteria(self, detection, avg_pos):
+        """Sorting criteria for the detected objects.
+
+        Parameters
+        ----------
+        detection : List[int]
+            The detected object.
+        avg_pos : Tuple[float, float]
+            The average position of the detected objects.
+
+        Returns
+        -------
+        float
+            The distance between the detected object and the average position.
+
+        """
         if avg_pos is None:
             return 100 - detection[-1]
-        # Calcola la distanza euclidea tra la detection e la media delle posizioni
+        # Calculates the euclidean distance between the detection and the average position
         dist = np.sqrt(
             (detection[0] - avg_pos[0]) ** 2 + (detection[1] - avg_pos[1]) ** 2
         )
         return dist
 
     def _frame_detect(self, frame: Frame, avg_pos):
+        """Detect objects in a single frame.
+
+        Parameters
+        ----------
+        frame : Frame
+            The frame to process.
+        avg_pos : Tuple[float, float]
+            The average position of the detected objects.
+
+        Returns
+        -------
+        List[List[int]]
+            The list of detected objects.
+
+        """
         gray_hist = cv2.equalizeHist(frame.gray)
         detections = self.classifier.detectMultiScale(gray_hist)
 
@@ -68,6 +127,14 @@ class HaarDetector:
             return []
 
     def detect(self):
+        """Detect objects in all frames.
+
+        Returns
+        -------
+        List[np.ndarray]
+            The list of detected objects.
+
+        """
         val = 1
         rects = []
         drawn_frames = []

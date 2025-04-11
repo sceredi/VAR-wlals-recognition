@@ -1,4 +1,4 @@
-# Description: This file contains the class for calculating the optical flow using Gunnar Farneback's algorithm.
+"""Optical flow calculator using Farneback method."""
 
 from typing import List
 
@@ -8,12 +8,26 @@ import numpy as np
 
 
 class FlowCalculator:
+    """Class to calculate optical flow using Farneback method."""
+
     def __init__(
         self,
         frames: List["np.ndarray"],
         last_frame_index: int,
         params=None,
     ):
+        """Initialize the FlowCalculator object.
+
+        Parameters
+        ----------
+        frames : List[np.ndarray]
+            The frames to process.
+        last_frame_index : int
+            The index of the last frame to process.
+        params : dict, optional
+            The parameters for the optical flow calculation, by default None.
+
+        """
         if params is None:
             params = {
                 "pyr_scale": 0.3,
@@ -29,6 +43,23 @@ class FlowCalculator:
         self.params = params
 
     def calculate(self, plot_each_frame: bool = False):
+        """Calculate the optical flow for the frames.
+
+        Parameters
+        ----------
+        plot_each_frame : bool, optional
+            Whether to plot each frame, by default False.
+
+        Returns
+        -------
+        List[np.ndarray]
+            The list of frames with optical flow applied.
+        List[np.ndarray]
+            The list of magnitudes of the optical flow.
+        List[np.ndarray]
+            The list of angles of the optical flow.
+
+        """
         frames = []
         magnitudes = []
         angles = []
@@ -69,6 +100,18 @@ class FlowCalculator:
         return frames, magnitudes, angles
 
     def _plot(self, frame, flow, index):
+        """Plot the frame and flow.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to plot.
+        flow : np.ndarray
+            The flow to plot.
+        index : int
+            The index of the frame.
+
+        """
         _fig, axes = plt.subplots(1, 2)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 

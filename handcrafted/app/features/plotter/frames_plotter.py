@@ -1,3 +1,5 @@
+"""Module for plotting frames and their features."""
+
 import math
 from typing import List
 
@@ -22,11 +24,24 @@ from handcrafted.app.preprocess.roi_extractor import RoiExtractor
 
 
 class FramesPlotter:
+    """Class to plot frames in a grid."""
+
     def __init__(self, frames: List["np.ndarray"], to_rgb=True):
+        """Initialize the FramesPlotter object.
+
+        Parameters
+        ----------
+        frames : List[np.ndarray]
+            The frames to plot.
+        to_rgb : bool, optional
+            Whether to convert the frames to RGB, by default True.
+
+        """
         self.frames = frames
         self.to_rgb = to_rgb
 
     def plot_grid(self):
+        """Plot the frames in a grid."""
         num_frames = len(self.frames)
         cols = int(math.ceil(math.sqrt(num_frames)))
         rows = int(math.ceil(num_frames / cols))
@@ -39,12 +54,38 @@ class FramesPlotter:
         plt.show()
 
     def _remove_axis(self, ax):
+        """Remove the axis from the plot."""
         ax.axis("off")
 
     def _to_rgb(self, frame) -> "np.ndarray":
+        """Convert the frame to RGB format.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to convert.
+
+        Returns
+        -------
+        np.ndarray
+            The converted frame.
+
+        """
         return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     def _update(self, ax, frame, title):
+        """Update the plot with the new frame.
+
+        Parameters
+        ----------
+        ax : Axes
+            The axes to update.
+        frame : np.ndarray
+            The frame to plot.
+        title : str
+            The title of the plot.
+
+        """
         if self.to_rgb:
             frame = self._to_rgb(frame)
         ax.clear()
@@ -54,17 +95,45 @@ class FramesPlotter:
 
 
 def plot_frames(frames: List["np.ndarray"], is_gray_scale=False) -> None:
+    """Plot frames in a grid.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+    is_gray_scale : bool, optional
+        Whether the frames are in grayscale, by default False.
+
+    """
     plotter = FramesPlotter(frames, to_rgb=not is_gray_scale)
     plotter.plot_grid()
 
 
 def plot_roi_frames(video: Video, remove_background=False) -> None:
+    """Plot ROI frames.
+
+    Parameters
+    ----------
+    video : Video
+        The video to plot.
+    remove_background : bool, optional
+        Whether to remove the background, by default False.
+
+    """
     roi_extractor = RoiExtractor(video.get_frames(), video.bbox, resize=224)
     roi_frames = roi_extractor.extract(remove_background=remove_background)
     plot_frames(roi_frames)
 
 
 def plot_edge_frames(frames: List["np.ndarray"]) -> None:
+    """Plot edge frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+
+    """
     edge_detector = EdgeExtractor(frames)
     edge_frames = edge_detector.process_frames()
     plot_frames(edge_frames)
@@ -73,6 +142,16 @@ def plot_edge_frames(frames: List["np.ndarray"]) -> None:
 def plot_flow_frames(
     frames: List["np.ndarray"], last_frame_index: int = -1
 ) -> None:
+    """Plot flow frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+    last_frame_index : int, optional
+        The last frame index to plot, by default -1.
+
+    """
     if last_frame_index == -1:
         last_frame_index = len(frames) - 1
     flow_calculator = FlowCalculator(frames, last_frame_index)
@@ -81,12 +160,28 @@ def plot_flow_frames(
 
 
 def plot_hog_frames(frames: List["np.ndarray"]) -> None:
+    """Plot HOG frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+
+    """
     hog_extractor = HOGExtractor(frames)
-    hog_features, hog_frames = hog_extractor.process_frames()
+    _hog_features, hog_frames = hog_extractor.process_frames()
     plot_frames(hog_frames, is_gray_scale=True)
 
 
 def plot_lbp_frames(frames: List[np.ndarray]) -> None:
+    """Plot LBP frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+
+    """
     lbp_extractor = LBPExtractor(frames)
     lbp_frames = lbp_extractor.get_lbp_frames()
     lbp_features = lbp_extractor.get_lbp_features()
@@ -134,6 +229,20 @@ def plot_color_hist(
     colors=("h", "s", "v"),
     normalize=False,
 ) -> None:
+    """Plot color histograms for each frame.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+    to_color : int, optional
+        The color conversion code, by default cv2.COLOR_BGR2HSV.
+    colors : tuple, optional
+        The colors to plot, by default ("h", "s", "v").
+    normalize : bool, optional
+        Whether to normalize the histograms, by default False.
+
+    """
     color_hist_extractor = ColorHistogram(frames)
     frames_hists = color_hist_extractor.process_frames(
         to_color, separate_colors=True, normalize=normalize
@@ -204,12 +313,35 @@ def plot_color_hist(
 
 
 def plot_contour(frames: List[np.ndarray]) -> None:
+    """Plot contour frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+
+    """
     contour_detector = ContourExtractor(frames)
     contour_frames = contour_detector.process_frames()
     plot_frames(contour_frames)
 
 
 def plot_haar_frames(frames: List["np.ndarray"], plot: bool = True):
+    """Plot Haar frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+    plot : bool, optional
+        Whether to plot the frames, by default True.
+
+    Returns
+    -------
+    List[tuple]
+        The list of rectangles for each frame.
+
+    """
     classifier = cv2.CascadeClassifier()
     if not classifier.load(
         cv2.samples.findFile(
@@ -226,6 +358,14 @@ def plot_haar_frames(frames: List["np.ndarray"], plot: bool = True):
 
 
 def plot_skin_frames(frames: List["np.ndarray"]) -> None:
+    """Plot skin frames.
+
+    Parameters
+    ----------
+    frames : List[np.ndarray]
+        The frames to plot.
+
+    """
     face_rects = plot_haar_frames(frames, False)
     skin_extractor = SkinExtractor(frames, face_rects)
     skin_frames = skin_extractor.extract()

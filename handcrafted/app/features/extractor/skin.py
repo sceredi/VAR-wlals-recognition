@@ -1,4 +1,4 @@
-# Purpose: Extracts skin from a video given a list of frames and the position of the face in each frame
+"""Module for extracting skin regions from frames."""
 
 from typing import List
 
@@ -7,13 +7,40 @@ import numpy as np
 
 
 class SkinExtractor:
+    """Class to extract skin regions from frames."""
+
     def __init__(
         self, frames: List["np.ndarray"], face_rects: List[List[int]]
     ) -> None:
+        """Initialize the SkinExtractor object.
+
+        Parameters
+        ----------
+        frames : List[np.ndarray]
+            The frames to process.
+        face_rects : List[List[int]]
+            The face rectangles to extract the skin regions.
+
+        """
         self.frames = frames
         self.face_rects = face_rects
 
     def _extract_from_frame(self, frame: "np.ndarray", rect):
+        """Extract skin region from a single frame.
+
+        Parameters
+        ----------
+        frame : np.ndarray
+            The frame to process.
+        rect : List[int]
+            The face rectangle to extract the skin region.
+
+        Returns
+        -------
+        np.ndarray
+            The extracted skin region.
+
+        """
         if rect is None:
             return frame
         if len(rect) == 0:
@@ -80,6 +107,14 @@ class SkinExtractor:
         return new_frame
 
     def extract(self):
+        """Extract skin regions from the frames.
+
+        Returns
+        -------
+            List[np.ndarray]
+                The extracted skin regions.
+
+        """
         skin_frames = []
         for frame, rect in zip(self.frames, self.face_rects, strict=False):
             skin_frame = self._extract_from_frame(frame, rect)
