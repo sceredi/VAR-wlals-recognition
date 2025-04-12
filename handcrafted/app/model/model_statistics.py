@@ -32,7 +32,12 @@ class ModelStatistics:
         self._save_name = save_name
 
     def plot_confusion_matrix(
-        self, y_test, y_pred, save: bool = True, plot: bool = True
+        self,
+        y_test,
+        y_pred,
+        save: bool = True,
+        plot: bool = True,
+        figsize: tuple[int, int] = (10, 7),
     ) -> None:
         """Plot confusion matrix.
 
@@ -46,13 +51,15 @@ class ModelStatistics:
             Whether to save the plot (default is True).
         plot : bool, optional
             Whether to display the plot (default is True).
+        figsize : tuple, optional
+            Size of the plot (default is (10, 7)).
 
         """
         cfm = confusion_matrix(y_test, y_pred)
         labels = sorted(set(y_test) | set(y_pred))
         df_cfm = pd.DataFrame(cfm, index=labels, columns=labels)
 
-        plt.figure(figsize=(10, 7))
+        plt.figure(figsize=figsize)
         _ = sns.heatmap(df_cfm, annot=True, cmap="Blues", fmt="d")
         plt.xlabel("Predicted")
         plt.ylabel("Actual")
