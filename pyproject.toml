@@ -61,8 +61,8 @@ exclude = [
     "venv",
     "mutemotion-wlasl-translation-model-regression.ipynb",
     "mutemotion-wlasl-translation-model-classification.ipynb",
-    "signer_cnn.ipynb",
-    "signer_no_bg.ipynb",
+    "signer-no-bg-cnn.ipynb",
+    "signer_no_bg-trad.ipynb",
 ]
 
 # Same as Black.
