@@ -5,13 +5,15 @@ The project aims to classify videos of Word Level American Sign Language into th
 It's also possible to classify each signer using traditional methods and representation learning.
 
 ## Project structure
-- [data_preprocessing.ipynb](./data_preprocessing.ipynb): shows the preprocessing of the dataset;
-- [handcrafted.ipynb](./handcrafted.ipynb): shows the handcrafted feature extraction;
-- [wlasl_trad.ipynb](./wlasl_trad.ipynb): is used to show the wlasl classification of the dataset using handcrafted features;
-- [wlasl_mediapipe.ipynb](./wlasl_mediapipe.ipynb): is used to show the wlasl classification of the dataset using MediaPipe extracted features;
-- [rn-mp-bad-perf-evaluation.ipynb](./rn-mp-bad-perf-evaluation.ipynb): demonstrates that the kaggle solution does not generalize on the problem at hand;
-- [mutemotion-wlasl-translation-model-classification.ipynb](./mutemotion-wlasl-translation-model-classification.ipynb): shows a correct classification using the model proposed in the kaggle solution;
-- [mutemotion-wlasl-translation-model-regression.ipynb](./mutemotion-wlasl-translation-model-regression.ipynb): shows a correct regression implementation based on the model proposed in the kaggle solution;
+- [1_data_preprocessing.ipynb](./1_data_preprocessing.ipynb): shows the preprocessing of the dataset;
+- [2_handcrafted.ipynb](./2_handcrafted.ipynb): shows the handcrafted feature extraction;
+- [3_wlasl_trad.ipynb](./3_wlasl_trad.ipynb): is used to show the wlasl classification of the dataset using handcrafted features;
+- [4_wlasl_mediapipe.ipynb](./4_wlasl_mediapipe.ipynb): is used to show the wlasl classification of the dataset using MediaPipe extracted features;
+- [5_nn_mp_bad_perf_evaluation.ipynb](./5_nn_mp_bad_perf_evaluation.ipynb): demonstrates that the kaggle solution does not generalize on the problem at hand;
+- [6_mutemotion_wlasl_translation_model_classification.ipynb](./6_mutemotion_wlasl_translation_model_classification.ipynb): shows a correct classification using the model proposed in the kaggle solution;
+- [7_mutemotion_wlasl_translation_model_regression.ipynb](./7_mutemotion_wlasl_translation_model_regression.ipynb): shows a correct regression implementation based on the model proposed in the kaggle solution;
+- [8_signer_trad.ipynb](./8_signer_trad.ipynb): face classification using traditional classifiers and handcrafted features;
+- [9_signer_cnn.ipynb](./9_signer_cnn.ipynb): face classification using a simple CNN model;
 - `handcrafted/`: the library regarding all the handcrafted features and the traditional classification;
     - `app/`
         - `dataset/`
@@ -29,7 +31,6 @@ It's also possible to classify each signer using traditional methods and represe
     - `plots/`: containing the confusion matrix plots of the various wlasl classification runs;
     - `results/`: containing the prints of the various wlasl classification runs;
 
-<!-- TODO fix structure after signer classification -->
 
 ## How to run
 
@@ -68,6 +69,7 @@ alternatively you can:
     - `labels.npz`
     - `wlasl_class_list.txt`
     - `videos/`
+    - `frames_no_bg/`
     - `original_videos_sample/`
     - `hf/`
     - `mp/`
