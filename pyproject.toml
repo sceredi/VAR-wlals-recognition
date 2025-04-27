@@ -59,10 +59,10 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "mutemotion-wlasl-translation-model-regression.ipynb",
-    "mutemotion-wlasl-translation-model-classification.ipynb",
-    "signer-no-bg-cnn.ipynb",
-    "signer_no_bg-trad.ipynb",
+    "7_mutemotion_wlasl_translation_model_regression.ipynb",
+    "6_mutemotion_wlasl_translation_model_classification.ipynb",
+    "8_signer_trad.ipynb",
+    "9_signer_cnn.ipynb",
 ]
 
 # Same as Black.
