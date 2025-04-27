@@ -4,6 +4,9 @@ This is the project for the course of "Visione Artificiale e Riconoscimento" of 
 The project aims to classify videos of Word Level American Sign Language into their glosses.
 It's also possible to classify each signer using traditional methods and representation learning.
 
+You can find the kaggle dataset related to this project [here](https://kaggle.com/datasets/fdb78b5c01260112e1e2b4c14c53691c5de616c3dd7db20e3a6a8fc64e6b590d).
+You won't find the 6th and 7th notebooks as they are related to a different dataset.
+
 ## Project structure
 - [1_data_preprocessing.ipynb](./1_data_preprocessing.ipynb): shows the preprocessing of the dataset;
 - [2_handcrafted.ipynb](./2_handcrafted.ipynb): shows the handcrafted feature extraction;
@@ -56,12 +59,7 @@ In order to run the project you'll need:
     .\.venv\Scrips\activate
     ```
 ### Dataset download
-To download the dataset, if you use bash, you can run the download script:
-```shell
-    ./download.sh
-```
-alternatively you can:
-- download the zip from [here](https://drive.google.com/file/d/1QbuUJbwrq0D3hU8-sEePb4tJ87t2WA8r/view?usp=drive_link)
+- download the dataset from [here](https://kaggle.com/datasets/fdb78b5c01260112e1e2b4c14c53691c5de616c3dd7db20e3a6a8fc64e6b590d).
 - unzip the file into the root directory of the project, so that it has the following structure:
   - `data/`
     - `WLASL_v0.3.json`
