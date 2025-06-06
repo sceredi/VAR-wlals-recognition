@@ -10,7 +10,6 @@ from handcrafted.app.model.model_statistics import ModelStatistics
 
 if __name__ == "__main__":
     dataset = Dataset("data/WLASL_v0.3.json")
-    # glosses = dataset.glosses[1:3]
 
     nwords = 10
     if len(sys.argv) > 1:
@@ -34,9 +33,3 @@ if __name__ == "__main__":
 
     model_stats = ModelStatistics(save_name=output_file)
     model_stats.plot_confusion_matrix(y_test_labels, y_pred_labels, plot=False)
-
-    # svc_model = SVClassifier()
-    # svc_model.train(X_train, y_train)
-    # y_pred = svc_model.predict(X_test, y_test)
-    # score = svc_model.svc.score(X_test, y_test)
-    # print(f"Correct classification rate SVC: {score * 100:.2f}%")
