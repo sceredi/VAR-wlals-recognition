@@ -74,7 +74,7 @@ In order to run the project you'll need:
 
 ### Download the required libraries
 ```shell
-pip install -r requirements.txt
+  pip install -r requirements.txt
 ```
 
 
