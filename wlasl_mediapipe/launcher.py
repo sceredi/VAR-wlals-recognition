@@ -52,8 +52,13 @@ class Launcher:
             topN=topN,
         )
 
-    def load_data(self) -> Dataset:
+    def load_data(self, filename: str = "data/WLASL_v0.3.json") -> Dataset:
         """Load the WLASL dataset with only the keypoints.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the WLASL dataset file.
 
         Returns
         -------
@@ -61,13 +66,19 @@ class Launcher:
             The dataset with only the keypoints.
 
         """
-        return Dataset("data/WLASL_v0.3.json", only_keypoints=True)
+        return Dataset(filename, only_keypoints=True)
 
-    def load_glosses(self, filtered: bool = False) -> List[str]:
+    def load_glosses(
+        self,
+        filename: str = "data/wlasl_class_list.txt",
+        filtered: bool = False,
+    ) -> List[str]:
         """Load the wlasl class list.
 
         Parameters
         ----------
+        filename : str
+            The path to the file containing the glosses.
         filtered : bool
             If True, returns the filtered labels, filtered by cosine similarity, otherwise by the order they appear in the file.
 
@@ -79,9 +90,7 @@ class Launcher:
         """
         glosses = []
         if not filtered:
-            glosses = pd.read_csv(
-                "data/wlasl_class_list.txt", sep="\t", header=None
-            )[1].tolist()
+            glosses = pd.read_csv(filename, sep="\t", header=None)[1].tolist()
         else:
             glosses = FilteredLabels.get_labels()
         return glosses
