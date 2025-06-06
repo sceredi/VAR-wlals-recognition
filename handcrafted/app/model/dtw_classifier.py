@@ -219,10 +219,7 @@ class DTWClassifier:
             X_test, y_train, y_test (the final DTW similarity matrices for training and testing).
 
         """
-        # X_train = self.similarity_matrix_training(self.train_videos)
-        X_test = self.similarity_matrix_test(
-            len(self.train_videos)
-        )  # (len(X_train))
+        X_test = self.similarity_matrix_test(len(self.train_videos))
 
         y_train = [
             self.glosses.index(video.gloss) for video in self.train_videos
@@ -231,7 +228,6 @@ class DTWClassifier:
             self.glosses.index(video.gloss) for video in self.test_videos
         ]
 
-        # return X_train.reshape((X_train.shape[0], -1)), X_test.reshape((X_test.shape[0], -1)), y_train, y_test
         return X_test.reshape((X_test.shape[0], -1)), y_train, y_test
 
     @staticmethod
