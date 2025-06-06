@@ -35,6 +35,7 @@ You won't find the 6th and 7th notebooks as they are related to a different data
     - `results/`: containing the prints of the various wlasl classification runs;
 - `signer/`
     - `plots/`: containing the confusion matrix plots of the various signer classification runs;
+- `doc/`: containing the project report.
 
 ## How to run
 
